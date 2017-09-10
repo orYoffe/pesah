@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,6 +14,13 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <script type="text/javascript">
+      if (window.location.search !== '?a=pesah' && document.cookie.indexOf('a=pesah') === -1) {
+        window.location.href = '';
+      } else {
+        document.cookie = 'a=pesah';
+      }
+    </script>
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/4.3.1/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
@@ -21,6 +30,7 @@
     <script defer src="/__/firebase/4.3.1/firebase-storage.js"></script>
     <!-- initialize the SDK after all desired features are loaded -->
     <script defer src="/__/firebase/init.js"></script>
+
     <script src="https://maps.googleapis.com/maps/api/js?v=3.27&libraries=places,geometry&key=AIzaSyBb-v3zujUJ9ZS4T7Inbo6pRHetDpRen3g"></script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
@@ -48,5 +58,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
   </body>
 </html>

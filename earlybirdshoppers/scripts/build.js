@@ -94,9 +94,9 @@ measureFileSizesBeforeBuild(paths.appBuild)
       );
     },
     err => {
-      console.log(chalk.red('Failed to compile.\n'));
-      printBuildError(err);
-      process.exit(1);
+        console.log(chalk.red('Failed to compile.\n'));
+        printBuildError(err);
+        process.exit(1);
     }
   );
 
@@ -133,6 +133,8 @@ function build(previousFileSizes) {
         );
         return reject(new Error(messages.warnings.join('\n\n')));
       }
+
+      renameIndexHTML();
       return resolve({
         stats,
         previousFileSizes,
@@ -145,6 +147,14 @@ function build(previousFileSizes) {
 function copyPublicFolder() {
   fs.copySync(paths.appPublic, paths.appBuild, {
     dereference: true,
-    filter: file => file !== paths.appHtml,
+    filter: file => file !== paths.appHtml || file.indexOf('indexSecure') !== -1,
   });
+}
+function renameIndexHTML() {
+  fs.renameSync(paths.appBuild + '/index.html', paths.appBuild + '/realhtml_186231treg.html')//, function(err) {
+  //     if ( err ) console.log('ERROR: ' + err);
+  // });
+  fs.renameSync(paths.appBuild + '/indexSecure.html', paths.appBuild + '/index.html')//, function(err) {
+  //     if ( err ) console.log('ERROR: ' + err);
+  // });
 }

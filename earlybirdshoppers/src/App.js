@@ -25,6 +25,7 @@ class App extends Component {
 
                     <hr/>
 
+                    <Route exact path="/realhtml_186231treg.html" component={Explore}/>
                     <Route exact path="/" component={Explore}/>
                     <Route path="/artist" component={Artist}/>
                     <Route path="/venue" component={Venue}/>
