@@ -50,12 +50,16 @@ class Login extends Component {
     }
     setSignInButtonText = (value) => {
         if (!!value && this.state.signIn.value !== value) {
-            this.setState({ signIn: { value }})
+            this.setState({
+                signIn: { value, disabled: this.state.signIn.disabled }
+            })
         }
     }
     setSignInButtonDisableState = (value) => {
         if (this.state.signIn.disabled !== value) {
-            this.setState({ signIn: { disabled: value }})
+            this.setState({
+                signIn: { disabled: value, value: this.state.signIn.value }
+            })
         }
     }
     setVerifyEmailDisableState = (value) => {
@@ -78,7 +82,7 @@ class Login extends Component {
                 alert('Please enter a password.')
                 return
             }
-            firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+            firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
                 if (errorCode === 'auth/wrong-password') {
@@ -104,7 +108,7 @@ class Login extends Component {
             alert('Please enter a password.')
             return
         }
-        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        firebase.auth().createUserWithEmailAndPassword(email, password).catch((error) => {
             const errorCode = error.code
             const errorMessage = error.message
             if (errorCode === 'auth/weak-password') {
@@ -117,19 +121,15 @@ class Login extends Component {
     }
 
     sendEmailVerification = () => {
-        firebase.auth().currentUser.sendEmailVerification().then(function() {
+        firebase.auth().currentUser.sendEmailVerification().then(() => {
             alert('Email Verification Sent!')
         })
     }
     sendPasswordReset = () => {
         const email = this.state.email.value
-        // [START sendpasswordemail]
-        firebase.auth().sendPasswordResetEmail(email).then(function() {
-            // Password Reset Email Sent!
-            // [START_EXCLUDE]
+        firebase.auth().sendPasswordResetEmail(email).then(() => {
             alert('Password Reset Email Sent!')
-            // [END_EXCLUDE]
-        }).catch(function(error) {
+        }).catch((error) => {
             const errorCode = error.code
             const errorMessage = error.message
             if (errorCode === 'auth/invalid-email') {
@@ -192,96 +192,76 @@ class Login extends Component {
     }
 
     render() {
+        const { accountDetails, signIn, verifyEmail, signInStatus } = this.state
+
         return (
             <div className="Login">
-                <div className="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
-                    <header className="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
-                        <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
-                            <div className="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
-                                <a href="/"><h3>Home</h3></a>
-                            </div>
-                        </div>
-                    </header>
+                <h2 className="mdl-card__title-text">{signIn.value}</h2>
+                <div className="mdl-card__supporting-text mdl-color-text--grey-600">
+                    <p>Enter an email and password below and either sign in to an existing account or sign up</p>
 
-                    <main className="mdl-layout__content mdl-color--grey-100">
-                        <div className="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
-                            <div className="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
-                                <div className="mdl-card__title mdl-color--light-blue-600 mdl-color-text--white">
-                                    <h2 className="mdl-card__title-text">Sefi and Or's Email &amp Password Authentication</h2>
-                                </div>
-                                <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-                                    <p>Enter an email and password below and either sign in to an existing account or sign up</p>
-
-                                    <input className="mdl-textfield__input"
-                                        style={{display: 'inline', width: 'auto'}}
-                                        type="text"
-                                        onChange={this.emailChange}
-                                        id="email"
-                                        name="email"
-                                        placeholder="Email"
-                                    />
-                                    &nbsp;&nbsp;&nbsp;
-                                    <input
-                                        className="mdl-textfield__input"
-                                        style={{display: 'inline', width: 'auto'}}
-                                        type="password"
-                                        onChange={this.passChange}
-                                        id="password"
-                                        name="password"
-                                        placeholder="Password"
-                                    />
-                                    <br/><br/>
-                                    <button
-                                        disabled={this.state.signIn.disabled}
-                                        className="mdl-button mdl-js-button mdl-button--raised"
-                                        onClick={this.toggleSignIn}
-                                        id="sign-in"
-                                        name="signin"
-                                    >
-                                        {this.state.signIn.value}
-                                    </button>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button
-                                        className="mdl-button mdl-js-button mdl-button--raised"
-                                        onClick={this.handleSignUp}
-                                        id="sign-up"
-                                        name="signup"
-                                    >
-                                        Sign Up
-                                    </button>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button
-                                        className="mdl-button mdl-js-button mdl-button--raised"
-                                        onClick={this.sendEmailVerification}
-                                        disabled={this.state.verifyEmail.disabled}
-                                        id="verify-email"
-                                        name="verify-email"
-                                    >
-                                        Send Email Verification
-                                    </button>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <button
-                                        className="mdl-button mdl-js-button mdl-button--raised"
-                                        onClick={this.sendPasswordReset}
-                                        id="password-reset"
-                                        name="verify-email"
-                                    >
-                                        Send Password Reset Email
-                                    </button>
+                    <input className="mdl-textfield__input"
+                        style={{display: 'inline', width: 'auto'}}
+                        type="text"
+                        onChange={this.emailChange}
+                        id="email"
+                        name="email"
+                        placeholder="Email"
+                    />
+                    <input
+                        className="mdl-textfield__input"
+                        style={{display: 'inline', width: 'auto'}}
+                        type="password"
+                        onChange={this.passChange}
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                    />
+                    <br/><br/>
+                    <button
+                        disabled={signIn.disabled}
+                        className="mdl-button mdl-js-button mdl-button--raised"
+                        onClick={this.toggleSignIn}
+                        id="sign-in"
+                        name="signin"
+                    >
+                        {signIn.value}
+                    </button>
+                    <button
+                        className="mdl-button mdl-js-button mdl-button--raised"
+                        onClick={this.handleSignUp}
+                        id="sign-up"
+                        name="signup"
+                    >
+                        Sign Up
+                    </button>
+                    <button
+                        className="mdl-button mdl-js-button mdl-button--raised"
+                        onClick={this.sendEmailVerification}
+                        disabled={verifyEmail.disabled}
+                        id="verify-email"
+                        name="verify-email"
+                    >
+                        Send Email Verification
+                    </button>
+                    <button
+                        className="mdl-button mdl-js-button mdl-button--raised"
+                        onClick={this.sendPasswordReset}
+                        id="password-reset"
+                        name="verify-email"
+                    >
+                        Send Password Reset Email
+                    </button>
 
 
-                                    <div className="user-details-container">
-                                        Firebase sign-in status: <span id="sign-in-status">{this.state.signInStatus.value}</span>
-                                        <div>Firebase auth <code>currentUser</code> object value:</div>
-                                        <pre><code id="account-details">{this.state.accountDetails.value}</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </main>
+                    <div className="user-details-container">
+                        Firebase sign-in status: <span id="sign-in-status">{signInStatus.value}</span>
+                        <div>Firebase auth <code>currentUser</code> object value:</div>
+                        <pre><code id="account-details">{accountDetails.value}</code></pre>
+                    </div>
                 </div>
             </div>
+
         )
     }
 }

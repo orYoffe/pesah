@@ -30,10 +30,10 @@ const Map = ({
 }) => (
   <GettingStartedGoogleMap
     containerElement={
-      <div style={{ height: `100%`, 'min-height': '400px' }} />
+      <div style={{ height: `100%`, minHeight: '400px' }} />
     }
     mapElement={
-      <div style={{ height: `100%`, 'min-height': '400px' }} />
+      <div style={{ height: `100%`, minHeight: '400px' }} />
     }
     onMapLoad={noop}
     onMapClick={noop}
