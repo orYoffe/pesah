@@ -1,5 +1,8 @@
-/* global firebase */
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
+import firebase from '../helpers/firebase'
+import './Login.css'
 
 class Login extends Component {
     state = {
@@ -9,18 +12,22 @@ class Login extends Component {
         pass: {
             value: '',
         },
-        accountDetails: {
-            value: 'null',
-        },
-        signInStatus: {
-            value: 'Unknown',
-        },
-        signIn: {
-            value: 'Sign In',
-            disabled: false
-        },
-        verifyEmail: {
-            disabled: true
+        messages: {
+            error: '',
+            message: ''
+        }
+    }
+
+    setMessage = (type, newMessage) => {
+        const { messages: { error, message } } = this.state
+        if (type === 'error') {
+            if (error !== newMessage) {
+                this.setState({ messages: { error: newMessage, message: '' }})
+            }
+        } else if (type === 'message') {
+            if (message !== newMessage) {
+                this.setState({ messages: { message: newMessage, error: '' }})
+            }
         }
     }
 
@@ -43,11 +50,6 @@ class Login extends Component {
             this.setState({ accountDetails: { value }})
         }
     }
-    setSignInStatus = (value) => {
-        if (!!value && this.state.signInStatus.value !== value) {
-            this.setState({ signInStatus: { value }})
-        }
-    }
     setSignInButtonText = (value) => {
         if (!!value && this.state.signIn.value !== value) {
             this.setState({
@@ -55,100 +57,44 @@ class Login extends Component {
             })
         }
     }
-    setSignInButtonDisableState = (value) => {
-        if (this.state.signIn.disabled !== value) {
-            this.setState({
-                signIn: { disabled: value, value: this.state.signIn.value }
-            })
-        }
-    }
-    setVerifyEmailDisableState = (value) => {
-        if (this.state.verifyEmail.disabled !== value) {
-            this.setState({ verifyEmail: { disabled: value }})
-        }
-    }
 
-    toggleSignIn = () => {
+    toggleSignIn = (e) => {
+        e && e.prevetDefault()
+        e && e.stopPropagation()
         if (firebase.auth().currentUser) {
             firebase.auth().signOut()
         } else {
             const email = this.state.email.value
             const password = this.state.pass.value
             if (email.length < 4) {
-                alert('Please enter an email address.')
+                this.setMessage('error', 'Please enter an email address.')
                 return
             }
             if (password.length < 4) {
-                alert('Please enter a password.')
+                this.setMessage('error', 'Please enter a password.')
                 return
             }
             firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
                 if (errorCode === 'auth/wrong-password') {
-                    alert('Wrong password.')
+                    this.setMessage('error', 'Wrong password.')
                 } else {
-                    alert(errorMessage)
+                    this.setMessage('error', errorMessage)
                 }
                 console.log(error)
-                this.setSignInButtonDisableState(false)
             })
         }
-        this.setSignInButtonDisableState(true)
     }
 
-    handleSignUp = () => {
-        const email = this.state.email.value
-        const password = this.state.pass.value
-        if (email.length < 4) {
-            alert('Please enter an email address.')
-            return
-        }
-        if (password.length < 4) {
-            alert('Please enter a password.')
-            return
-        }
-        firebase.auth().createUserWithEmailAndPassword(email, password).catch((error) => {
-            const errorCode = error.code
-            const errorMessage = error.message
-            if (errorCode === 'auth/weak-password') {
-                alert('The password is too weak.')
-            } else {
-                alert(errorMessage)
-            }
-            console.log(error)
-        })
-    }
 
     sendEmailVerification = () => {
         firebase.auth().currentUser.sendEmailVerification().then(() => {
-            alert('Email Verification Sent!')
+            // this.setMessage('message', 'Email Verification Sent!')
         })
     }
-    sendPasswordReset = () => {
-        const email = this.state.email.value
-        firebase.auth().sendPasswordResetEmail(email).then(() => {
-            alert('Password Reset Email Sent!')
-        }).catch((error) => {
-            const errorCode = error.code
-            const errorMessage = error.message
-            if (errorCode === 'auth/invalid-email') {
-                alert(errorMessage)
-            } else if (errorCode === 'auth/user-not-found') {
-                alert(errorMessage)
-            }
-            console.log(error)
-        })
-    }
-    /**
-    * initLogin handles setting up UI event listeners and registering Firebase auth listeners:
-    *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
-    *    out, and that is where we update the UI.
-    */
 
     checkAuthState = (user) => {
-        this.setVerifyEmailDisableState(true)
-        // [END_EXCLUDE]
         if (user) {
             // const displayName = user.displayName
             // const email = user.email
@@ -157,59 +103,49 @@ class Login extends Component {
             // const isAnonymous = user.isAnonymous
             // const uid = user.uid
             // const providerData = user.providerData
-            this.setSignInStatus('Signed in')
-            this.setSignInButtonText('Sign out')
-            this.setAccountDetails(JSON.stringify(user, null, '  '))
             if (!emailVerified) {
-                this.setVerifyEmailDisableState(false)
+                this.sendEmailVerification()
             }
         } else {
             // User is signed out.
-            this.setSignInStatus('Signed out')
-            this.setSignInButtonText('Sign in')
-            this.setAccountDetails('null')
         }
-        this.setSignInButtonDisableState(false)
     }
     initLogin = () => {
-        firebase.auth().onAuthStateChanged(this.checkAuthState)
-        if (firebase.auth().currentUser) {
-            this.checkAuthState()
+        if (typeof firebase !== 'undefined' && !this.initialized) {
+            this.initialized = true
+            firebase.auth().onAuthStateChanged(this.checkAuthState)
+            const user = firebase.auth().currentUser
+            if (user) {
+                this.checkAuthState(user)
+            }
         }
     }
 
     componentDidMount() {
-        if (typeof firebase !== 'undefined' && !this.initialized) {
-            this.initialized = true
-            this.initLogin()
-        }
+        this.initLogin()
     }
     componentWillUpdate() {
-        if (typeof firebase !== 'undefined' && !this.initialized) {
-            this.initialized = true
-            this.initLogin()
-        }
+        this.initLogin()
     }
 
     render() {
-        const { accountDetails, signIn, verifyEmail, signInStatus } = this.state
+        const { messages: { message, error } } = this.state
 
         return (
             <div className="Login">
-                <h2 className="mdl-card__title-text">{signIn.value}</h2>
-                <div className="mdl-card__supporting-text mdl-color-text--grey-600">
-                    <p>Enter an email and password below and either sign in to an existing account or sign up</p>
-
-                    <input className="mdl-textfield__input"
+                <h2 className="mdl-card__title-text">Sign In</h2>
+                <form onSubmit={this.toggleSignIn}>
+                    <label htmlFor="email">Email:</label>
+                    <input
                         style={{display: 'inline', width: 'auto'}}
                         type="text"
                         onChange={this.emailChange}
                         id="email"
                         name="email"
-                        placeholder="Email"
+                        placeholder="example@example.com"
                     />
+                    <label htmlFor="password">Password:</label>
                     <input
-                        className="mdl-textfield__input"
                         style={{display: 'inline', width: 'auto'}}
                         type="password"
                         onChange={this.passChange}
@@ -217,53 +153,46 @@ class Login extends Component {
                         name="password"
                         placeholder="Password"
                     />
-                    <br/><br/>
-                    <button
-                        disabled={signIn.disabled}
-                        className="mdl-button mdl-js-button mdl-button--raised"
+                    <input
+                        className="button"
                         onClick={this.toggleSignIn}
                         id="sign-in"
+                        type="submit"
                         name="signin"
-                    >
-                        {signIn.value}
-                    </button>
-                    <button
-                        className="mdl-button mdl-js-button mdl-button--raised"
-                        onClick={this.handleSignUp}
-                        id="sign-up"
-                        name="signup"
-                    >
-                        Sign Up
-                    </button>
-                    <button
-                        className="mdl-button mdl-js-button mdl-button--raised"
-                        onClick={this.sendEmailVerification}
-                        disabled={verifyEmail.disabled}
-                        id="verify-email"
-                        name="verify-email"
-                    >
-                        Send Email Verification
-                    </button>
-                    <button
-                        className="mdl-button mdl-js-button mdl-button--raised"
-                        onClick={this.sendPasswordReset}
-                        id="password-reset"
-                        name="verify-email"
-                    >
-                        Send Password Reset Email
-                    </button>
+                        value="Sign In"
+                    />
+                </form>
+                {!!error && <br/>}
+                {!!error && <div style={{color: '#f00'}}>{error}</div>}
+                {!!message && <br/>}
+                {!!message && <div>{message}</div>}
 
+                <br />
+                <input
+                    className="button"
+                    type="button"
+                    value="Connect with FB (unfunctional)"
+                />
+                <input
+                    className="button"
+                    type="button"
+                    value="Connect with google (unfunctional)"
+                />
+                <input
+                    className="button"
+                    type="button"
+                    value="Connect with twitter (unfunctional)"
+                />
 
-                    <div className="user-details-container">
-                        Firebase sign-in status: <span id="sign-in-status">{signInStatus.value}</span>
-                        <div>Firebase auth <code>currentUser</code> object value:</div>
-                        <pre><code id="account-details">{accountDetails.value}</code></pre>
-                    </div>
-                </div>
+                <br />
+                <p>Don't have a User? Sign up <Link to="signup">here</Link></p>
             </div>
 
         )
     }
 }
 
-export default Login
+function mapStateToProps(state) {
+    return { firebase: state.config.firebase }
+}
+export default connect(mapStateToProps)(Login)
