@@ -51,8 +51,8 @@
   }
 
   input.focus();
-  form.addEventListener('click', submitForm);
-  button.addEventListener('click', submitForm);
+  form.addEventListener('submit', submitForm, true);
+  button.addEventListener('click', submitForm, true);
   if (window.location.search === '?a=wrong') {
     var error = document.getElementById('error');
     error.style.display = 'block';

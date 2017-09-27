@@ -10,9 +10,6 @@ import './index.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 
-// const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore);
-
-// Redux Dev tools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const logger = createLogger();
