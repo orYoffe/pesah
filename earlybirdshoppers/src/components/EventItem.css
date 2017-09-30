@@ -35,3 +35,22 @@
     width: 100%;
     padding: 10px;
 }
+
+.bar-progress {
+    position: relative;
+    float: right;
+    display: block;
+    width: 40px;
+    height: 130px;
+    background: transparent;
+    border: 1px solid #ccc;
+}
+.bar-progress div {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1%;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
