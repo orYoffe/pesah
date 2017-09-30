@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { login, logout } from './reducers/auth'
 import { configInit } from './reducers/config'
 import Routes from './Routes'
-import './App.css'
 
 
 class App extends Component {

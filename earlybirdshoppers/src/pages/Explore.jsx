@@ -9,10 +9,14 @@ class Explore extends Component {
 
     render() {
         return (
-            <div className="Explore">
+            <div className="Explore container">
               <h3>Explore Events, Artists and Venues</h3>
-              <input type="search" placeholder="Artist/Venue name/location" />
-              <button>Search</button>
+              <div className="input-group">
+                <input className="form-control" type="search" placeholder="Artist/Venue name/location" />
+                <span className="input-group-btn">
+                  <button className="btn btn-default" type="button">Search</button>
+                </span>
+              </div>
               <hr/>
             <h4>Trending Events</h4>
               <div className="row">

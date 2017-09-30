@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { signup } from '../helpers/auth'
 import { Link } from 'react-router-dom'
 import { login as loginAction } from '../reducers/auth'
-import './Login.css'
 
 class Signup extends Component {
     state = {
@@ -73,27 +72,31 @@ class Signup extends Component {
         const { messages: { message, error } } = this.state
 
         return (
-            <div className="Login">
+            <div className="Signup container">
                 <h2>Sign up</h2>
                 <form onSubmit={this.handleSignUp}>
                     <label htmlFor="email">Email:</label>
                     <input
+                        className="form-control"
                         type="email"
                         onChange={this.emailChange}
                         id="email"
                         name="email"
                         placeholder="example@example.com"
                     />
+                    <br />
                     <label htmlFor="password">Password:</label>
                     <input
+                        className="form-control"
                         type="password"
                         onChange={this.passChange}
                         id="password"
                         name="password"
                         placeholder="Password"
                     />
+                    <br />
                     <input
-                        className="button"
+                        className="btn btn-primary form-control"
                         onClick={this.handleSignUp}
                         id="sign-in"
                         type="submit"
@@ -107,21 +110,24 @@ class Signup extends Component {
 
                 <br />
                 <input
-                    className="button"
+                    className="btn btn-primary"
                     type="button"
                     value="Connect with FB (unfunctional)"
                 />
+                <br />
                 <input
-                    className="button"
+                    className="btn btn-primary"
                     type="button"
                     value="Connect with google (unfunctional)"
                 />
+                <br />
                 <input
-                    className="button"
+                    className="btn btn-primary"
                     type="button"
                     value="Connect with twitter (unfunctional)"
                 />
 
+                <br />
                 <br />
                 <p>Already have a User? Log in <Link to="login">here</Link></p>
             </div>

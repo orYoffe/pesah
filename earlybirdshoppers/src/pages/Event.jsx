@@ -31,7 +31,7 @@ class Event extends Component {
 
         console.log('event', event)
         return (
-            <div className="event-item">
+            <div className="event-item page">
                 <div className="event-item-content">
                     <h3>Event name: {name}</h3>
                     <h4>Where: {location}</h4>
@@ -39,7 +39,7 @@ class Event extends Component {
                         <VenueItem {...currentVenue} />
                     </div>}
                     <h5>How much: {price}$</h5>
-                    <h5>When: {moment(date).format('LLL')}$</h5>
+                    <h5>When: {moment(date).format('LLL')}</h5>
                     <h4>Who:</h4>
                     <div className="row">
                         {currentArtists.map(artist => <ArtistItem key={`artist_item_${artist.id}`} {...artist} /> )}

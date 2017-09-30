@@ -15,10 +15,28 @@ body {
 }
 
 .button {
-  background: #2af;
+  /* background: #2af;
   padding: 6px 8px;
   box-shadow: 0px 3px 3px #ccc;
   border: none;
   font-size: 16px;
-  color: #fff;
+  color: #fff; */
+}
+
+.page {
+  height: auto;
+}
+
+.item {
+  height: 180px;
+  box-shadow: 0 0 3px #aaa;
+  transition: transform 0.25s;
+  transform: none;
+}
+.item:hover {
+  transform: scale(1.05);
+}
+a:focus, a:hover {
+  color: #768A9B;
+  text-decoration: none;
 }

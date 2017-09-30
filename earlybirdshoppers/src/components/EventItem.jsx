@@ -21,15 +21,17 @@ const EventItem = props => {
     const currentArtists = artists.filter(artist => eventArtists.indexOf(artist.id) !== -1)
     
     return (
-        <Link to={`/event/${id}`} className="col-sm-6 col-xs-12 event-item">
-            <div className="event-item-content">
-                <h4>Event name: {name}</h4>
-                <p>Location: {location} at {currentVenue.name}</p>
-                <p>Price: {price}$</p>
-                <p>When: {moment(date).format('LLL')}</p>
-                <p>Who: {currentArtists.length && currentArtists.map(artist => artist.name).join(', ')}</p>
-            </div>
-        </Link>
+        <div className="col-sm-6 col-xs-12">
+            <Link to={`/event/${id}`} className="event-item item">
+                <div className="event-item-content">
+                    <h4>Event name: {name}</h4>
+                    <p>Location: {location} at {currentVenue.name}</p>
+                    <p>Price: {price}$</p>
+                    <p>When: {moment(date).format('LLL')}</p>
+                    <p>Who: {currentArtists.length && currentArtists.map(artist => artist.name).join(', ')}</p>
+                </div>
+            </Link>
+        </div>
     )
 }
 

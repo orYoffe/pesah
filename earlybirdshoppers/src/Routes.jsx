@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
+import PassReset from './pages/PassReset'
 // import PrivateRoute from './helpers/PrivateRoute'
 // import PublicRoute from './helpers/PublicRoute'
 import Explore from './pages/Explore'
@@ -29,6 +30,7 @@ const Routes = (props) => (
                         <Route exact path="/" component={Explore}/>
                         <Route exact path="/login" component={Login}/>
                         <Route exact path="/signup" component={SignUp}/>
+                        <Route exact path="/password-reset" component={PassReset}/>
                         <Route path="/artist/:id" component={Artist}/>
                         <Route path="/venue/:id" component={Venue}/>
                         <Route path="/event/:id" component={Event}/>

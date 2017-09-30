@@ -10,12 +10,15 @@ const ArtistItem = props => {
         id,
     } = props
     return (
-        <Link to={`/artist/${id}`} className="col-sm-6 col-xs-12 artist-item">
-            <div className="artist-item-content">
-                <h4>Artist name: {name}</h4>
-                <p>Based in: {location}</p>
-            </div>
-        </Link>
+        
+        <div className="col-sm-6 col-xs-12">
+            <Link to={`/artist/${id}`} className="artist-item item">
+                <div className="artist-item-content">
+                    <h4>Artist name: {name}</h4>
+                    <p>Based in: {location}</p>
+                </div>
+            </Link>
+        </div>
     )
 }
 

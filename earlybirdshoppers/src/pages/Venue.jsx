@@ -25,7 +25,7 @@ class Venue extends Component {
 
         console.log('venue', venue)
         return (
-            <div className="venue-item">
+            <div className="venue-item page">
                 <div className="venue-item-content">
                     <h3>Venue name: {name}</h3>
                     <h4>Based in: {location}</h4>

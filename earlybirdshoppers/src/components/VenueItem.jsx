@@ -10,12 +10,14 @@ const VenueItem = props => {
         id,
     } = props
     return (
-        <Link to={`/venue/${id}`} className="col-sm-6 col-xs-12 venue-item">
-            <div className="venue-item-content">
-                <h4>Venue name: {name}</h4>
-                <p>location: {location}</p>
-            </div>
-        </Link>
+        <div className="col-sm-6 col-xs-12">
+            <Link to={`/venue/${id}`} className="venue-item item">
+                <div className="venue-item-content">
+                    <h4>Venue name: {name}</h4>
+                    <p>location: {location}</p>
+                </div>
+            </Link>
+        </div>
     )
 }
 

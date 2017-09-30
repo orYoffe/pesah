@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { login } from '../helpers/auth'
 import { login as loginAction } from '../reducers/auth'
-import './Login.css'
 
 class Login extends Component {
     state = {
@@ -46,19 +45,6 @@ class Login extends Component {
         }
     }
 
-    setAccountDetails = (value) => {
-        if (!!value && this.state.accountDetails.value !== value) {
-            this.setState({ accountDetails: { value }})
-        }
-    }
-    setSignInButtonText = (value) => {
-        if (!!value && this.state.signIn.value !== value) {
-            this.setState({
-                signIn: { value, disabled: this.state.signIn.disabled }
-            })
-        }
-    }
-
     signIn = (e) => {
         e && e.preventDefault()
         e && e.stopPropagation()
@@ -92,29 +78,31 @@ class Login extends Component {
         const { messages: { message, error } } = this.state
 
         return (
-            <div className="Login">
-                <h2>Sign In</h2>
+            <div className="Login container">
+                <h2>Login</h2>
                 <form onSubmit={this.signIn}>
                     <label htmlFor="email">Email:</label>
                     <input
-                        style={{display: 'inline', width: 'auto'}}
+                    className="form-control"
                         type="text"
                         onChange={this.emailChange}
                         id="email"
                         name="email"
                         placeholder="example@example.com"
                     />
+                    <br />
                     <label htmlFor="password">Password:</label>
                     <input
-                        style={{display: 'inline', width: 'auto'}}
+                        className="form-control"
                         type="password"
                         onChange={this.passChange}
                         id="password"
                         name="password"
                         placeholder="Password"
                     />
+                    <br />
                     <input
-                        className="button"
+                        className="btn btn-primary form-control"
                         onClick={this.signIn}
                         id="sign-in"
                         type="submit"
@@ -126,24 +114,30 @@ class Login extends Component {
                 {!!error && <div style={{color: '#f00'}}>{error}</div>}
                 {!!message && <br/>}
                 {!!message && <div>{message}</div>}
+                <br />
+                <br />
+                <p>Forgot your password? Reset your password <Link to="/password-reset">here</Link></p>
 
                 <br />
                 <input
-                    className="button"
+                    className="btn btn-primary"
                     type="button"
                     value="Connect with FB (unfunctional)"
                 />
+                <br />
                 <input
-                    className="button"
+                    className="btn btn-primary"
                     type="button"
                     value="Connect with google (unfunctional)"
                 />
+                <br />
                 <input
-                    className="button"
+                    className="btn btn-primary"
                     type="button"
                     value="Connect with twitter (unfunctional)"
                 />
 
+                <br />
                 <br />
                 <p>Don't have a User? Sign up <Link to="signup">here</Link></p>
             </div>

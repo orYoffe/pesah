@@ -24,7 +24,7 @@ class Artist extends Component {
 
         console.log('artist', artist)
         return (
-            <div className="artist-item">
+            <div className="artist-item page">
                 <div className="artist-item-content">
                     <h3>Artist name: {name}</h3>
                     <h4>Based in: {location}</h4>
