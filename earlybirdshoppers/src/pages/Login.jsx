@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import firebase from '../helpers/firebase'
+import { login } from '../helpers/auth'
+import { login as loginAction } from '../reducers/auth'
 import './Login.css'
 
 class Login extends Component {
@@ -58,23 +59,23 @@ class Login extends Component {
         }
     }
 
-    toggleSignIn = (e) => {
-        e && e.prevetDefault()
+    signIn = (e) => {
+        e && e.preventDefault()
         e && e.stopPropagation()
-        if (firebase.auth().currentUser) {
-            firebase.auth().signOut()
-        } else {
+        
             const email = this.state.email.value
             const password = this.state.pass.value
             if (email.length < 4) {
                 this.setMessage('error', 'Please enter an email address.')
-                return
+                return false
             }
             if (password.length < 4) {
                 this.setMessage('error', 'Please enter a password.')
-                return
+                return false
             }
-            firebase.auth().signInWithEmailAndPassword(email, password).catch((error) => {
+            login(email, password)
+            .then(user => this.props.login(user))
+            .catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
                 if (errorCode === 'auth/wrong-password') {
@@ -84,48 +85,7 @@ class Login extends Component {
                 }
                 console.log(error)
             })
-        }
-    }
-
-
-    sendEmailVerification = () => {
-        firebase.auth().currentUser.sendEmailVerification().then(() => {
-            // this.setMessage('message', 'Email Verification Sent!')
-        })
-    }
-
-    checkAuthState = (user) => {
-        if (user) {
-            // const displayName = user.displayName
-            // const email = user.email
-            const emailVerified = user.emailVerified
-            // const photoURL = user.photoURL
-            // const isAnonymous = user.isAnonymous
-            // const uid = user.uid
-            // const providerData = user.providerData
-            if (!emailVerified) {
-                this.sendEmailVerification()
-            }
-        } else {
-            // User is signed out.
-        }
-    }
-    initLogin = () => {
-        if (typeof firebase !== 'undefined' && !this.initialized) {
-            this.initialized = true
-            firebase.auth().onAuthStateChanged(this.checkAuthState)
-            const user = firebase.auth().currentUser
-            if (user) {
-                this.checkAuthState(user)
-            }
-        }
-    }
-
-    componentDidMount() {
-        this.initLogin()
-    }
-    componentWillUpdate() {
-        this.initLogin()
+        return false
     }
 
     render() {
@@ -133,8 +93,8 @@ class Login extends Component {
 
         return (
             <div className="Login">
-                <h2 className="mdl-card__title-text">Sign In</h2>
-                <form onSubmit={this.toggleSignIn}>
+                <h2>Sign In</h2>
+                <form onSubmit={this.signIn}>
                     <label htmlFor="email">Email:</label>
                     <input
                         style={{display: 'inline', width: 'auto'}}
@@ -155,7 +115,7 @@ class Login extends Component {
                     />
                     <input
                         className="button"
-                        onClick={this.toggleSignIn}
+                        onClick={this.signIn}
                         id="sign-in"
                         type="submit"
                         name="signin"
@@ -192,7 +152,8 @@ class Login extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return { firebase: state.config.firebase }
+function mapDispatchToProps(dispatch) {
+    return { login: (user) => dispatch(loginAction(user)) }
 }
-export default connect(mapStateToProps)(Login)
+
+export default connect(() => ({}), mapDispatchToProps)(Login)

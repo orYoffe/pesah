@@ -1,0 +1,31 @@
+.venue-item {
+    display: inline-block;
+    position: relative;
+    color: #fff;
+}
+
+.venue-item::after,
+.venue-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.venue-item::before {
+    z-index: 1;
+    background: url('https://thumbs.dreamstime.com/z/empty-seats-5925524.jpg') no-repeat;
+    background-size: cover;
+    background-position: 50%;
+}
+.venue-item::after {
+    z-index: 2;
+    background: linear-gradient(#000, rgba(0, 0, 0, 0.25));
+}
+.venue-item .venue-item-content {
+    position: relative;
+    padding: 10px;
+    z-index: 3;
+}

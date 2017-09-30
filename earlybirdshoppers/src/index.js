@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, compose } from 'redux'
-import { createLogger } from 'redux-logger'
-import ReduxPromise from 'redux-promise'
+// import { createLogger } from 'redux-logger'
+import promiseMiddleware from 'redux-promise-middleware'
 import ReduxThunk from 'redux-thunk'
 import reducers from './reducers'
 import './index.css'
@@ -12,10 +12,12 @@ import registerServiceWorker from './registerServiceWorker'
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const logger = createLogger();
+// const logger = createLogger();
 
 const store = createStore(reducers, composeEnhancers(
-  applyMiddleware(ReduxThunk, ReduxPromise, logger)
+  applyMiddleware(ReduxThunk, promiseMiddleware({
+    promiseTypeSuffixes: ['LOADING', 'SUCCESS', 'ERROR']
+  }))//, logger)
 ));
 
 ReactDOM.render(

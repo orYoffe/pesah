@@ -1,0 +1,31 @@
+.artist-item {
+    display: inline-block;
+    position: relative;
+    color: #fff;
+}
+
+.artist-item::after,
+.artist-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.artist-item::before {
+    z-index: 1;
+    background: url('https://img3.goodfon.com/wallpaper/big/b/3f/kiss-kiss-gruppa-rok.jpg') no-repeat;
+    background-size: cover;
+    background-position: 50%;
+}
+.artist-item::after {
+    z-index: 2;
+    background: linear-gradient(#000, rgba(0, 0, 0, 0.25));
+}
+.artist-item .artist-item-content {
+    position: relative;
+    padding: 10px;
+    z-index: 3;
+}

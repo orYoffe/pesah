@@ -1,6 +1,19 @@
 const LOGIN = 'LOGIN'
 const LOGOUT = 'LOGOUT'
+const SIGNUP = 'SIGNUP'
+const RESET_PASS = 'RESET_PASS'
+const VERIFY_EMAIL = 'VERIFY_EMAIL'
 
+export const verifyEmail = () => ({
+  type: VERIFY_EMAIL
+})
+export const resetPassword = () => ({
+  type: RESET_PASS
+})
+export const signup = (user) => ({
+  type: SIGNUP,
+  user
+})
 export const login = (user) => ({
   type: LOGIN,
   user
@@ -14,6 +27,11 @@ export default (state = {
   user: false
 }, action) => {
   switch (action.type) {
+    case 'SIGNUP':
+      return {
+        loggedIn: true,
+        user: action.user
+      }
     case 'LOGIN':
       return {
         loggedIn: true,
