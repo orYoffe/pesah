@@ -2,7 +2,7 @@ import { ref, auth } from './firebase'
 
 export const signup = (email, pass) => {
     return auth().createUserWithEmailAndPassword(email, pass)
-        .then(saveUser)
+        // .then(saveUser)
 }
 
 export const logout = () => {
@@ -22,18 +22,18 @@ export const verifyEmail = () => {
 }
 
 export const saveUser = (user) => {
-    debugger
+    // debugger
 
-    const newUser = {
-        displayName: user.displayName,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        photoURL: user.photoURL,
-        isAnonymous: user.isAnonymous,
-        uid: user.uid,
-        providerData: user.providerData,
-    }
-    return ref.child(`users/${user.uid}/info`)
-        .set(newUser)
-        .then(() => user)
+    // const newUser = {
+    //     displayName: user.displayName,
+    //     email: user.email,
+    //     emailVerified: user.emailVerified,
+    //     photoURL: user.photoURL,
+    //     isAnonymous: user.isAnonymous,
+    //     uid: user.uid,
+    //     providerData: user.providerData,
+    // }
+    // return ref.child(`users/${user.uid}/info`)
+    //     .set(newUser)
+    //     .then(() => user)
 }

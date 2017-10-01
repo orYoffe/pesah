@@ -68,14 +68,11 @@ class Event extends Component {
         // TODO if the event belongs to the user show edit options
         // TODO if user doesn't have event, show him onboarding for creating events
         const {
-            id,
-            eventArtists,
             date,
             location,
             name,
             fundsRaised,
             goal,
-            eventVenues,
             price,
             currentVenue,
             currentArtists
