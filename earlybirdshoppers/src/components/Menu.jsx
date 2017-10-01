@@ -12,7 +12,11 @@ class Menu extends Component {
     }
 
     render() {
-        const { isLoggedIn } = this.props
+        const { isLoggedIn, id, isArtist } = this.props
+        const navButtons = isLoggedIn && id ? ([
+            <NavLink className="nav-link" key={`menu_item_${id}_page`} to={isArtist ? `/artist/${id}` : `/venue/${id}`}>My Page</NavLink>,
+            <NavLink className="nav-link" key={`menu_item_${id}_logout`} to="/" onClick={this.logout}>Logout</NavLink>
+        ]) : (<NavLink className="nav-link" to="/login">Login</NavLink>)
         return (
             <div className="navbar navbar-default navbar-fixed-top" role="navigation">
                 <div className="container">
@@ -28,13 +32,11 @@ class Menu extends Component {
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav navbar-right">
                             <li>
-                                {isLoggedIn ? 
-                                    <NavLink className="nav-link" to="/" onClick={this.logout}>Logout</NavLink> :
-                                    <NavLink className="nav-link" to="/login">Login</NavLink>
-                                }
+                                {navButtons}
                             </li>
                         </ul>
                         <ul className="nav navbar-nav">
+                            <NavLink className="nav-link" to="/">Explore</NavLink>
                         </ul>
                     </div>
                 </div>
@@ -44,6 +46,10 @@ class Menu extends Component {
 }
 
 function mapStateToProps(state) {
-    return { isLoggedIn: state.auth.loggedIn }
+    return {
+        isLoggedIn: state.auth.loggedIn,
+        isArtist: state.auth.isArtist,
+        id: state.auth.user && state.auth.user.uid,
+    }
 }
 export default connect(mapStateToProps)(Menu)

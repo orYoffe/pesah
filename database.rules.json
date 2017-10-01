@@ -1,10 +1,28 @@
 {
   "rules": {
-    ".read": "auth != null",
+    ".read": "true",
     ".write": "auth != null",
     "users": {
       "$userid": {
-        ".read": "auth.uid == $userid",
+        ".read": "true",
+        ".write": "auth.uid == $userid"
+      }
+    },
+    "artists": {
+      "$userid": {
+        ".read": "true",
+        ".write": "auth.uid == $userid"
+      }
+    },
+    "venues": {
+      "$userid": {
+        ".read": "true",
+        ".write": "auth.uid == $userid"
+      }
+    },
+    "events": {
+      "$userid": {
+        ".read": "true",
         ".write": "auth.uid == $userid"
       }
     }

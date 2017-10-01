@@ -13,10 +13,18 @@ class Signup extends Component {
         pass: {
             value: '',
         },
+        name: {
+            value: '',
+        },
         messages: {
             error: '',
             message: ''
-        }
+        },
+        type: 'artist',
+    }
+
+    checkType = e => {
+        this.setState({type: e.target.value})
     }
 
     setMessage = (type, newMessage) => {
@@ -32,6 +40,12 @@ class Signup extends Component {
         }
     }
 
+    nameChange = (e) => {
+        const value = e.target.value
+        if (!!value && this.state.name.value !== value) {
+            this.setState({ name: { value }})
+        }
+    }
     emailChange = (e) => {
         const value = e.target.value
         if (!!value && this.state.email.value !== value) {
@@ -46,35 +60,83 @@ class Signup extends Component {
         }
     }
 
-    handleSignUp = (e) => {
-        e && e.preventDefault()
-        e && e.stopPropagation()
+    isValid = () => {
         const email = this.state.email.value
         const password = this.state.pass.value
+        const displayName = this.state.name.value
+        if (displayName.length < 4) {
+            this.setMessage('error', 'Please enter a Name or a Title.')
+            return false
+        }
         if (email.length < 4) {
             this.setMessage('error', 'Please enter an email address.')
-            return
+            return false
         }
         if (password.length < 4) {
             this.setMessage('error', 'Please enter a password.')
-            return
+            return false
         }
-        signup(email, password)
+        return true
+    }
+
+    handleSignUp = (e) => {
+        e && e.preventDefault()
+        e && e.stopPropagation()
+        if(!this.isValid()) {
+            return false
+        }
+        const email = this.state.email.value
+        const password = this.state.pass.value
+        const displayName = this.state.name.value
+        signup({
+            email,
+            password,
+            isArtist: this.state.type === 'artist',
+            displayName,
+        })
         .then(user => this.props.login(user))
         .catch((error) => {
             const errorMessage = error.message
             this.setMessage('error', errorMessage)
             console.log(error)
         })
+        return false
     }
 
     render() {
-        const { messages: { message, error } } = this.state
+        const { messages: { message, error }, type } = this.state
+        const isArtist = type === 'artist'
 
         return (
             <div className="Signup container">
                 <h2>Sign up</h2>
                 <form onSubmit={this.handleSignUp}>
+                    <div className="radio">
+                        <label>
+                            <input type="radio"
+                            checked={isArtist}
+                            onChange={this.checkType} name="optionsRadios" id="optionsRadios1" value="artist" />
+                            I am an Artist
+                        </label>
+                    </div>
+                    <div className="radio">
+                        <label>
+                            <input type="radio"
+                            checked={!isArtist}
+                            onChange={this.checkType} name="optionsRadios" id="optionsRadios2" value="venue" />
+                            I own a Venue
+                        </label>
+                    </div>
+                    <label htmlFor="name">Name/Title:</label>
+                    <input
+                        className="form-control"
+                        type="text"
+                        onChange={this.nameChange}
+                        id="name"
+                        name="displayName"
+                        placeholder="Lizards of Gondor"
+                    />
+                    <br />
                     <label htmlFor="email">Email:</label>
                     <input
                         className="form-control"

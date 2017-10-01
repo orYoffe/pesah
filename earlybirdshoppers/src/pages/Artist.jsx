@@ -2,14 +2,28 @@ import React, { Component } from 'react'
 import { events, artists } from '../helpers/mockData'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
+import { ref, auth } from '../helpers/firebase'
 import '../components/ArtistItem.css'
 
 class Artist extends Component {
+    state = {
+        artist: null
+    }
+
+    componentDidMount() {
+        const { id } = this.props.match.params
+        let artist = artists.find(artist => parseInt(id,10) === artist.id)
+        console.log('auth().currentUser==========', auth().currentUser)
+        ref.child('users').child(id).on('value', snapshot => {
+            console.log('snapshot==========', snapshot)
+        })
+        
+    }
 
     render() {     
         // TODO if the artist belongs to the user show edit options
-        const { id } = this.props.match.params
-        const artist = artists.find(artist => parseInt(id,10) === artist.id)
+        const { artist } = this.state
+        
         
         if(!artist) {
             return <NotFound />
@@ -61,7 +75,7 @@ class Artist extends Component {
                     <h4>Based in: {location}</h4>
                     <h4>Events:</h4>
                     <div className="row">
-                        {currentEvents.map(event => <EventItem key={`event_item_${event.id}`} {...event} /> )}
+                        {currentEvents && currentEvents.map(event => <EventItem key={`event_item_${event.id}`} {...event} /> )}
                     </div>
                 </div>
             </div>
