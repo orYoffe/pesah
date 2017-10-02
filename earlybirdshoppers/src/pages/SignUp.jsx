@@ -20,7 +20,7 @@ class Signup extends Component {
             error: '',
             message: ''
         },
-        type: 'artist',
+        type: 'fan',
     }
 
     checkType = e => {
@@ -91,7 +91,7 @@ class Signup extends Component {
         signup({
             email,
             password,
-            isArtist: this.state.type === 'artist',
+            accountType: this.state.type,
             displayName,
         })
         .then(user => this.props.login(user))
@@ -105,7 +105,6 @@ class Signup extends Component {
 
     render() {
         const { messages: { message, error }, type } = this.state
-        const isArtist = type === 'artist'
 
         return (
             <div className="Signup container">
@@ -114,7 +113,15 @@ class Signup extends Component {
                     <div className="radio">
                         <label>
                             <input type="radio"
-                            checked={isArtist}
+                            checked={type === 'fan'}
+                            onChange={this.checkType} name="optionsRadios" id="optionsRadios0" value="fan" />
+                            I am a Fan
+                        </label>
+                    </div>
+                    <div className="radio">
+                        <label>
+                            <input type="radio"
+                            checked={type === 'artist'}
                             onChange={this.checkType} name="optionsRadios" id="optionsRadios1" value="artist" />
                             I am an Artist
                         </label>
@@ -122,12 +129,12 @@ class Signup extends Component {
                     <div className="radio">
                         <label>
                             <input type="radio"
-                            checked={!isArtist}
+                            checked={type === 'venue'}
                             onChange={this.checkType} name="optionsRadios" id="optionsRadios2" value="venue" />
                             I own a Venue
                         </label>
                     </div>
-                    <label htmlFor="name">Name/Title:</label>
+                    <label htmlFor="name">Name{type !== 'fan' ? '/Title' : ''}:</label>
                     <input
                         className="form-control"
                         type="text"

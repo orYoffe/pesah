@@ -2,30 +2,52 @@ import React, { Component } from 'react'
 import { events, venues } from '../helpers/mockData'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
+import { getUser } from '../helpers/firebase'
 import '../components/VenueItem.css'
 
 class Venue extends Component {
+    state = {
+        venue: null
+    }
+
+    componentDidMount() {
+        const { id } = this.props.match.params
+        let venue = venues.find(venue => parseInt(id,10) === venue.id)
+
+        if (!venue) {
+            getUser(id, snapshot => {
+                venue = snapshot.val()
+                this.setState({ venue: venue || 'not found' })
+            })
+            .catch(snapshot => {
+                this.setState({ venue: 'not found' })
+            })
+        } else {
+            this.setState({ venue })
+        }
+    }
 
     render() {     
         // TODO if the Venue belongs to the user show edit options
-        const { id } = this.props.match.params
-        const venue = venues.find(venue => parseInt(id,10) === venue.id)
+        const {venue} = this.state
+        let content
         
-        if(!venue) {
+        if(venue === 'not found') {
             return <NotFound />
+        } else if(!venue) {
+            return <div>Loading...</div>
         }
 
-        const {
-            events: venueEvents,
-            location,
-            name,
-            openDates,
-        } = venue
-        const currentEvents = events.filter(event => venueEvents.indexOf(event.id) !== -1)
+        if(venue.location) {
+            const {
+                events: venueEvents,
+                location,
+                name,
+                openDates,
+            } = venue
+            const currentEvents = events.filter(event => venueEvents.indexOf(event.id) !== -1)
 
-        console.log('venue', venue)
-        return (
-            <div className="venue-item page">
+            content = (
                 <div className="venue-item-content">
                     <h3>Venue name: {name}</h3>
                     <h4>Based in: {location}</h4>
@@ -35,6 +57,19 @@ class Venue extends Component {
                         {currentEvents.map(event => <EventItem key={`event_item_${event.id}`} {...event} /> )}
                     </div>
                 </div>
+            )
+        } else {
+            const { email } = venue
+            content = (<div className="venue-item-content">
+                            <h5> email: {email} </h5>
+                        </div>)
+        }
+
+
+        console.log('venue', venue)
+        return (
+            <div className="venue-item page">
+                {content}
             </div>
         )
     }
