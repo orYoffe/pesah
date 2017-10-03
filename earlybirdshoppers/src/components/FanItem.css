@@ -1,5 +1,5 @@
-.venue-item {
-    background: url('/venue.jpg') no-repeat;
+.fan-item {
+    background: url('/fan.jpg') no-repeat;
     background-size: cover;
     background-position: 50%;
 }

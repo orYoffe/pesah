@@ -5,8 +5,8 @@ class NotFound extends Component {
 
     render() {
         return (
-            <div className="NotFound">
-              <h3>404 Page Not Found <span role="img" aria-label="oops">🤷‍♀️</span></h3>
+            <div className="NotFound text-center">
+              <h3>404 Page Not Found <span role="img" aria-label="oops">🤷‍</span></h3>
               <br />
               <Link to="/">Go Back Home</Link>
             </div>

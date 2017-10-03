@@ -3,6 +3,7 @@ import moment from 'moment'
 import Proptypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { artists, venues } from '../helpers/mockData'
+import './UserItem.css'
 import './EventItem.css'
 
 const EventItem = props => {   
@@ -22,8 +23,8 @@ const EventItem = props => {
     
     return (
         <div className="col-sm-6 col-xs-12">
-            <Link to={`/event/${id}`} className="event-item item">
-                <div className="event-item-content">
+            <Link to={`/event/${id}`} className="event-item  user-item">
+                <div className="event-item-content user-item-content">
                     <h4>Event name: {name}</h4>
                     <p>Location: {location} at {currentVenue.name}</p>
                     <p>Price: {price}$</p>

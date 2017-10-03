@@ -23,19 +23,42 @@ body {
   color: #fff; */
 }
 
+.text-center {
+  text-align: center;
+}
+
 .page {
   height: auto;
 }
 
-.item {
-  height: 180px;
-  box-shadow: 0 0 3px #aaa;
-  transition: transform 0.25s;
-  transform: none;
+.page::after,
+.page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
-.item:hover {
-  transform: scale(1.05);
+
+.page::before {
+    z-index: 1;
+    background: linear-gradient(rgba(0, 0, 0, 0.05), #444);
 }
+.page::after {
+    z-index: 2;
+    background: linear-gradient(#444, rgba(0, 0, 0, 0.05));
+}
+
+.page-content {
+    position: relative;
+    display: block;
+    z-index: 3;
+    width: 100%;
+    padding: 10px;
+    color: #fff;
+}
+
 a:focus, a:hover {
   color: #768A9B;
   text-decoration: none;

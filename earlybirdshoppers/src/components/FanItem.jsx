@@ -2,30 +2,31 @@ import React from 'react'
 import Proptypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import './UserItem.css'
-import './VenueItem.css'
+import './FanItem.css'
 
-const VenueItem = props => {
+const FanItem = props => {
     const {
         name,
         location,
         id,
     } = props
     return (
+        
         <div className="col-sm-6 col-xs-12">
-            <Link to={`/venue/${id}`} className="venue-item user-item">
-                <div className="venue-item-content user-item-content">
-                    <h4>Venue name: {name}</h4>
-                    <p>location: {location}</p>
+            <Link to={`/fan/${id}`} className="fan-item item user-item">
+                <div className="fan-item-content user-item-content">
+                    <h4>fan name: {name}</h4>
+                    <p>Based in: {location}</p>
                 </div>
             </Link>
         </div>
     )
 }
 
-VenueItem.proptypes = {
+FanItem.proptypes = {
     name: Proptypes.string.isRequired,
     location: Proptypes.string.isRequired,
     id: Proptypes.number.isRequired,
 }
 
-export default VenueItem
+export default FanItem

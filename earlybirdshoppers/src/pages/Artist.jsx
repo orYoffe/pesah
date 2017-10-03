@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { events, artists } from '../helpers/mockData'
+import { getUser } from '../helpers/firebase'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
-import { getUser } from '../helpers/firebase'
-import '../components/ArtistItem.css'
+import Loader from '../components/Loader'
 
 class Artist extends Component {
     state = {
@@ -35,7 +35,7 @@ class Artist extends Component {
         if(artist === 'not found') {
             return <NotFound />
         } else if(!artist) {
-            return <div>Loading...</div>
+            return <Loader />
         }
         if(artist.location) {
             // fake data
@@ -51,7 +51,7 @@ class Artist extends Component {
             const currentEvents = events.filter(event => artistEvents.indexOf(event.id) !== -1)
 
             content = (
-                        <div className="artist-item-content">
+                        <div className="page-content">
                             <h3>Artist name: {name}</h3>
                             {youtubeVideo && (
                                 <div className="col-xs-12 col-sm-6">
@@ -89,14 +89,14 @@ class Artist extends Component {
                     )
         } else {
             const { email } = artist
-            content = (<div className="artist-item-content">
+            content = (<div className="page-content">
                             <h5> email: {email} </h5>
                         </div>)
         }
 
         console.log('artist', artist)
         return (
-            <div className="artist-item page">
+            <div className="page">
                 {content}
             </div>
         )

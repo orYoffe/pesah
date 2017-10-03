@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { events, venues } from '../helpers/mockData'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
+import Loader from '../components/Loader'
 import { getUser } from '../helpers/firebase'
 import '../components/VenueItem.css'
 
@@ -35,7 +36,7 @@ class Venue extends Component {
         if(venue === 'not found') {
             return <NotFound />
         } else if(!venue) {
-            return <div>Loading...</div>
+            return <Loader />
         }
 
         if(venue.location) {
@@ -48,7 +49,7 @@ class Venue extends Component {
             const currentEvents = events.filter(event => venueEvents.indexOf(event.id) !== -1)
 
             content = (
-                <div className="venue-item-content">
+                <div className="page-content">
                     <h3>Venue name: {name}</h3>
                     <h4>Based in: {location}</h4>
                     <h4>Open dates: {openDates.join(', ')}</h4>
@@ -60,7 +61,7 @@ class Venue extends Component {
             )
         } else {
             const { email } = venue
-            content = (<div className="venue-item-content">
+            content = (<div className="page-content">
                             <h5> email: {email} </h5>
                         </div>)
         }
@@ -68,7 +69,7 @@ class Venue extends Component {
 
         console.log('venue', venue)
         return (
-            <div className="venue-item page">
+            <div className="page">
                 {content}
             </div>
         )

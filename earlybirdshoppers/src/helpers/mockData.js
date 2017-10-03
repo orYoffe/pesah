@@ -61,3 +61,18 @@ export const venues = [
         id: 2,
     },
 ]
+
+export const fans = [
+    {
+        name: "Or",
+        location: "Berlin, Name of street",
+        events: [1],
+        id: 1,
+    },
+    {
+        name: "Sefi",
+        location: "Tel Aviv, Name of street",
+        events: [2],
+        id: 2,
+    },
+]

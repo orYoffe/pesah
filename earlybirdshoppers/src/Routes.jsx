@@ -14,6 +14,7 @@ import Explore from './pages/Explore'
 import Artist from './pages/Artist'
 import Venue from './pages/Venue'
 import Event from './pages/Event'
+import Fan from './pages/Fan'
 import NotFound from './pages/NotFound'
 import Menu from './components/Menu'
 
@@ -33,6 +34,7 @@ const Routes = (props) => (
                         <Route path="/artist/:id" component={Artist}/>
                         <Route path="/venue/:id" component={Venue}/>
                         <Route path="/event/:id" component={Event}/>
+                        <Route path="/fan/:id" component={Fan}/>
                         {/*<PublicRoute authed={this.state.authed} path='/login' component={Login} />*/}
                         {/*<PrivateRoute authed={this.state.authed} path='/dashboard' component={Dashboard} />*/}
                         <Route path="/404" component={NotFound}/>
