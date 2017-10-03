@@ -1,29 +1,53 @@
 {
   "rules": {
-    ".read": "true",
-    ".write": "auth != null",
     "users": {
       "$userid": {
         ".read": "true",
-        ".write": "auth.uid == $userid"
+        ".write": "auth.uid == $userid",
+        "private": {
+          ".read": "auth.uid == $userid",
+          ".write": "auth.uid == $userid"
+        }
       }
     },
     "artists": {
       "$userid": {
         ".read": "true",
-        ".write": "auth.uid == $userid"
+        ".write": "auth.uid == $userid",
+        "private": {
+          ".read": "auth.uid == $userid",
+          ".write": "auth.uid == $userid"
+        }
       }
     },
     "venues": {
       "$userid": {
         ".read": "true",
-        ".write": "auth.uid == $userid"
+        ".write": "auth.uid == $userid",
+        "private": {
+          ".read": "auth.uid == $userid",
+          ".write": "auth.uid == $userid"
+        }
+      }
+    },
+    "fans": {
+      "$userid": {
+        ".read": "true",
+        ".write": "auth.uid == $userid",
+        "private": {
+          ".read": "auth.uid == $userid",
+          ".write": "auth.uid == $userid"
+        }
       }
     },
     "events": {
       "$userid": {
         ".read": "true",
-        ".write": "auth.uid == $userid"
+        ".write": "auth.uid == $userid",
+        "private": {
+          ".read": "auth.uid == $userid",
+          ".write": "auth.uid == $userid"
+        }
       }
     }
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { signup } from '../helpers/auth'
-import { Link } from 'react-router-dom'
+import { signup, verifyEmail } from '../helpers/auth'
+import { Link, Redirect } from 'react-router-dom'
 import { login as loginAction } from '../reducers/auth'
 
 class Signup extends Component {
@@ -94,7 +94,7 @@ class Signup extends Component {
             accountType: this.state.type,
             displayName,
         })
-        .then(user => this.props.login(user))
+        .then(user => verifyEmail())
         .catch((error) => {
             const errorMessage = error.message
             this.setMessage('error', errorMessage)
@@ -105,6 +105,10 @@ class Signup extends Component {
 
     render() {
         const { messages: { message, error }, type } = this.state
+
+        if (this.props.isLoggedIn) {
+            return  <Redirect to='/'/>
+        }
 
         return (
             <div className="Signup container">
@@ -205,8 +209,8 @@ class Signup extends Component {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return { login: (user) => dispatch(loginAction(user)) }
-}
+const mapDispatchToProps = dispatch => ({ login: (user) => dispatch(loginAction(user)) })
 
-export default connect(() => ({}), mapDispatchToProps)(Signup)
+const mapStateToProps = state => ({isLoggedIn: state.auth.loggedIn})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Signup)

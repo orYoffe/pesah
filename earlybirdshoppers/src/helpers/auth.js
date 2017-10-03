@@ -2,14 +2,6 @@ import { ref, auth } from './firebase'
 
 const accountTypes = ['fan', 'artist', 'venue']
 
-export const signup = ({ email, password, accountType, displayName }) => {
-    if (!accountTypes.includes(accountType)) {
-        return false
-    }
-    return auth().createUserWithEmailAndPassword(email, password)
-        .then(saveUser(accountType, displayName))
-}
-
 export const logout = () => {
     return auth().signOut()
 }
@@ -26,10 +18,18 @@ export const verifyEmail = () => {
     return auth().currentUser.sendEmailVerification()
 }
 
-export const saveUser = (accountType, displayName) => (user) => {
-    debugger
+export const signup = ({ email, password, accountType, displayName }) => {
+    if (!accountTypes.includes(accountType)) {
+        return false
+    }
+    return auth().createUserWithEmailAndPassword(email, password)
+        .then(user => saveUser(user, accountType, displayName))
+}
 
-    verifyEmail()
+export const saveUser = (user, accountType, displayName) => {
+    if (!accountType || !displayName || !user) {
+        return logout()
+    }
     const newUser = {
         displayName: displayName,
         accountType,
@@ -40,7 +40,9 @@ export const saveUser = (accountType, displayName) => (user) => {
         uid: user.uid,
         providerData: user.providerData,
     }
-    return ref.child(`${accountType}s/${user.uid}`)
+    return ref.child(`users/${user.uid}`)
         .set(newUser)
+        .then(() => ref.child(`${accountType}s/${user.uid}`)
+            .set(newUser))
         .then(() => user)
 }

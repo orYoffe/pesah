@@ -6,6 +6,8 @@ import 'firebase/storage'
 import { DB_CONFIG } from './config'
 
 firebase.initializeApp(DB_CONFIG)
+firebase.auth().languageCode = 'en'; // TODO add locale
+
 export default firebase
 export const ref = firebase.database().ref()
 export const auth = firebase.auth

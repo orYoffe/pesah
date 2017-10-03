@@ -22,10 +22,12 @@ export const logout = () => ({
   type: LOGOUT
 })
 
-export default (state = {
+const initialState = {
   loggedIn: false,
   user: false
-}, action) => {
+}
+
+export default (state = initialState, action) => {
   switch (action.type) {
     case 'SIGNUP':
       return {

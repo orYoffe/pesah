@@ -32,7 +32,9 @@ class App extends Component {
     this.removeListener()
   }
 
-  render = () => <Routes />
+  render = () => <Routes isLoggedIn={this.props.isLoggedIn} />
 }
 
-export default connect()(App)
+const mapStateToProps = state => ({ isLoggedIn: state.auth.loggedIn })
+
+export default connect(mapStateToProps)(App)

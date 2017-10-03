@@ -14,11 +14,19 @@ class Menu extends Component {
     render() {
         const { isLoggedIn, id, isArtist } = this.props
         const navButtons = isLoggedIn && id ? ([
-            <NavLink className="nav-link" key={`menu_item_${id}_page`} to={isArtist ? `/artist/${id}` : `/venue/${id}`}>My Page</NavLink>,
-            <NavLink className="nav-link" key={`menu_item_${id}_logout`} to="/" onClick={this.logout}>Logout</NavLink>
+            <li key={`menu_item_${id}_page`}>
+                <NavLink className="nav-link" to={isArtist ? `/artist/${id}` : `/venue/${id}`}>My Page</NavLink>
+            </li>,
+            <li key={`menu_item_${id}_logout`}>
+                <NavLink className="nav-link" to="/" onClick={this.logout}>Logout</NavLink>
+            </li>,
         ]) : ([
-            <NavLink className="nav-link" to="/signup">Signup</NavLink>,
-            <NavLink className="nav-link" to="/login">Login</NavLink>,
+            <li key={`menu_item_01_signup`}>
+                <NavLink className="nav-link" to="/signup">Signup</NavLink>
+            </li>,
+            <li key={`menu_item_02_login`}>
+                <NavLink className="nav-link" to="/login">Login</NavLink>
+            </li>,
         ])
         return (
             <div className="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -34,12 +42,12 @@ class Menu extends Component {
                     </div>
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav navbar-right">
-                            <li>
-                                {navButtons}
-                            </li>
+                            {navButtons}
                         </ul>
                         <ul className="nav navbar-nav">
-                            <NavLink className="nav-link" to="/">Explore</NavLink>
+                            <li>
+                                <NavLink className="nav-link" to="/">Explore</NavLink>
+                            </li>
                         </ul>
                     </div>
                 </div>

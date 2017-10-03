@@ -1,5 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
 import {
     BrowserRouter as Router,
     Route,
@@ -9,8 +8,8 @@ import {
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import PassReset from './pages/PassReset'
-// import PrivateRoute from './helpers/PrivateRoute'
-// import PublicRoute from './helpers/PublicRoute'
+import PrivateRoute from './helpers/PrivateRoute'
+import PublicRoute from './helpers/PublicRoute'
 import Explore from './pages/Explore'
 import Artist from './pages/Artist'
 import Venue from './pages/Venue'
@@ -28,8 +27,8 @@ const Routes = (props) => (
                     <Switch>
                         <Route exact path="/realhtml_186231treg.html" component={Explore}/>
                         <Route exact path="/" component={Explore}/>
-                        <Route exact path="/login" component={Login}/>
-                        <Route exact path="/signup" component={SignUp}/>
+                        <PublicRoute exact path="/login" authed={props.isLoggedIn} component={Login}/>
+                        <PublicRoute exact path="/signup" authed={props.isLoggedIn} component={SignUp}/>
                         <Route exact path="/password-reset" component={PassReset}/>
                         <Route path="/artist/:id" component={Artist}/>
                         <Route path="/venue/:id" component={Venue}/>
@@ -45,8 +44,4 @@ const Routes = (props) => (
     </Router>
 )
 
-function mapStateToProps(state) {
-    return { auth: state.auth.loggedIn }
-}
-
-export default connect(mapStateToProps)(Routes)
+export default Routes

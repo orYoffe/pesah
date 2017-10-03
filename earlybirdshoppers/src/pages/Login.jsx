@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { login } from '../helpers/auth'
 import { login as loginAction } from '../reducers/auth'
 
@@ -76,6 +76,10 @@ class Login extends Component {
 
     render() {
         const { messages: { message, error } } = this.state
+        
+        if (this.props.isLoggedIn) {
+            return  <Redirect to='/'/>
+        }
 
         return (
             <div className="Login container">
@@ -146,8 +150,8 @@ class Login extends Component {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return { login: (user) => dispatch(loginAction(user)) }
-}
+const mapDispatchToProps = dispatch => ({ login: (user) => dispatch(loginAction(user)) })
 
-export default connect(() => ({}), mapDispatchToProps)(Login)
+const mapStateToProps = state => ({isLoggedIn: state.auth.loggedIn})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
