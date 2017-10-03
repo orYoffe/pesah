@@ -16,7 +16,10 @@ class Menu extends Component {
         const navButtons = isLoggedIn && id ? ([
             <NavLink className="nav-link" key={`menu_item_${id}_page`} to={isArtist ? `/artist/${id}` : `/venue/${id}`}>My Page</NavLink>,
             <NavLink className="nav-link" key={`menu_item_${id}_logout`} to="/" onClick={this.logout}>Logout</NavLink>
-        ]) : (<NavLink className="nav-link" to="/login">Login</NavLink>)
+        ]) : ([
+            <NavLink className="nav-link" to="/signup">Signup</NavLink>,
+            <NavLink className="nav-link" to="/login">Login</NavLink>,
+        ])
         return (
             <div className="navbar navbar-default navbar-fixed-top" role="navigation">
                 <div className="container">
