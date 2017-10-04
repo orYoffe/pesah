@@ -59,8 +59,8 @@ class Login extends Component {
                 this.setMessage('error', 'Please enter a password.')
                 return false
             }
+            // .then(user => this.props.login(user))
             login(email, password)
-            .then(user => this.props.login(user))
             .catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message

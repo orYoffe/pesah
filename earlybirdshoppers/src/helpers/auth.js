@@ -40,8 +40,11 @@ export const saveUser = (user, accountType, displayName) => {
         uid: user.uid,
         providerData: user.providerData,
     }
-    return ref.child(`users/${user.uid}`)
-        .set(newUser)
+    return user.updateProfile({
+        displayName
+    })
+        .then(() => ref.child(`users/${user.uid}`)
+        .set(newUser))
         .then(() => ref.child(`${accountType}s/${user.uid}`)
             .set(newUser))
         .then(() => user)

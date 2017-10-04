@@ -1,3 +1,5 @@
+import { auth } from '../helpers/firebase'
+
 const LOGIN = 'LOGIN'
 const LOGOUT = 'LOGOUT'
 const SIGNUP = 'SIGNUP'
@@ -30,19 +32,30 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case 'SIGNUP':
-      return {
-        loggedIn: true,
-        user: action.user
-      }
     case 'LOGIN':
+      console.log(auth().currentUser)
+      let user
+      const currentUser = auth().currentUser
+      if (state.user && currentUser) {
+        user = { ...state.user, ...currentUser, ...action.user }
+      } else if (currentUser) {
+        user = { ...currentUser, ...action.user }
+      } else if (state.user) {
+        user = { ...state.user, ...action.user }
+      } else {
+        user = action.user
+      }
+      debugger
       return {
+        ...state,
         loggedIn: true,
-        user: action.user
+        user,
       }
     case 'LOGOUT':
       return {
+        ...state,
         loggedIn: false,
-        user: false
+        user: false,
       }
     default:
       return state
