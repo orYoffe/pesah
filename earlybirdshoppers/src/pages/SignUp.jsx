@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { signup, verifyEmail } from '../helpers/auth'
 import { Link, Redirect } from 'react-router-dom'
 import { login as loginAction } from '../reducers/auth'
+import { pageView } from '../helpers/analytics'
 
 class Signup extends Component {
     state = {
@@ -101,6 +102,10 @@ class Signup extends Component {
             console.log(error)
         })
         return false
+    }
+    
+    componentDidMount() {
+        pageView();
     }
 
     render() {

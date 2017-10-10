@@ -5,8 +5,13 @@ import ArtistItem from '../components/ArtistItem'
 import VenueItem from '../components/VenueItem'
 import FanItem from '../components/FanItem'
 import { events, artists, venues, fans } from '../helpers/mockData'
+import { pageView } from '../helpers/analytics'
 
 class Explore extends Component {
+
+  componentDidMount() {
+        pageView();
+  }
 
     render() {
         return (

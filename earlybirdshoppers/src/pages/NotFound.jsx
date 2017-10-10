@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { pageView } from '../helpers/analytics'
 
 class NotFound extends Component {
+
+    componentDidMount() {
+        pageView();
+    }
 
     render() {
         return (

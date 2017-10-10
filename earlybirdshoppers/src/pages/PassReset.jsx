@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { resetPassword } from '../helpers/auth'
+import { pageView } from '../helpers/analytics'
 
 class PassReset extends Component {
     state = {
@@ -49,6 +50,10 @@ class PassReset extends Component {
                 console.log(error)
             })
         return false
+    }
+
+    componentDidMount() {
+        pageView();
     }
 
     render() {

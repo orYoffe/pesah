@@ -4,6 +4,7 @@ import { getUser } from '../helpers/firebase'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
 import Loader from '../components/Loader'
+import { pageView } from '../helpers/analytics'
 import '../components/FanItem.css'
 
 class Fan extends Component {
@@ -12,6 +13,8 @@ class Fan extends Component {
     }
 
     componentDidMount() {
+        pageView();
+
         const { id } = this.props.match.params
         let fan = fans.find(fan => parseInt(id,10) === fan.id)
 

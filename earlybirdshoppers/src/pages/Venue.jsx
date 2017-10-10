@@ -4,6 +4,7 @@ import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
 import Loader from '../components/Loader'
 import { getUser } from '../helpers/firebase'
+import { pageView } from '../helpers/analytics'
 import '../components/VenueItem.css'
 
 class Venue extends Component {
@@ -12,6 +13,8 @@ class Venue extends Component {
     }
 
     componentDidMount() {
+        pageView();
+
         const { id } = this.props.match.params
         let venue = venues.find(venue => parseInt(id,10) === venue.id)
 

@@ -6,6 +6,7 @@ import NotFound from './NotFound'
 import Loader from '../components/Loader'
 import ArtistItem from '../components/ArtistItem'
 import VenueItem from '../components/VenueItem'
+import { pageView } from '../helpers/analytics'
 
 class Event extends Component {
     state = {
@@ -13,6 +14,8 @@ class Event extends Component {
     }
 
     componentDidMount() {
+        pageView();
+
         const { id } = this.props.match.params
         let event = events.find(event => parseInt(id,10) === event.id)
         

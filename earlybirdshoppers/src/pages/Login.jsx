@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
 import { login } from '../helpers/auth'
 import { login as loginAction } from '../reducers/auth'
+import { pageView } from '../helpers/analytics'
 
 class Login extends Component {
     state = {
@@ -72,6 +73,10 @@ class Login extends Component {
                 console.log(error)
             })
         return false
+    }
+
+    componentDidMount() {
+        pageView();
     }
 
     render() {

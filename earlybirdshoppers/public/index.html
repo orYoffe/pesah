@@ -46,9 +46,37 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+      <script>
+        window.fbAsyncInit = function () {
+          FB.init({
+            appId: '500676650325931',
+            xfbml: true,
+            version: 'v2.10'
+          });
+  
+          FB.AppEvents.logPageView();
+  
+        };
+  
+        (function (d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) { return; }
+          js = d.createElement(s); js.id = id;
+          js.src = "https://connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+      </script>
     <title>Earlybird Shoppers</title>
   </head>
   <body>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107882684-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments) };
+      gtag('js', new Date());
+
+      gtag('config', 'UA-107882684-1');
+    </script>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
@@ -68,14 +96,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
       crossorigin="anonymous">
       </script>
-      <!-- Global Site Tag (gtag.js) - Google Analytics -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107882684-1"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments)};
-        gtag('js', new Date());
-
-        gtag('config', 'UA-107882684-1');
-      </script>
+      
   </body>
 </html>

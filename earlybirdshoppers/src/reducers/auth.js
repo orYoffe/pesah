@@ -45,7 +45,6 @@ export default (state = initialState, action) => {
       } else {
         user = action.user
       }
-      debugger
       return {
         ...state,
         loggedIn: true,
