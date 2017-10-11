@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { FormattedMessage } from 'react-intl';
 import { logout } from '../helpers/auth'
 import { logout as logoutAction } from '../reducers/auth'
 import './Menu.css'
@@ -18,7 +19,7 @@ class Menu extends Component {
                 <NavLink className="nav-link" to={isArtist ? `/artist/${id}` : `/venue/${id}`}>My Page</NavLink>
             </li>,
             <li key={`menu_item_${id}_logout`}>
-                <NavLink className="nav-link" to="/" onClick={this.logout}>Logout</NavLink>
+                <NavLink className="nav-link" to="/" onClick={this.logout}><FormattedMessage defaultMessage="Logout" /></NavLink>
             </li>,
         ]) : ([
             <li key={`menu_item_01_signup`}>
