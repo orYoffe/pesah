@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import firebase from './helpers/firebase'
+import firebase, { getUser } from './helpers/firebase'
 import { connect } from 'react-redux'
 import { login, logout } from './reducers/auth'
 import { configInit } from './reducers/config'
@@ -10,14 +10,13 @@ class App extends Component {
   constructor(props){
     super(props);
     props.dispatch(configInit(firebase))
-    // this.database = firebase.database().ref().child('Artists');
   }
 
   componentDidMount () {
     const { dispatch } = this.props
     this.removeListener = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        dispatch(login(user))
+      if (user && user.uid) {
+        getUser(user.uid, userData => dispatch(login(userData)))
       } else {
         dispatch(logout())
       }

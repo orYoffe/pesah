@@ -18,6 +18,7 @@ import Fan from './pages/Fan'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 import Menu from './components/Menu/'
+import CreateEvent from './components/CreateEvent/'
 
 const Routes = (props) => (
         <Router>
@@ -36,6 +37,7 @@ const Routes = (props) => (
                             <Route path="/venue/:id" component={Venue}/>
                             <Route path="/event/:id" component={Event}/>
                             <Route path="/fan/:id" component={Fan}/>
+                            <PrivateRoute authed={props.isLoggedIn} path='/create-event' component={CreateEvent} />
                             <PrivateRoute authed={props.isLoggedIn} path='/admin' component={Admin} />
                             <Route path="/404" component={NotFound}/>
                             <Redirect to="/404" />

@@ -11,7 +11,7 @@ export const locales = [
     "de",
     "fr",
 ]
-
+const html = document.getElementsByTagName('html')[0]
 
 export let currentLocale = 'en-US'
 
@@ -26,8 +26,10 @@ const initTranslations = (locale) => {
         case 'fr':
         case 'de':
         case 'de-DE':
+            html.lang = 'en'
             return en
         case 'he':
+            html.lang = 'he'
             return hebrew
         default:
             return translations

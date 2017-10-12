@@ -16,3 +16,4 @@ export const getFan = (id, callback) => ref.child(`fans/${id}`).once('value', ca
 export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('value', callback)
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback)
+export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback)

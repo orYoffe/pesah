@@ -4,5 +4,6 @@ export default {
     Signup: 'הירשם',
     My_Page: 'העמוד שלי',
     Explore: 'חקור',
+    Create_Event: 'צור אירוע',
 
 }

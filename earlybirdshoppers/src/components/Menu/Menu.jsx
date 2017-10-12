@@ -16,12 +16,15 @@ class Menu extends Component {
     onSelect = (e) => this.props.setLocale(e.target.value)
 
     render() {
-        const { isLoggedIn, id, isArtist, trans, currentLocale } = this.props
-        
+        const { isLoggedIn, id, accountType, trans, currentLocale } = this.props
+        const isFan = accountType === 'fan'
         const navButtons = isLoggedIn && id ? ([
-            <li key={`menu_item_${id}_page`}>
-                <NavLink className="nav-link" to={isArtist ? `/artist/${id}` : `/venue/${id}`}>{trans.My_Page}</NavLink>
-            </li>,
+            !isFan && (<li key={`menu_item_${id}_page`}>
+                <NavLink className="nav-link" to={`/${accountType}/${id}`}>{trans.My_Page}</NavLink>
+            </li>),
+            !isFan && (<li key={`menu_item_${id}_create_event`}>
+                <NavLink className="nav-link" to="/create-event">{trans.Create_Event}</NavLink>
+            </li>),
             <li key={`menu_item_${id}_logout`}>
                 <NavLink className="nav-link" to="/" onClick={this.logout}>{trans.Logout}</NavLink>
             </li>,
@@ -73,7 +76,7 @@ class Menu extends Component {
 const mapStateToProps = (state) => {
     return {
         isLoggedIn: state.auth.loggedIn,
-        isArtist: state.auth.isArtist,
+        accountType: state.user && state.user.accountType,
         id: state.auth.user && state.auth.user.uid,
         trans: state.locale.trans,
         currentLocale: state.locale.currentLocale,
