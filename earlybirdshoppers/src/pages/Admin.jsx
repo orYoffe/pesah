@@ -1,20 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, Redirect } from 'react-router-dom'
-import { Admin } from '../helpers/auth'
-import { Admin as AdminAction } from '../reducers/auth'
 import { pageView } from '../helpers/analytics'
 
 // TODO start implementing admin panel to see data and change certain types of data
+// TODO block anyone without admin access
 
 class Admin extends Component {
     state = {
-        email: {
-            value: '',
-        },
-        pass: {
-            value: '',
-        },
         messages: {
             error: '',
             message: ''
@@ -41,42 +34,6 @@ class Admin extends Component {
         }
     }
 
-    passChange = (e) => {
-        const value = e.target.value
-        if (!!value && this.state.pass.value !== value) {
-            this.setState({ pass: { value }})
-        }
-    }
-
-    signIn = (e) => {
-        e && e.preventDefault()
-        e && e.stopPropagation()
-        
-            const email = this.state.email.value
-            const password = this.state.pass.value
-            if (email.length < 4) {
-                this.setMessage('error', 'Please enter an email address.')
-                return false
-            }
-            if (password.length < 4) {
-                this.setMessage('error', 'Please enter a password.')
-                return false
-            }
-            // .then(user => this.props.Admin(user))
-            Admin(email, password)
-            .catch((error) => {
-                const errorCode = error.code
-                const errorMessage = error.message
-                if (errorCode === 'auth/wrong-password') {
-                    this.setMessage('error', 'Wrong password.')
-                } else {
-                    this.setMessage('error', errorMessage)
-                }
-                console.log(error)
-            })
-        return false
-    }
-
     componentDidMount() {
         pageView();
     }
@@ -87,73 +44,6 @@ class Admin extends Component {
         if (true) {
             return  <div>Admin panel</div>
         }
-
-        return (
-            <div className="Admin container">
-                <h2>Admin</h2>
-                <form onSubmit={this.signIn}>
-                    <label htmlFor="email">Email:</label>
-                    <input
-                    className="form-control"
-                        type="text"
-                        onChange={this.emailChange}
-                        id="email"
-                        name="email"
-                        placeholder="example@example.com"
-                    />
-                    <br />
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        className="form-control"
-                        type="password"
-                        onChange={this.passChange}
-                        id="password"
-                        name="password"
-                        placeholder="Password"
-                    />
-                    <br />
-                    <input
-                        className="btn btn-primary form-control"
-                        onClick={this.signIn}
-                        id="sign-in"
-                        type="submit"
-                        name="signin"
-                        value="Sign In"
-                    />
-                </form>
-                {!!error && <br/>}
-                {!!error && <div style={{color: '#f00'}}>{error}</div>}
-                {!!message && <br/>}
-                {!!message && <div>{message}</div>}
-                <br />
-                <br />
-                <p>Forgot your password? Reset your password <Link to="/password-reset">here</Link></p>
-
-                <br />
-                <input
-                    className="btn btn-primary"
-                    type="button"
-                    value="Connect with FB (unfunctional)"
-                />
-                <br />
-                <input
-                    className="btn btn-primary"
-                    type="button"
-                    value="Connect with google (unfunctional)"
-                />
-                <br />
-                <input
-                    className="btn btn-primary"
-                    type="button"
-                    value="Connect with twitter (unfunctional)"
-                />
-
-                <br />
-                <br />
-                <p>Don't have a User? Sign up <Link to="signup">here</Link></p>
-            </div>
-
-        )
     }
 }
 

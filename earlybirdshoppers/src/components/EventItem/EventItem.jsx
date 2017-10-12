@@ -2,8 +2,8 @@ import React from 'react'
 import moment from 'moment'
 import Proptypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import { artists, venues } from '../helpers/mockData'
-import './UserItem.css'
+import { artists, venues } from '../../helpers/mockData'
+import '../UserItem.css'
 import './EventItem.css'
 
 const EventItem = props => {   

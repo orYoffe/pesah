@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { events, artists } from '../helpers/mockData'
 import { getUser } from '../helpers/firebase'
 import NotFound from './NotFound'
-import EventItem from '../components/EventItem'
-import Loader from '../components/Loader'
+import EventItem from '../components/EventItem/'
+import Loader from '../components/Loader/'
 import { pageView } from '../helpers/analytics'
 
 class Artist extends Component {

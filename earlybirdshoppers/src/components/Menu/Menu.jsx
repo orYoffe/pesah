@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { logout } from '../helpers/auth'
-import { logout as logoutAction } from '../reducers/auth'
-import { setLocale } from '../reducers/locale'
-import { locales } from '../translations'
+import { logout } from '../../helpers/auth'
+import { logout as logoutAction } from '../../reducers/auth'
+import { setLocale } from '../../reducers/locale'
+import { locales } from '../../translations'
 import './Menu.css'
 
 class Menu extends Component {

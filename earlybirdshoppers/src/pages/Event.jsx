@@ -3,9 +3,9 @@ import moment from 'moment'
 import { events, artists, venues } from '../helpers/mockData'
 import { getUser } from '../helpers/firebase'
 import NotFound from './NotFound'
-import Loader from '../components/Loader'
-import ArtistItem from '../components/ArtistItem'
-import VenueItem from '../components/VenueItem'
+import Loader from '../components/Loader/'
+import ArtistItem from '../components/ArtistItem/'
+import VenueItem from '../components/VenueItem/'
 import { pageView } from '../helpers/analytics'
 
 class Event extends Component {

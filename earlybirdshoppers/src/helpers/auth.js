@@ -50,45 +50,13 @@ const venue = {
         artists: {}
     },
 }
-const event = {
-    fans: {},
-    payments: {},
-    goalPrice: {},
-    priceStatus: {},
-    ticketPrice: 0,
-    title: '',
-    object: 'event',
-    email: '',
-    eventVerified: false,
-    photoURL: '',
-    uid: 0,
-    artists: {},
-    venues: {},
-    managers: {},
-    isPartOfTour: false,
-    futureEvents: {},
-    pastEvents: {},
-    claimed: false,
-    collaborationPartners: {
-        venues: {},
-        artists: {}
-    },
-}
 
-const payment = {
-    uid: 0,
-    email: '',
-    status: 'initial',
-    token: null,
-    cancelled: false,
-    users: {},
+const accounts = {
+    fan,
+    artist,
+    venue
 }
-
-const accountTypes = [
-    'fan',
-    'artist',
-    'venue'
-]
+const accountTypes = Object.keys(accounts)
 
 export const logout = () => auth().signOut()
 
@@ -116,14 +84,17 @@ export const saveUser = (user, accountType, displayName) => {
         return logout()
     }
     const newUser = {
-        displayName: displayName,
-        accountType,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        photoURL: user.photoURL,
-        isAnonymous: user.isAnonymous,
-        uid: user.uid,
-        providerData: user.providerData,
+        ...accounts[accountType],
+        ...{
+            displayName: displayName,
+            accountType,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            photoURL: user.photoURL,
+            isAnonymous: user.isAnonymous,
+            uid: user.uid,
+            providerData: user.providerData,
+        },
     }
 
     return user.updateProfile({

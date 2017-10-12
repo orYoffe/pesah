@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { events, venues } from '../helpers/mockData'
 import NotFound from './NotFound'
-import EventItem from '../components/EventItem'
-import Loader from '../components/Loader'
+import EventItem from '../components/EventItem/'
+import Loader from '../components/Loader/'
 import { getUser } from '../helpers/firebase'
 import { pageView } from '../helpers/analytics'
-import '../components/VenueItem.css'
+import '../components/VenueItem/VenueItem.css'
 
 class Venue extends Component {
     state = {

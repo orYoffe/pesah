@@ -1,63 +1,117 @@
-import { ref, auth } from './firebase'
+import { ref, auth } from '../firebase'
+import { verifyEmail } from '../auth'
+
+
+const defaultEvent = {
+    fans: {},
+    payments: {},
+    currency: {},
+    dates: {
+        created: null,
+        start: null,
+        auctionStart: null,
+        auctionEnd: null,
+        end: null
+    },
+    goalPrice: {},
+    priceStatus: {},
+    ticketPrice: 0,
+    title: '',
+    object: 'event',
+    email: '',
+    eventVerified: false,
+    photoURL: '',
+    uid: 0,
+    artists: {},
+    venues: {},
+    managers: {},
+    isPartOfTour: false,
+    futureEvents: {},
+    pastEvents: {},
+    claimed: false,
+    location: {},
+    collaborationPartners: {
+        venues: {},
+        artists: {}
+    },
+}
+
+const defaultPayment = {
+    uid: 0,
+    email: '',
+    status: 'initial',
+    token: null,
+    cancelled: false,
+    users: {},
+}
+
+const createEvent = (eventData) => {
+     const user = auth().currentUser
+
+     if (!user || !user.uid) {
+         return ''
+     }
+
+    // TODO make sure user and event are verified
+    //  if (!user.emailVerified) {
+        //      verifyEmail()
+        //      return 'verifyemail'
+        //  }
+
+    // TODO add validation
+
+    const eventObject = {
+        ...defaultEvent,
+        ...eventData
+    }
+     // TODO make account type (artist/venue) dynamic
+     ref.child(`events`)
+        .push(eventObject)
+        .then(newEvent => {
+            // event id => newEvent.key
+            return ref.child(`artists/${user.uid}/events`)
+            .push(newEvent.key)
+            .then(newEvent => {
+                // event id => newEvent.key
+            })
+        })
+}
+
+const createPayment = (paymentData) => {
+     const user = auth().currentUser
+
+     if (!user || !user.uid || !paymentData || !paymentData.eventId) {
+         return ''
+     }
+
+    // TODO make sure user and payment are verified
+    //  if (!user.emailVerified) {
+        //      verifyEmail()
+        //      return 'verifyemail'
+        //  }
+
+    // TODO add validation
+
+    const paymentObject = {
+        ...defaultPayment,
+        ...paymentData
+    }
+     // TODO make account type (artist/venue) dynamic
+
+     // TODO save payment to event, payments and user
+    //  ref.child(`artists/${user.uid}/payments`)
+    //     .push(paymentObject)
+    //     .then(newPayment => {
+            // payment id => newPayment.key
+        // })
+}
 
 const eventActions = {
-    create: {
-        event: () => true,
-        payment: () => true,
-    },
+    createEvent,
+    createPayment,
     update: {},
     remove: {},
     get: {}
 }
 
-// const accountTypes = [
-//     'fan',
-//     'artist',
-//     'venue'
-// ]
-
-// export const logout = () => auth().signOut()
-
-// export const login = (email, pass) => auth().signInWithEmailAndPassword(email, pass)
-
-// export const resetPassword = (email) => auth().sendPasswordResetEmail(email)
-
-// export const verifyEmail = () => auth().currentUser.sendEmailVerification()
-
-// export const signup = ({
-//     email,
-//     password,
-//     accountType,
-//     displayName
-// }) => {
-//     if (!accountTypes.includes(accountType)) {
-//         return false
-//     }
-//     return auth().createUserWithEmailAndPassword(email, password)
-//         .then(user => saveUser(user, accountType, displayName))
-// }
-
-// export const saveUser = (user, accountType, displayName) => {
-//     if (!accountType || !displayName || !user) {
-//         return logout()
-//     }
-//     const newUser = {
-//         displayName: displayName,
-//         accountType,
-//         email: user.email,
-//         emailVerified: user.emailVerified,
-//         photoURL: user.photoURL,
-//         isAnonymous: user.isAnonymous,
-//         uid: user.uid,
-//         providerData: user.providerData,
-//     }
-
-//     return user.updateProfile({
-//         displayName
-//     })
-//     .then(() => ref.child(`users/${user.uid}`)
-//     .set(newUser))
-//     .then(() => ref.child(`${accountType}s/${user.uid}`)
-//         .set(newUser))
-//     .then(() => user)
-// }
+export default eventActions
