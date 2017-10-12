@@ -36,7 +36,7 @@ defaultCalendarValue.add(-1, 'month')
 const timePickerElement = <TimePickerPanel defaultValue={moment('00:00:00', 'HH:mm:ss')} />
 
 function disabledTime(date) {
-  console.log('disabledTime', date)
+  // console.log('disabledTime', date)
   if (date && (date.date() === 15)) {
     return {
       disabledHours() {

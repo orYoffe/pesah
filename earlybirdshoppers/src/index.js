@@ -13,11 +13,16 @@ import registerServiceWorker from './registerServiceWorker'
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 // const logger = createLogger();
-
-const store = createStore(reducers, composeEnhancers(
-  applyMiddleware(ReduxThunk, promiseMiddleware({
+const middlewares = [
+  ReduxThunk,
+  promiseMiddleware({
     promiseTypeSuffixes: ['LOADING', 'SUCCESS', 'ERROR']
-  }))//, logger)
+  }),
+  // logger,
+]
+
+const store = createStore(reducers, {}, composeEnhancers(
+  applyMiddleware(...middlewares)
 ));
 
 ReactDOM.render(

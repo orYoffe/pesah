@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { FormattedMessage } from 'react-intl';
 import { logout } from '../helpers/auth'
 import { logout as logoutAction } from '../reducers/auth'
+import { setLocale } from '../reducers/locale'
+import { locales } from '../translations'
 import './Menu.css'
 
 class Menu extends Component {
@@ -12,21 +13,24 @@ class Menu extends Component {
         logout().then(() => logoutAction())
     }
 
+    onSelect = (e) => this.props.setLocale(e.target.value)
+
     render() {
-        const { isLoggedIn, id, isArtist } = this.props
+        const { isLoggedIn, id, isArtist, trans, currentLocale } = this.props
+        
         const navButtons = isLoggedIn && id ? ([
             <li key={`menu_item_${id}_page`}>
-                <NavLink className="nav-link" to={isArtist ? `/artist/${id}` : `/venue/${id}`}>My Page</NavLink>
+                <NavLink className="nav-link" to={isArtist ? `/artist/${id}` : `/venue/${id}`}>{trans.My_Page}</NavLink>
             </li>,
             <li key={`menu_item_${id}_logout`}>
-                <NavLink className="nav-link" to="/" onClick={this.logout}><FormattedMessage defaultMessage="Logout" /></NavLink>
+                <NavLink className="nav-link" to="/" onClick={this.logout}>{trans.Logout}</NavLink>
             </li>,
         ]) : ([
             <li key={`menu_item_01_signup`}>
-                <NavLink className="nav-link" to="/signup">Signup</NavLink>
+                <NavLink className="nav-link" to="/signup">{trans.Signup}</NavLink>
             </li>,
             <li key={`menu_item_02_login`}>
-                <NavLink className="nav-link" to="/login">Login</NavLink>
+                <NavLink className="nav-link" to="/login">{trans.Login}</NavLink>
             </li>,
         ])
         return (
@@ -42,12 +46,21 @@ class Menu extends Component {
                         <NavLink className="navbar-brand" to="/">Raise The Bar</NavLink>
                     </div>
                     <div className="collapse navbar-collapse">
-                        <ul className="nav navbar-nav navbar-right">
-                            {navButtons}
-                        </ul>
                         <ul className="nav navbar-nav">
                             <li>
-                                <NavLink className="nav-link" to="/">Explore</NavLink>
+                                <NavLink className="nav-link" to="/">{trans.Explore}</NavLink>
+                            </li>
+                        </ul>
+                        <ul className="nav navbar-nav navbar-right">
+                            {navButtons}
+                            <li>
+                                <select onChange={this.onSelect} defaultValue={currentLocale} className="form-control" to="/">
+                                    {locales.map(locale => (
+                                        <option
+                                        value={locale}
+                                        key={locale}>{locale}</option>
+                                    ))}
+                                </select>
                             </li>
                         </ul>
                     </div>
@@ -57,11 +70,16 @@ class Menu extends Component {
     }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
     return {
         isLoggedIn: state.auth.loggedIn,
         isArtist: state.auth.isArtist,
         id: state.auth.user && state.auth.user.uid,
+        trans: state.locale.trans,
+        currentLocale: state.locale.currentLocale,
     }
 }
-export default connect(mapStateToProps)(Menu)
+const mapDispatchToProps = (dispatch) => ({
+        setLocale: locale => dispatch(setLocale(locale)),
+    })
+export default connect(mapStateToProps, mapDispatchToProps)(Menu)

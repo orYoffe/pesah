@@ -33,14 +33,15 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case 'SIGNUP':
     case 'LOGIN':
-      console.log(auth().currentUser)
+      // console.log(auth().currentUser)
       let user
-      const currentUser = auth().currentUser
-      if (state.user && currentUser) {
-        user = { ...state.user, ...currentUser, ...action.user }
-      } else if (currentUser) {
-        user = { ...currentUser, ...action.user }
-      } else if (state.user) {
+      // const currentUser = auth().currentUser
+      // if (state.user && currentUser) {
+      //   user = { ...state.user, ...currentUser, ...action.user }
+      // } else if (currentUser) {
+      //   user = { ...currentUser, ...action.user }
+      // } else 
+      if (state.user) {
         user = { ...state.user, ...action.user }
       } else {
         user = action.user

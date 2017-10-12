@@ -5,7 +5,6 @@ import {
     Switch,
     Redirect
 } from 'react-router-dom'
-import { IntlProvider } from 'react-intl';
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import PassReset from './pages/PassReset'
@@ -20,7 +19,6 @@ import NotFound from './pages/NotFound'
 import Menu from './components/Menu'
 
 const Routes = (props) => (
-    <IntlProvider locale="en">
         <Router>
             <div className="root">
                 <div className="container">
@@ -46,7 +44,6 @@ const Routes = (props) => (
                 </div>
             </div>
         </Router>
-    </IntlProvider>
 )
 
 export default Routes

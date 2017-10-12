@@ -11,11 +11,6 @@ class App extends Component {
     super(props);
     props.dispatch(configInit(firebase))
     // this.database = firebase.database().ref().child('Artists');
-
-    // We're going to setup the React state of our component
-    // this.state = {
-    //   notes: [],
-    // }
   }
 
   componentDidMount () {
