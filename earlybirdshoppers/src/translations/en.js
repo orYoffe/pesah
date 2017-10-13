@@ -1,4 +1,6 @@
 export default  {
+    rtl: false,
+    currency: '$',
     Logout: 'Logout',
     Login: 'Login',
     Signup: 'Signup',

@@ -1,3 +1,4 @@
+const path = require('path');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -30,8 +31,8 @@ exports.removeUserFromDatabase = functions.auth.user()
 });
 
 exports.guard = functions.https.onRequest((req, res) => {
-  if (req.query.a === 'pesah') {
-    res.redirect("https://earlybirdshopers.firebaseapp.com/realhtml_186231treg.html?a=pesah");
+  if (req.body.a === 'pesah') {
+    res.sendFile(path.join(__dirname, 'realhtml_186231treg.html'));
   } else {
     res.redirect('https://earlybirdshopers.firebaseapp.com?a=wrong');
   }

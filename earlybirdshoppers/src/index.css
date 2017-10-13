@@ -27,6 +27,9 @@ body {
   text-align: center;
 }
 
+.error {
+  color: #f00;
+}
 .page {
   height: auto;
 }

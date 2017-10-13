@@ -1,4 +1,4 @@
-import { auth } from '../helpers/firebase'
+// import { auth } from '../helpers/firebase'
 
 const LOGIN = 'LOGIN'
 const LOGOUT = 'LOGOUT'

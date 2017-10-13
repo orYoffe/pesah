@@ -1,6 +1,5 @@
-import { ref, auth } from '../firebase'
+import { ref, auth, getUser } from '../firebase'
 import { verifyEmail } from '../auth'
-
 
 const defaultEvent = {
     fans: {},
@@ -45,36 +44,126 @@ const defaultPayment = {
     users: {},
 }
 
-const createEvent = (eventData) => {
-     const user = auth().currentUser
+export const createEvent = (eventData) => {
 
-     if (!user || !user.uid) {
-         return ''
-     }
+    const user = auth().currentUser
+    const {
+        title,
+        date,
+        time,
+        price,
+        goal,
+        currency,
+        location,
+        venue,
+        artist,
+        photoURL,
+        accountType,
+    } = eventData
+    const isArtist = accountType === 'artist'
+    const isVenue = accountType === 'venue' 
 
-    // TODO make sure user and event are verified
-    //  if (!user.emailVerified) {
-        //      verifyEmail()
-        //      return 'verifyemail'
-        //  }
+    if (!user || !user.uid || (!isArtist && !isVenue)) {
+        // TODO validate location and date and time goal price and everything else also image
+        return 'login'
+    }
+    
 
-    // TODO add validation
+    const country = location.address_components
+        .find(prop => prop.types.indexOf('country') !== -1).long_name
+    const countryShortName = location.address_components
+        .find(prop => prop.types.indexOf('country') !== -1).short_name
+    const city = location.address_components
+        .find(prop => prop.types.indexOf('locality') !== -1).long_name
+        debugger
+    const eventTime = new Date(date)
+    const [hours, minutes] = time.split(':')
+    eventTime.setHours(hours)
+    eventTime.setMinutes(minutes)
 
     const eventObject = {
         ...defaultEvent,
-        ...eventData
+        dates: {
+            created: new Date().toJSON(),
+            start: eventTime,
+            auctionStart: null, // TODO custom campagins
+            auctionEnd: eventTime, // TODO custom campagins
+        },
+        fans: {},
+        payments: {},
+        owner: {
+            accountType,
+            uid: user.uid,
+            email: user.email,
+        },
+        currency: {
+            symbol: currency,
+            country,
+        },
+        goalPrice: goal,
+        priceStatus: {
+            level: 0,
+            precentage: 0,
+        },
+        ticketPrice:price,
+        title,
+        object: 'event',
+        eventVerified: false,
+        photoURL,
+        uid: 0,
+        artists: {
+            isOwner: isArtist,
+            [artist]: artist || null, // TODO add real api artist data
+        },
+        venues: {
+            isOwner: isVenue,
+            [venue]: venue|| null, // TODO implement real data venues
+        },
+        managers: {
+            // implement premissions to venue and artists in the event
+        },
+        isPartOfTour: false, // TODO add tour functionality
+        futureEvents: {}, // TODO as part of a tour feature
+        pastEvents: {}, // TODO as part of a tour feature
+        venueApproved: isVenue, // if venue approved 
+        artistApproved: isArtist, // if venue approved 
+        location: {
+            country,
+            countryShortName, 
+            city,
+        },
+        collaborationPartners: {
+            venues: {}, // TOTO aother venues and artists adding
+            artists: {},
+        },
     }
-     // TODO make account type (artist/venue) dynamic
-     ref.child(`events`)
-        .push(eventObject)
-        .then(newEvent => {
-            // event id => newEvent.key
-            return ref.child(`artists/${user.uid}/events`)
-            .push(newEvent.key)
-            .then(newEvent => {
-                // event id => newEvent.key
+
+    // TODO make sure user and event are verified
+    //  if (!user.emailVerified) {
+    //     verifyEmail()
+    //     return 'verifyemail'
+    // }
+
+    // TODO add validation
+
+
+     // TODO list:
+     // create event
+     // connect to artist and venue if exists
+     // check id event or ATcvRIST
+
+    return ref.child(`events`)
+    .push(eventObject)
+    .then(newEvent => {
+        debugger
+        // event id => newEvent.key
+        return ref.child(`${isArtist ? 'artists' : 'venues'}/${user.uid}/events${newEvent.key}`)
+            .set(newEvent.key)
+            .then(eventId => {
+                debugger
+                return newEvent
             })
-        })
+    })
 }
 
 const createPayment = (paymentData) => {
@@ -106,12 +195,10 @@ const createPayment = (paymentData) => {
         // })
 }
 
-const eventActions = {
+export default {
     createEvent,
     createPayment,
     update: {},
     remove: {},
     get: {}
 }
-
-export default eventActions

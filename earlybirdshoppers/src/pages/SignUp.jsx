@@ -151,6 +151,7 @@ class Signup extends Component {
                         id="name"
                         name="displayName"
                         placeholder="Lizards of Gondor"
+                        required
                     />
                     <br />
                     <label htmlFor="email">Email:</label>
@@ -161,6 +162,7 @@ class Signup extends Component {
                         id="email"
                         name="email"
                         placeholder="example@example.com"
+                        required
                     />
                     <br />
                     <label htmlFor="password">Password:</label>
@@ -171,6 +173,7 @@ class Signup extends Component {
                         id="password"
                         name="password"
                         placeholder="Password"
+                        required
                     />
                     <br />
                     <input

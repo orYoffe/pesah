@@ -92,12 +92,13 @@ class Login extends Component {
                 <form onSubmit={this.signIn}>
                     <label htmlFor="email">Email:</label>
                     <input
-                    className="form-control"
+                        className="form-control"
                         type="text"
                         onChange={this.emailChange}
                         id="email"
                         name="email"
                         placeholder="example@example.com"
+                        required
                     />
                     <br />
                     <label htmlFor="password">Password:</label>
@@ -108,6 +109,7 @@ class Login extends Component {
                         id="password"
                         name="password"
                         placeholder="Password"
+                        required
                     />
                     <br />
                     <input

@@ -2,6 +2,8 @@ import Cookies from 'js-cookie'
 import en from './en'
 import hebrew from './hebrew'
 
+// TODO create support for rtl
+
 export const locales = [
     'en-US',
     "en-GB",

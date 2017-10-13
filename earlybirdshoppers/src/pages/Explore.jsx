@@ -6,11 +6,24 @@ import VenueItem from '../components/VenueItem/'
 import FanItem from '../components/FanItem/'
 import { events, artists, venues, fans } from '../helpers/mockData'
 import { pageView } from '../helpers/analytics'
+import { getUsers, getEvents } from '../helpers/firebase'
 
 class Explore extends Component {
 
   componentDidMount() {
         pageView();
+        getUsers(snapshot => {
+          if (snapshot.code !== 'PERMISSION_DENIED'){
+            debugger
+            console.log('snapshot========', snapshot.val())
+          }
+        })
+        getEvents(snapshot => {
+          if (snapshot.code !== 'PERMISSION_DENIED'){
+            debugger
+            console.log('snapshot========', snapshot.val())
+          }
+        })
   }
 
     render() {

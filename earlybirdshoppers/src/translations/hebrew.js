@@ -1,4 +1,6 @@
 export default {
+    rtl: true,
+    currency: '₪',
     Logout: 'צא',
     Login: 'היכנס',
     Signup: 'הירשם',

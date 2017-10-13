@@ -39,8 +39,9 @@ class Admin extends Component {
     }
 
     render() {
-        const { messages: { message, error } } = this.state
+        // const { messages: { message, error } } = this.state
         
+        // TODO add auth for admign and admin panel for venues
         if (true) {
             return  <div>Admin panel</div>
         }

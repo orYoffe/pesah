@@ -33,26 +33,19 @@
 </head>
 <body>
   <h1 id="error" style="display:none;">wrong pass</h1>
-  <form id="form1">
+  <form id="form1" action="https://us-central1-earlybirdshopers.cloudfunctions.net/guard" method="post">
     <p>Pass:</p>
     <br />
-    <input id="_forOr" type="password" name="_forOr" value="">
+    <input id="_forOr" type="password" name="a" value="">
     <br />
     <input id="submit" type="submit" value="Submit" />
   </form>
   <script>
-  var button = document.getElementById('submit');
   var input = document.getElementById('_forOr');
   var form = document.getElementById('form1');
 
-  function submitForm(e){
-    e.preventDefault();
-    window.location.href = 'https://us-central1-earlybirdshopers.cloudfunctions.net/guard?a=' + input.value.trim();
-  }
 
   input.focus();
-  form.addEventListener('submit', submitForm, true);
-  button.addEventListener('click', submitForm, true);
   if (window.location.search === '?a=wrong') {
     var error = document.getElementById('error');
     error.style.display = 'block';

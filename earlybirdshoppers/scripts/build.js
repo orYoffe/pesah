@@ -151,10 +151,17 @@ function copyPublicFolder() {
   });
 }
 function renameIndexHTML() {
-  fs.renameSync(paths.appBuild + '/index.html', paths.appBuild + '/realhtml_186231treg.html')//, function(err) {
-  //     if ( err ) console.log('ERROR: ' + err);
-  // });
-  fs.renameSync(paths.appBuild + '/indexSecure.html', paths.appBuild + '/index.html')//, function(err) {
-  //     if ( err ) console.log('ERROR: ' + err);
-  // });
+  fs.renameSync(paths.appBuild + '/index.html', paths.appBuild + '/realhtml_186231treg.html')
+  fs.renameSync(paths.appBuild + '/indexSecure.html', paths.appBuild + '/index.html')
+
+  // remove current real file
+  fs.unlinkSync(paths.appBuild + '/../functions/realhtml_186231treg.html')
+
+  // copy new real file
+  fs.createReadStream(paths.appBuild + '/realhtml_186231treg.html')
+    .pipe(fs.createWriteStream(paths.appBuild + '/../functions/realhtml_186231treg.html'));
+
+  // remove new real file from public
+  fs.unlinkSync(paths.appBuild + '/firebaseIndex.html')
+  fs.unlinkSync(paths.appBuild + '/realhtml_186231treg.html')
 }
