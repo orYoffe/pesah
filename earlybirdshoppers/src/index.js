@@ -9,8 +9,9 @@ import reducers from './reducers'
 import './index.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
+import { isDev } from './helpers/common'
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers = (isDev && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
 // const logger = createLogger();
 const middlewares = [

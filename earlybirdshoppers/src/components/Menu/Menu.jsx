@@ -3,8 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { logout } from '../../helpers/auth'
 import { logout as logoutAction } from '../../reducers/auth'
-import { setLocale } from '../../reducers/locale'
-import { locales } from '../../translations'
+import LocalePicker from './LocalePicker'
 import './Menu.css'
 
 class Menu extends Component {
@@ -12,30 +11,48 @@ class Menu extends Component {
     logout = () => {
         logout().then(() => logoutAction())
     }
+    renderDynamicLinks = () => {
+        const { isLoggedIn, id, accountType, trans } = this.props
+        const isFan = accountType === 'fan'
+        const links = []
+        if (isLoggedIn && id) {
+            if (!isFan) {
+                links.push(
+                    <li key={`menu_item_${id}_page`}>
+                        <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to={`/${accountType}/${id}`}>{trans.My_Page}</NavLink>
+                    </li>
+                )
+                links.push(
+                    <li key={`menu_item_${id}_create_event`}>
+                        <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/create-event">{trans.Create_Event} +</NavLink>
+                    </li>
+                )
+            }
+            links.push(
+                <li key={`menu_item_${id}_logout`}>
+                    <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/" onClick={this.logout}>{trans.Logout}</NavLink>
+                </li>
+            )
+        } else {
+            links.push(
+                <li key={`menu_item_01_signup`}>
+                    <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/signup">{trans.Signup}</NavLink>
+                </li>
+            )
+            links.push(
+                <li key={`menu_item_02_login`}>
+                    <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/login">{trans.Login}</NavLink>
+                </li>
+            )
+        }
 
-    onSelect = (e) => this.props.setLocale(e.target.value)
+        return links
+    }
 
     render() {
-        const { isLoggedIn, id, accountType, trans, currentLocale } = this.props
-        const isFan = accountType === 'fan'
-        const navButtons = isLoggedIn && id ? ([
-            !isFan && (<li key={`menu_item_${id}_page`}>
-                <NavLink className="nav-link" to={`/${accountType}/${id}`}>{trans.My_Page}</NavLink>
-            </li>),
-            !isFan && (<li key={`menu_item_${id}_create_event`}>
-                <NavLink className="nav-link" to="/create-event">{trans.Create_Event}</NavLink>
-            </li>),
-            <li key={`menu_item_${id}_logout`}>
-                <NavLink className="nav-link" to="/" onClick={this.logout}>{trans.Logout}</NavLink>
-            </li>,
-        ]) : ([
-            <li key={`menu_item_01_signup`}>
-                <NavLink className="nav-link" to="/signup">{trans.Signup}</NavLink>
-            </li>,
-            <li key={`menu_item_02_login`}>
-                <NavLink className="nav-link" to="/login">{trans.Login}</NavLink>
-            </li>,
-        ])
+        
+        const { trans } = this.props
+
         return (
             <div className="navbar navbar-default navbar-fixed-top" role="navigation">
                 <div className="container">
@@ -46,24 +63,18 @@ class Menu extends Component {
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                         </button>
-                        <NavLink className="navbar-brand" to="/">Raise The Bar</NavLink>
+                        <NavLink className="navbar-brand" data-toggle="collapse" data-target=".navbar-collapse" to="/">Raise The Bar</NavLink>
                     </div>
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav">
                             <li>
-                                <NavLink className="nav-link" to="/">{trans.Explore}</NavLink>
+                                <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/">{trans.Explore}</NavLink>
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right">
-                            {navButtons}
+                            {this.renderDynamicLinks()}
                             <li>
-                                <select onChange={this.onSelect} defaultValue={currentLocale} className="form-control" to="/">
-                                    {locales.map(locale => (
-                                        <option
-                                        value={locale}
-                                        key={locale}>{locale}</option>
-                                    ))}
-                                </select>
+                                <LocalePicker />
                             </li>
                         </ul>
                     </div>
@@ -74,15 +85,20 @@ class Menu extends Component {
 }
 
 const mapStateToProps = (state) => {
+    if (state.auth.user) {
+        return {
+            isLoggedIn: state.auth.loggedIn,
+            accountType: state.auth.user.accountType,
+            id: state.auth.user.uid,
+            trans: state.locale.trans,
+        }
+    }
+
     return {
         isLoggedIn: state.auth.loggedIn,
-        accountType: state.user && state.user.accountType,
-        id: state.auth.user && state.auth.user.uid,
+        accountType: false,
+        id: false,
         trans: state.locale.trans,
-        currentLocale: state.locale.currentLocale,
     }
 }
-const mapDispatchToProps = (dispatch) => ({
-        setLocale: locale => dispatch(setLocale(locale)),
-    })
-export default connect(mapStateToProps, mapDispatchToProps)(Menu)
+export default connect(mapStateToProps)(Menu)
