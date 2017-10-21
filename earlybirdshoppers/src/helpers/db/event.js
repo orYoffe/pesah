@@ -7,7 +7,7 @@ const defaultEvent = {
     currency: {},
     dates: {
         created: null,
-        start: null,
+        eventTime: null,
         auctionStart: null,
         auctionEnd: null,
         end: null
@@ -85,7 +85,7 @@ export const createEvent = (eventData) => {
         ...defaultEvent,
         dates: {
             created: new Date().toJSON(),
-            start: eventTime,
+            eventTime,
             auctionStart: null, // TODO custom campagins
             auctionEnd: eventTime, // TODO custom campagins
         },

@@ -1,0 +1,673 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData'])",
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+        },
+        "accountType": {
+          ".validate": "newData.isString()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "isAnonymous": {
+          ".validate": "newData.isBoolean()"
+        },
+        "emailVerified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "providerData": {
+          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
+          "uid": {
+            ".validate": "newData.isString()"
+          },
+          "email": {
+            ".validate": "newData.isString()"
+          },
+          "providerId": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true",
+        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "artists": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData', 'photoURL', 'isAnonymous', 'following', 'followers', 'rooms', 'notifs', 'payments', 'futureEvents', 'pastEvents', 'accounts', 'page', 'bank', 'tickets', ('location'), ('members'), ('managers'), ('claimed'), ('collaboration'), ('openDates'), ('bookedDates'), ('accountType')])",
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+        },
+        "accountType": {
+          ".validate": "newData.isString() && newData.isString() && 'artist' == newData.val()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "isAnonymous": {
+          ".validate": "newData.isBoolean() && newData.isBoolean()"
+        },
+        "emailVerified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "providerData": {
+          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
+          "uid": {
+            ".validate": "newData.isString()"
+          },
+          "email": {
+            ".validate": "newData.isString()"
+          },
+          "providerId": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        "photoURL": {
+          ".validate": "newData.isString()"
+        },
+        "following": {
+          ".validate": "newData.hasChildren()"
+        },
+        "followers": {
+          ".validate": "newData.hasChildren()"
+        },
+        "rooms": {
+          ".validate": "newData.hasChildren()"
+        },
+        "notifs": {
+          ".validate": "newData.hasChildren()"
+        },
+        "payments": {
+          ".validate": "newData.hasChildren()"
+        },
+        "futureEvents": {
+          ".validate": "newData.hasChildren()"
+        },
+        "pastEvents": {
+          ".validate": "newData.hasChildren()"
+        },
+        "accounts": {
+          ".validate": "newData.hasChildren()"
+        },
+        "page": {
+          ".validate": "newData.hasChildren()"
+        },
+        "bank": {
+          ".validate": "newData.hasChildren()"
+        },
+        "tickets": {
+          ".validate": "newData.hasChildren()"
+        },
+        "location": {
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          "country": {
+            ".validate": "newData.isString()"
+          },
+          "city": {
+            ".validate": "newData.isString()"
+          },
+          "short": {
+            ".validate": "newData.isString()"
+          },
+          "lat": {
+            ".validate": "newData.isNumber()"
+          },
+          "lng": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "members": {
+          ".validate": "newData.hasChildren()"
+        },
+        "managers": {
+          ".validate": "newData.hasChildren()"
+        },
+        "claimed": {
+          ".validate": "newData.isBoolean()"
+        },
+        "collaboration": {
+          ".validate": "newData.hasChildren(['artists', 'venues', 'fans'])",
+          "artists": {
+            ".validate": "newData.hasChildren()"
+          },
+          "venues": {
+            ".validate": "newData.hasChildren()"
+          },
+          "fans": {
+            ".validate": "newData.hasChildren()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "openDates": {
+          ".validate": "newData.hasChildren()"
+        },
+        "bookedDates": {
+          ".validate": "newData.hasChildren()"
+        },
+        ".read": "true",
+        ".write": "auth != null && $uid == auth.uid || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "venues": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData', 'photoURL', 'isAnonymous', 'following', 'followers', 'rooms', 'notifs', 'payments', 'futureEvents', 'pastEvents', 'accounts', 'page', 'bank', 'tickets', ('location'), ('members'), ('managers'), ('claimed'), ('collaboration'), ('openDates'), ('bookedDates'), ('accountType')])",
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+        },
+        "accountType": {
+          ".validate": "newData.isString() && newData.isString() && 'venue' == newData.val()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "isAnonymous": {
+          ".validate": "newData.isBoolean() && newData.isBoolean()"
+        },
+        "emailVerified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "providerData": {
+          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
+          "uid": {
+            ".validate": "newData.isString()"
+          },
+          "email": {
+            ".validate": "newData.isString()"
+          },
+          "providerId": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        "photoURL": {
+          ".validate": "newData.isString()"
+        },
+        "following": {
+          ".validate": "newData.hasChildren()"
+        },
+        "followers": {
+          ".validate": "newData.hasChildren()"
+        },
+        "rooms": {
+          ".validate": "newData.hasChildren()"
+        },
+        "notifs": {
+          ".validate": "newData.hasChildren()"
+        },
+        "payments": {
+          ".validate": "newData.hasChildren()"
+        },
+        "futureEvents": {
+          ".validate": "newData.hasChildren()"
+        },
+        "pastEvents": {
+          ".validate": "newData.hasChildren()"
+        },
+        "accounts": {
+          ".validate": "newData.hasChildren()"
+        },
+        "page": {
+          ".validate": "newData.hasChildren()"
+        },
+        "bank": {
+          ".validate": "newData.hasChildren()"
+        },
+        "tickets": {
+          ".validate": "newData.hasChildren()"
+        },
+        "location": {
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          "country": {
+            ".validate": "newData.isString()"
+          },
+          "city": {
+            ".validate": "newData.isString()"
+          },
+          "short": {
+            ".validate": "newData.isString()"
+          },
+          "lat": {
+            ".validate": "newData.isNumber()"
+          },
+          "lng": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "members": {
+          ".validate": "newData.hasChildren()"
+        },
+        "managers": {
+          ".validate": "newData.hasChildren()"
+        },
+        "claimed": {
+          ".validate": "newData.isBoolean()"
+        },
+        "collaboration": {
+          ".validate": "newData.hasChildren(['artists', 'venues', 'fans'])",
+          "artists": {
+            ".validate": "newData.hasChildren()"
+          },
+          "venues": {
+            ".validate": "newData.hasChildren()"
+          },
+          "fans": {
+            ".validate": "newData.hasChildren()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "openDates": {
+          ".validate": "newData.hasChildren()"
+        },
+        "bookedDates": {
+          ".validate": "newData.hasChildren()"
+        },
+        ".read": "true",
+        ".write": "auth != null && $uid == auth.uid || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "fans": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData', 'photoURL', 'isAnonymous', 'following', 'followers', 'rooms', 'notifs', 'payments', 'futureEvents', 'pastEvents', 'accounts', 'page', 'bank', 'tickets', ('location'), ('accountType')])",
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+        },
+        "accountType": {
+          ".validate": "newData.isString() && newData.isString() && 'fan' == newData.val()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "isAnonymous": {
+          ".validate": "newData.isBoolean() && newData.isBoolean()"
+        },
+        "emailVerified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "email": {
+          ".validate": "newData.isString()"
+        },
+        "providerData": {
+          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
+          "uid": {
+            ".validate": "newData.isString()"
+          },
+          "email": {
+            ".validate": "newData.isString()"
+          },
+          "providerId": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        "photoURL": {
+          ".validate": "newData.isString()"
+        },
+        "following": {
+          ".validate": "newData.hasChildren()"
+        },
+        "followers": {
+          ".validate": "newData.hasChildren()"
+        },
+        "rooms": {
+          ".validate": "newData.hasChildren()"
+        },
+        "notifs": {
+          ".validate": "newData.hasChildren()"
+        },
+        "payments": {
+          ".validate": "newData.hasChildren()"
+        },
+        "futureEvents": {
+          ".validate": "newData.hasChildren()"
+        },
+        "pastEvents": {
+          ".validate": "newData.hasChildren()"
+        },
+        "accounts": {
+          ".validate": "newData.hasChildren()"
+        },
+        "page": {
+          ".validate": "newData.hasChildren()"
+        },
+        "bank": {
+          ".validate": "newData.hasChildren()"
+        },
+        "tickets": {
+          ".validate": "newData.hasChildren()"
+        },
+        "location": {
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          "country": {
+            ".validate": "newData.isString()"
+          },
+          "city": {
+            ".validate": "newData.isString()"
+          },
+          "short": {
+            ".validate": "newData.isString()"
+          },
+          "lat": {
+            ".validate": "newData.isNumber()"
+          },
+          "lng": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        ".read": "true",
+        ".write": "auth != null && $uid == auth.uid || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "events": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['uid', 'artists', 'venues', 'fans', 'currency', 'location', 'date', 'managers', 'title', 'description', 'ticketPrice', 'goalPrice', 'fundStatus', 'verified', 'collaboration', 'page', 'payments', 'venueVerified', 'artistVerified', 'cancelled', ('funded')])",
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "artists": {
+          ".validate": "newData.hasChildren()"
+        },
+        "venues": {
+          ".validate": "newData.hasChildren()"
+        },
+        "fans": {
+          ".validate": "newData.hasChildren()"
+        },
+        "currency": {
+          ".validate": "newData.hasChildren()"
+        },
+        "location": {
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          "country": {
+            ".validate": "newData.isString()"
+          },
+          "city": {
+            ".validate": "newData.isString()"
+          },
+          "short": {
+            ".validate": "newData.isString()"
+          },
+          "lat": {
+            ".validate": "newData.isNumber()"
+          },
+          "lng": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "date": {
+          ".validate": "newData.hasChildren()"
+        },
+        "managers": {
+          ".validate": "newData.hasChildren()"
+        },
+        "title": {
+          ".validate": "newData.isString()"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "ticketPrice": {
+          ".validate": "newData.isNumber()"
+        },
+        "goalPrice": {
+          ".validate": "newData.isNumber()"
+        },
+        "fundStatus": {
+          ".validate": "newData.hasChildren(['fundsRaised', 'precentage'])",
+          "fundsRaised": {
+            ".validate": "newData.isNumber()"
+          },
+          "precentage": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "verified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "collaboration": {
+          ".validate": "newData.hasChildren(['artists', 'venues', 'fans'])",
+          "artists": {
+            ".validate": "newData.hasChildren()"
+          },
+          "venues": {
+            ".validate": "newData.hasChildren()"
+          },
+          "fans": {
+            ".validate": "newData.hasChildren()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "page": {
+          ".validate": "newData.hasChildren(['cover', 'photoURL'])",
+          "cover": {
+            ".validate": "newData.isString()"
+          },
+          "photoURL": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          }
+        },
+        "payments": {
+          ".validate": "newData.hasChildren()"
+        },
+        "venueVerified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "artistVerified": {
+          ".validate": "newData.isBoolean()"
+        },
+        "cancelled": {
+          ".validate": "newData.isBoolean()"
+        },
+        "funded": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
+        ".write": "newData.parent().parent().child('events').child($uid).child('managers').val()[auth.uid] == true || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "payments": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['buyer', 'buyerEmail', 'seller', 'token', 'status', 'price', 'event', 'uid', 'date', 'currency', 'paymentMethod', 'cancelled', 'processed'])",
+        "buyer": {
+          ".validate": "newData.hasChildren()"
+        },
+        "buyerEmail": {
+          ".validate": "newData.hasChildren()"
+        },
+        "seller": {
+          ".validate": "newData.hasChildren()"
+        },
+        "token": {
+          ".validate": "newData.hasChildren()"
+        },
+        "status": {
+          ".validate": "newData.hasChildren()"
+        },
+        "price": {
+          ".validate": "newData.isNumber()"
+        },
+        "event": {
+          ".validate": "newData.hasChildren()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "date": {
+          ".validate": "newData.hasChildren()"
+        },
+        "currency": {
+          ".validate": "newData.hasChildren()"
+        },
+        "paymentMethod": {
+          ".validate": "newData.hasChildren()"
+        },
+        "cancelled": {
+          ".validate": "newData.isBoolean()"
+        },
+        "processed": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
+        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "tickets": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['buyer', 'buyerEmail', 'status', 'price', 'date', 'event', 'uid', 'payment'])",
+        "buyer": {
+          ".validate": "newData.hasChildren()"
+        },
+        "buyerEmail": {
+          ".validate": "newData.hasChildren()"
+        },
+        "status": {
+          ".validate": "newData.hasChildren()"
+        },
+        "price": {
+          ".validate": "newData.isNumber()"
+        },
+        "date": {
+          ".validate": "newData.hasChildren()"
+        },
+        "event": {
+          ".validate": "newData.hasChildren()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "payment": {
+          ".validate": "newData.hasChildren()"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
+        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "rooms": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['uid', 'members', 'creator', 'title', 'messages', 'timeCreated', 'last', 'notifs'])",
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "members": {
+          ".validate": "newData.hasChildren()"
+        },
+        "creator": {
+          ".validate": "newData.hasChildren()"
+        },
+        "title": {
+          ".validate": "newData.hasChildren()"
+        },
+        "messages": {
+          ".validate": "newData.hasChildren()"
+        },
+        "timeCreated": {
+          ".validate": "newData.hasChildren()"
+        },
+        "last": {
+          ".validate": "newData.hasChildren()"
+        },
+        "notifs": {
+          ".validate": "newData.hasChildren()"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
+        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    },
+    "messages": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['uid', 'from', 'message', 'time', 'seenBy', 'room'])",
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "from": {
+          ".validate": "newData.isString()"
+        },
+        "message": {
+          ".validate": "newData.isString()"
+        },
+        "time": {
+          ".validate": "newData.isString()"
+        },
+        "seenBy": {
+          ".validate": "newData.hasChildren()"
+        },
+        "room": {
+          ".validate": "newData.hasChildren()"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
+        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+      }
+    }
+  }
+}

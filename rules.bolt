@@ -1,0 +1,341 @@
+
+// ================== Functions
+
+isLoggedIn() { auth != null && currentUser() }
+currentUser() { auth.uid }
+isSameId(uid) { auth != null && uid == currentUser() }
+isEmptyAndLogged() { auth != null && !data.exists() }
+isAdmin () {
+  root.child('users').child(currentUser()).child('isAdmin').val() == true;
+}
+
+
+getRoomInfo(id) { prior(root).rooms[id] }
+
+isMember(roomInfo) {
+  roomInfo.members[currentUser()] != null && !roomInfo.members[currentUser()].isBanned
+}
+isEventOwner(uid) {
+  root.child('events').child(uid).child('managers').val()[currentUser()] == true;
+}
+
+initial(value, init) { value == (isInitial(value) ? init : prior(value)) }
+isInitial(value) { prior(value) == null }
+// Returns true if the value is intialized to init, or if it retains it's prior
+// value, otherwise.
+
+//type Post {
+//  read() { isSameId(uid) || isAdmin() }
+//  write() { isAdmin() }
+//  index() { ["email"] }
+//  message: String,
+//  modified: CurrentTimestamp,
+//  created: InitialTimestamp,
+//}
+
+type Location {
+  country: String,
+  city: String,
+  short: String,
+  lat: Number,
+  lng: Number
+}
+type Collaboration {
+  artists: Object,
+  venues: Object,
+  fans: Object
+}
+type InitialTimestamp extends Number {
+  validate() { initial(this, now) }
+}
+
+
+
+type CurrentTimestamp extends Number {
+  validate() { this == now }
+}
+
+//path /users/{uid} is User {
+//  read() { true }
+//  write() { isSameId(uid) }
+//}
+
+
+// ================== Objects
+type DisplayName extends String {
+  validate() { this.length > 2 && this.length <= 32 }
+}
+type ProviderData {
+  uid: String,
+  email: String,
+  providerId: String
+}
+type UserData {
+  displayName: DisplayName,
+  accountType: String,
+  uid: String,
+  isAnonymous: Boolean,
+  emailVerified: Boolean,
+  email: String,
+  providerData: ProviderData
+}
+type User extends UserData {
+  photoURL: String,
+  isAnonymous: Boolean,
+  following: Object,
+  followers: Object,
+  rooms: Object,
+  notifs: Object,
+  payments: Object,
+  futureEvents: Object,
+  pastEvents: Object,
+  accounts: Object,
+  page: Object,
+  bank: Object,
+  tickets: Object,
+  location: Location
+}
+
+type AccountTypeArtist extends String {
+  validate() { 'artist' == this }
+}
+type Artist extends User {
+  members: Object,
+  managers: Object,
+  claimed: Boolean,
+  collaboration: Collaboration,
+  openDates: Object,
+  bookedDates: Object,
+  accountType: AccountTypeArtist
+}
+
+
+type AccountTypeVenue extends String {
+  validate() { 'venue' == this }
+}
+type Venue extends User {
+  members: Object,
+  managers: Object,
+  claimed: Boolean,
+  collaboration: Collaboration,
+  openDates: Object,
+  bookedDates: Object,
+  accountType: AccountTypeVenue
+}
+
+type AccountTypeFan extends String {
+  validate() { 'fan' == this }
+}
+type Fan extends User {
+  accountType: AccountTypeFan
+}
+
+type FundStatus {
+  fundsRaised: Number,
+  precentage: Number
+}
+type EventPage {
+  cover: String,
+  photoURL: String
+}
+type Event {
+  uid: String,
+  artists: Object,
+  venues: Object,
+  fans: Object,
+  currency: Object,
+  location: Location,
+  date: Object,
+  managers: Object,
+  title: String,
+  description: String,
+  ticketPrice: Number,
+  goalPrice: Number,
+  fundStatus: FundStatus,
+  verified: Boolean,
+  collaboration: Collaboration,
+  page: EventPage,
+  payments: Object,
+  venueVerified: Boolean,
+  artistVerified: Boolean,
+  cancelled: Boolean,
+  funded: Boolean
+}
+
+type Payment {
+  buyer: Object,
+  buyerEmail: Object,
+  seller: Object,
+  token: Object,
+  status: Object,
+  price: Number,
+  event: Object,
+  uid: String,
+  date: Object,
+  currency: Object,
+  paymentMethod: Object,
+  cancelled: Boolean,
+  processed: Boolean
+}
+
+
+type Ticket {
+  buyer: Object,
+  buyerEmail: Object,
+  status: Object,
+  price: Number,
+  date: Object,
+  event: Object,
+  uid: String,
+  payment: Object,
+}
+
+// ================= messages from git WIP ======================================
+
+// type RoomInfo {
+//   read() { isMember(this) || isSameId(this.creator) }
+
+//   create() { true }
+//   update() { isSameId(prior(this).creator) }
+//   delete() { isSameId(prior(this).creator) }
+
+//   name: NameString,
+//   creator: String,
+//   members: Member[],
+// }
+// type Post {
+//   // Allow create (but not modify/delete).
+//   create() { true }
+
+//   from: String,
+//   message: MessageString,
+// }
+// type MessageString extends String {
+//   validate() { this.length > 0 && this.length <= 140 }
+// }
+
+// type Modified extends Number {
+//   validate() { this == now }
+// }
+
+// type Member {
+//   // Anyone can add themselves to a Room with their own nickname.
+//   create() { isSameId(key()) }
+
+//   displayName: NameString,
+//   isBanned: Boolean,
+// }
+
+// type NameString {
+//   validate() { this.length > 0 && this.length <= 32 }
+// }
+
+//============my own implementations WIP ======================================
+type Room {
+  uid: String,
+  members: Object,
+  creator: Object,
+  title: Object,
+  messages: Object,
+  timeCreated: Object,
+  last: Object,
+  notifs: Object
+}
+
+type Message {
+  uid: String,
+  from: String,
+  message: String,
+  time: String,
+  seenBy: Object,
+  room: Object
+}
+
+
+
+
+  // Make sure that the only value allowed to be written is now.
+  //validate() { this.modified == now }
+
+
+
+
+//=========================example from git
+
+
+  // read: {
+  //   read() { true },
+  //   write() { isSameId()}
+  // },
+  // writeAuth: {
+
+  // },
+  // writeOwner: {
+
+  // },
+  // adminWrite: {
+
+  // },
+
+// path /userReadable/{objectType}/{uid} {
+//   read() { isSameId(uid) || isAdmin() }
+//   write() { isAdmin() }
+// }
+
+// path /userWriteable/{objectType}/{uid} {
+//   read() { isAdmin() }
+//   write() { isSameId(uid) || isAdmin() }
+// }
+
+// path /userOwned/{objectType}/{uid} {
+//   read() { isSameId(uid) || isAdmin() }
+//   write() { isSameId(uid) || isAdmin() }
+// }
+
+
+//======================================PATHS
+
+path /users/{uid} is UserData {
+  read() { isSameId(uid) || isAdmin() }
+  write() { isAdmin() }
+  // index() { ["email"] }
+}
+
+path /artists/{uid} is Artist {
+  read() { true }
+  write() { isSameId(uid) || isAdmin() }
+}
+
+path /venues/{uid} is Venue {
+  read() { true }
+  write() { isSameId(uid) || isAdmin() }
+}
+
+path /fans/{uid} is Fan {
+  read() { true }
+  write() { isSameId(uid) || isAdmin() }
+}
+
+path /events/{uid} is Event {
+  read() { isAdmin() }
+  write() { isEventOwner(uid) || isAdmin() }
+}
+
+path /payments/{uid} is Payment {
+  read() { isAdmin() }
+  write() { isAdmin() }
+}
+
+path /tickets/{uid} is Ticket {
+  read() { isAdmin() }
+  write() { isAdmin() }
+}
+
+path /rooms/{uid} is Room {
+  read() { isAdmin() }
+  write() { isAdmin() }
+}
+path /messages/{uid} is Message {
+  read() { isAdmin() }
+  write() { isAdmin() }
+}
