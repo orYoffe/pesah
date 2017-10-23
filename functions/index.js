@@ -2,10 +2,10 @@ const path = require('path');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 // const Language = require('@google-cloud/language');
-// const express = require('express');
+const express = require('express');
 
 
-// const app = express();
+const app = express();
 // const language = new Language({ projectId: process.env.GCLOUD_PROJECT });
 admin.initializeApp(functions.config().firebase);
 
@@ -49,34 +49,157 @@ exports.removeUserFromDatabase = functions.auth.user()
 });
 
 exports.guard = functions.https.onRequest((req, res) => {
-  if (req.body.a === 'pesah') {
+  console.log('guard req.hostname ========', req.hostname)
+  if (req.body.a === 'pesah' || req.hostname === 'localhost') {
     res.sendFile(path.join(__dirname, 'realhtml_186231treg.html'));
   } else {
     res.redirect('https://earlybirdshopers.firebaseapp.com?a=wrong');
   }
 });
 
+exports.getArtists = functions.https.onRequest((req, res) => {
+  if (req.query.coutry) { // TODO add params and options
+    console.log('getArtists was called with country ===== ', req.query.coutry);
+  } else {
+    return admin.database().ref(`artists`).once("value").then(snapshot => {
+      let artists = [];
+      snapshot.forEach(function (childSnapshot) {
+        const artist = childSnapshot.val();
+        if (!artist.disabled && artist.uid) {
+          artists.push(artist);
+        }
+        if (artists.length > 5) {
+          return true;
+        }
+      });
+      res.status(200).json(artists);
+    })
+  }
+});
 
+exports.getVenues = functions.https.onRequest((req, res) => {
+  if (req.query.coutry) { // TODO add params and options
+    console.log('getVenues was called with country ===== ', req.query.coutry);
+  } else {
+    return admin.database().ref(`venues`).once("value").then(snapshot => {
+      let venues = [];
+      snapshot.forEach(function (childSnapshot) {
+        const venue = childSnapshot.val();
+        if (!venue.disabled && venue.uid) {
+          venues.push(venue);
+        }
+        if (venues.length > 5) {
+          return true;
+        }
+      });
+      res.status(200).json(venues);
+    })
+  }
+});
 
-// // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
-// // The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
-// // `Authorization: Bearer <Firebase ID Token>`.
-// // when decoded successfully, the ID Token content will be added as `req.user`.
-// const authenticate = (req, res, next) => {
-//   if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
-//     res.status(403).send('Unauthorized');
-//     return;
-//   }
-//   const idToken = req.headers.authorization.split('Bearer ')[1];
-//   admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
-//     req.user = decodedIdToken;
-//     next();
-//   }).catch(error => {
-//     res.status(403).send('Unauthorized');
+exports.getFans = functions.https.onRequest((req, res) => {
+  if (req.query.coutry) { // TODO add params and options
+    console.log('getFans was called with country ===== ', req.query.coutry);
+  } else {
+    return admin.database().ref(`fans`).once("value").then(snapshot => {
+      let fans = [];
+      snapshot.forEach(function (childSnapshot) {
+        const fan = childSnapshot.val();
+        if (!fan.disabled && fan.uid) {
+          fans.push(fan);
+        }
+        if (fans.length > 5) {
+          return true;
+        }
+      });
+      res.status(200).json(fans);
+    })
+  }
+});
+
+exports.getEvents = functions.https.onRequest((req, res) => {
+  if (req.query.coutry) { // TODO add params and options
+    console.log('getEvents was called with country ===== ', req.query.coutry);
+  } else {
+    return admin.database().ref(`events`).once("value").then(snapshot => {
+      let events = [];
+      snapshot.forEach(function (childSnapshot) {
+        const event = childSnapshot.val();
+        if (!event.disabled && event.uid) {
+          events.push(event);
+        }
+        if (events.length > 5) {
+          return true;
+        }
+      });
+      res.status(200).json(events);
+    })
+  }
+});
+
+// exports.createEvent = functions.database.ref('/events/{pushId}')
+//   .onWrite(event => {
+//     // Grab the current value of what was written to the Realtime Database.
+//     const original = event.data.val();
+//     console.log('createEvent =====', event.params.pushId, original);
+//     // const uppercase = original.toUpperCase();
+//     // You must return a Promise when performing asynchronous tasks inside a Functions such as
+//     // writing to the Firebase Realtime Database.
+//     // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
+//     // return event.data.ref.parent.child('uppercase').set(uppercase);
 //   });
-// };
 
-// app.use(authenticate);
+// Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
+// The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
+// `Authorization: Bearer <Firebase ID Token>`.
+// when decoded successfully, the ID Token content will be added as `req.user`.
+const authenticate = (req, res, next) => {
+
+  console.log('authenticate req.headers=== ', req.headers)
+  console.log('authenticate req.body=== ', req.body)
+  console.log('authenticate req.user=== ', req.user)
+  if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+    res.status(403).send('Unauthorized');
+    return;
+  }
+  const idToken = req.headers.authorization.split('Bearer ')[1];
+  return admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
+    req.user = decodedIdToken;
+    console.log('authenticate === user============ ', req.user);
+    next();
+  }).catch(error => {
+    console.log('authenticate req.error=== ', error)
+    res.status(403).send('Unauthorized');
+  });
+};
+
+app.use(authenticate);
+
+app.post('/createEvent', (req, res) => {
+  if (req.body.coutry) { // TODO add params and options
+    console.log('createEvent was called with country ===== ', req.body.coutry);
+  } else if (req.user && req.body && req.body.eventObject) {
+    // return admin.database().ref(`events`)
+    //   .push(req.body.eventObject)
+    //   .then(newEvent => {
+    //     // event id => newEvent.key
+
+    //     return newEvent.child('uid').update(newEvent.key)
+    //       // .then(snapshot => admin.database().ref.child(`${isArtist ? 'artists' : 'venues'}/${user.uid}/events${newEvent.key}`)
+    //       // .set(newEvent.key)
+    //       // .then(eventId => {
+    //       //   debugger
+    //       //   return newEvent
+    //       // })
+    //   })
+  }
+  console.log('createEvent req.headers=== ', req.headers)
+  console.log('createEvent req.body=== ', req.body)
+  console.log('createEvent req.user=== ', req.user)
+  res.status(200)
+});
+
+
 
 // // POST /api/messages
 // // Create a new message, get its sentiment using Google Cloud NLP,
@@ -144,7 +267,7 @@ exports.guard = functions.https.onRequest((req, res) => {
 // });
 
 // // Expose the API as a function
-// exports.api = functions.https.onRequest(app);
+exports.api = functions.https.onRequest(app);
 
 // // Helper function to categorize a sentiment score as positive, negative, or neutral
 // const categorizeScore = score => {

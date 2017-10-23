@@ -1,22 +1,22 @@
 
 // ================== Functions
 
-isLoggedIn() { auth != null && currentUser() }
+isLoggedIn() { auth != null && currentUser() != null }
 currentUser() { auth.uid }
 isSameId(uid) { auth != null && uid == currentUser() }
 isEmptyAndLogged() { auth != null && !data.exists() }
 isAdmin () {
-  root.child('users').child(currentUser()).child('isAdmin').val() == true;
+  prior(root).child('users').child(currentUser()).child('isAdmin').val() == true;
 }
 
 
 getRoomInfo(id) { prior(root).rooms[id] }
 
-isMember(roomInfo) {
-  roomInfo.members[currentUser()] != null && !roomInfo.members[currentUser()].isBanned
-}
+// isMember(uid) {
+//   root.child('rooms').child(uid) || root.child('rooms').child(uid).child('members').val()[uid] != null && !root.child('rooms').child(uid).child('members').val()[uid].isBanned
+// }
 isEventOwner(uid) {
-  root.child('events').child(uid).child('managers').val()[currentUser()] == true;
+  isLoggedIn() && prior(root).child('events').child(uid).val() != null && prior(root).child('events').child(uid).child('managers').val()[currentUser()] == true;
 }
 
 initial(value, init) { value == (isInitial(value) ? init : prior(value)) }
@@ -318,7 +318,8 @@ path /fans/{uid} is Fan {
 
 path /events/{uid} is Event {
   read() { isAdmin() }
-  write() { isEventOwner(uid) || isAdmin() }
+  // write() { isEventOwner(uid) || isAdmin() }
+  write() { isAdmin() }
 }
 
 path /payments/{uid} is Payment {

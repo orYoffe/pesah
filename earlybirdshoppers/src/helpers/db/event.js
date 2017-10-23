@@ -1,4 +1,4 @@
-import { ref, auth, getUser } from '../firebase'
+import { ref, auth, getUser, req } from '../firebase'
 import { verifyEmail } from '../auth'
 
 const defaultEvent = {
@@ -75,7 +75,7 @@ export const createEvent = (eventData) => {
         .find(prop => prop.types.indexOf('country') !== -1).short_name
     const city = location.address_components
         .find(prop => prop.types.indexOf('locality') !== -1).long_name
-        debugger
+    
     const eventTime = new Date(date)
     const [hours, minutes] = time.split(':')
     eventTime.setHours(hours)
@@ -151,19 +151,23 @@ export const createEvent = (eventData) => {
      // create event
      // connect to artist and venue if exists
      // check id event or ATcvRIST
-
-    return ref.child(`events`)
-    .push(eventObject)
-    .then(newEvent => {
-        debugger
-        // event id => newEvent.key
-        return ref.child(`${isArtist ? 'artists' : 'venues'}/${user.uid}/events${newEvent.key}`)
-            .set(newEvent.key)
-            .then(eventId => {
-                debugger
-                return newEvent
-            })
+    return req('POST', 'createEvent', { eventObject }, (...rest) => {
+        console.log('rest--------post event ===', rest)
+        return rest
     })
+
+    // return ref.child(`events`)
+    // .push(eventObject)
+    // .then(newEvent => {
+    //     debugger
+    //     // event id => newEvent.key
+    //     return ref.child(`${isArtist ? 'artists' : 'venues'}/${user.uid}/events${newEvent.key}`)
+    //         .set(newEvent.key)
+    //         .then(eventId => {
+    //             debugger
+    //             return newEvent
+    //         })
+    // })
 }
 
 const createPayment = (paymentData) => {

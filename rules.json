@@ -40,7 +40,7 @@
           ".validate": "false"
         },
         ".read": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "artists": {
@@ -170,7 +170,7 @@
           ".validate": "newData.hasChildren()"
         },
         ".read": "true",
-        ".write": "auth != null && $uid == auth.uid || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "venues": {
@@ -300,7 +300,7 @@
           ".validate": "newData.hasChildren()"
         },
         ".read": "true",
-        ".write": "auth != null && $uid == auth.uid || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "fans": {
@@ -400,7 +400,7 @@
           }
         },
         ".read": "true",
-        ".write": "auth != null && $uid == auth.uid || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "events": {
@@ -521,7 +521,7 @@
           ".validate": "false"
         },
         ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "newData.parent().parent().child('events').child($uid).child('managers').val()[auth.uid] == true || newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "payments": {
@@ -570,7 +570,7 @@
           ".validate": "false"
         },
         ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "tickets": {
@@ -604,7 +604,7 @@
           ".validate": "false"
         },
         ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "rooms": {
@@ -638,7 +638,7 @@
           ".validate": "false"
         },
         ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     },
     "messages": {
@@ -666,7 +666,7 @@
           ".validate": "false"
         },
         ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "newData.parent().parent().child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
       }
     }
   }

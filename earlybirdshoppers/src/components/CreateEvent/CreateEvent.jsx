@@ -26,6 +26,13 @@ class CreateEvent extends Component {
             this.setState({values: storedValues})
         }
     }
+    // componentWillUpdate(nextProps, nextState) {
+    //     // TODO keep values in local storage better
+    //     const storedValues = store.get(LOCALSTORAGE_CREATEEVENT_KEY)
+    //     if (storedValues) {
+    //         this.setState({values: storedValues})
+    //     }
+    // }
 
     isValid = ({
         title, date, location, venue, artist, price, accountType, goal, time
@@ -144,13 +151,13 @@ class CreateEvent extends Component {
                 title, date: new Date(date).toJSON(), time, price, goal,
                 currency, location, venue, artist, photoURL, accountType,
             })
-            if (error.then) {
+            if (error && error.then) {
                 error.then(event => {
                     debugger
-                    this.props.history.push(`/event/${event.uid}`)
+                    // this.props.history.push(`/event/${event.uid}`)
                 })
             }
-            if (error === 'login') {
+            if (error && error === 'login') {
                 return this.setState({ error: 'Please Login to Create Event', errors: [] })
             } else if (error === 'verifyemail') {
                 return this.setState({
@@ -222,12 +229,39 @@ class CreateEvent extends Component {
         this.onPricingChange()
     }
 
+    // example {title: "buxa tlv", date: "2017-10-31", time: "23:10", price: "50", goal: "1989", …}
+    // date
+    // :
+    // "2017-10-31"
+    // goal
+    // :
+    // "1989"
+    // location
+    // :
+    // { address_components: Array(6), adr_address: "<span class="street- address">Rothschild Blvd 31</s…</span>, <span class="country- name">Israel</span>", formatted_address: "Rothschild Blvd 31, Tel Aviv-Yafo, 6688301, Israel", formatted_phone_number: "058-511-1558", geometry: { … }, …
+// }
+// price
+// :
+// "50"
+// time
+// :
+// "23:10"
+// title
+// :
+// "buxa tlv"
+// venue
+// :
+// "buxa tlv"}
+
     onPlacesChanged = places => {} //console.log(this.eventLocation.getPlaces())
     
     render() {
         const { trans, accountType } = this.props
         const { image, error, errors, numberOfTickets, values } = this.state
         console.log('values=========', values)
+        if (values) {
+            store.set(LOCALSTORAGE_CREATEEVENT_KEY, values)
+        }
         const now = new Date()
         const minDate = `${now.getFullYear()}-${ifLessThanTen(now.getDate())}-${ifLessThanTen(now.getMonth() + 1)}`
         return (
@@ -239,6 +273,7 @@ class CreateEvent extends Component {
                         <input
                             ref={node => this.eventTitle = node}
                             required
+                            value={values ? (values.title || '') : ''}
                             className="form-control"
                             type="text"
                             onChange={this.onInputChange}
@@ -250,6 +285,7 @@ class CreateEvent extends Component {
                         <input
                             ref={node => this.eventDate = node}
                             required
+                            value={values ? (values.date || '') : ''}
                             className="form-control"
                             type="date"
                             onChange={this.onInputChange}
@@ -262,6 +298,7 @@ class CreateEvent extends Component {
                         <input
                             ref={node => this.time = node}
                             required
+                            value={values ? (values.time || '') : ''}
                             className="form-control"
                             onChange={this.onInputChange}
                             type="time"
@@ -273,6 +310,7 @@ class CreateEvent extends Component {
                         <input
                             ref={node => this.ticketPrice = node}
                             required
+                            value={values ? (values.price || '') : ''}
                             className="form-control"
                             type="number"
                             onChange={this.onInputChange}
@@ -285,6 +323,7 @@ class CreateEvent extends Component {
                         <input
                             ref={node => this.goal = node}
                             required
+                            value={values ? (values.goal || '') : ''}
                             className="form-control"
                             onChange={this.onInputChange}
                             type="number"
@@ -308,6 +347,7 @@ class CreateEvent extends Component {
                         <input
                             ref={node => this.venue = node}
                             required
+                            value={values ? (values.venue || '') : ''}
                             className="form-control"
                             onChange={this.onInputChange}
                             type="text"
@@ -319,6 +359,7 @@ class CreateEvent extends Component {
                         <input
                             ref={node => this.atrist = node}
                             required
+                            value={values ? (values.artist || '') : ''}
                             className="form-control"
                             onChange={this.onInputChange}
                             type="text"

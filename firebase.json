@@ -1,6 +1,6 @@
 {
   "database": {
-    "rules": "rules.bolt"
+    "rules": "rules.json"
   },
   "hosting": {
     "public": "public",
