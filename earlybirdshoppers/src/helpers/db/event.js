@@ -1,39 +1,7 @@
-import { ref, auth, getUser, req } from '../firebase'
+import { ref, auth, getUser, post } from '../firebase'
 import { verifyEmail } from '../auth'
 
-const defaultEvent = {
-    fans: {},
-    payments: {},
-    currency: {},
-    dates: {
-        created: null,
-        eventTime: null,
-        auctionStart: null,
-        auctionEnd: null,
-        end: null
-    },
-    goalPrice: {},
-    priceStatus: {},
-    ticketPrice: 0,
-    title: '',
-    object: 'event',
-    email: '',
-    eventVerified: false,
-    photoURL: '',
-    uid: 0,
-    artists: {},
-    venues: {},
-    managers: {},
-    isPartOfTour: false,
-    futureEvents: {},
-    pastEvents: {},
-    claimed: false,
-    location: {},
-    collaborationPartners: {
-        venues: {},
-        artists: {}
-    },
-}
+
 
 const defaultPayment = {
     uid: 0,
@@ -62,87 +30,113 @@ export const createEvent = (eventData) => {
     } = eventData
     const isArtist = accountType === 'artist'
     const isVenue = accountType === 'venue' 
-
+    
     if (!user || !user.uid || (!isArtist && !isVenue)) {
         // TODO validate location and date and time goal price and everything else also image
         return 'login'
     }
-    
-
+    // if (!user.emailVerified) {
+    //     verifyEmail()
+    //     return 'verifyemail'
+    // }
     const country = location.address_components
         .find(prop => prop.types.indexOf('country') !== -1).long_name
     const countryShortName = location.address_components
         .find(prop => prop.types.indexOf('country') !== -1).short_name
     const city = location.address_components
         .find(prop => prop.types.indexOf('locality') !== -1).long_name
+
+    if (!country || !countryShortName || !city) {
+        return 'location'
+    }
+
     
     const eventTime = new Date(date)
     const [hours, minutes] = time.split(':')
     eventTime.setHours(hours)
     eventTime.setMinutes(minutes)
-
-    const eventObject = {
-        ...defaultEvent,
-        dates: {
-            created: new Date().toJSON(),
-            eventTime,
-            auctionStart: null, // TODO custom campagins
-            auctionEnd: eventTime, // TODO custom campagins
-        },
-        fans: {},
-        payments: {},
-        owner: {
-            accountType,
-            uid: user.uid,
-            email: user.email,
-        },
-        currency: {
-            symbol: currency,
-            country,
-        },
-        goalPrice: goal,
-        priceStatus: {
-            level: 0,
-            precentage: 0,
-        },
-        ticketPrice:price,
+    
+    return post('createEvent', { eventObject: {
+        eventTime: eventTime.toJSON(),
+        city: city,
+        countryShortName: countryShortName,
+        country: country,
         title,
-        object: 'event',
-        eventVerified: false,
+        date,
+        time,
+        price,
+        goal,
+        currency,
+        venue,
+        artist,
         photoURL,
-        uid: 0,
-        artists: {
-            isOwner: isArtist,
-            [artist]: artist || null, // TODO add real api artist data
-        },
-        venues: {
-            isOwner: isVenue,
-            [venue]: venue|| null, // TODO implement real data venues
-        },
-        managers: {
-            // implement premissions to venue and artists in the event
-        },
-        isPartOfTour: false, // TODO add tour functionality
-        futureEvents: {}, // TODO as part of a tour feature
-        pastEvents: {}, // TODO as part of a tour feature
-        venueApproved: isVenue, // if venue approved 
-        artistApproved: isArtist, // if venue approved 
-        location: {
-            country,
-            countryShortName, 
-            city,
-        },
-        collaborationPartners: {
-            venues: {}, // TOTO aother venues and artists adding
-            artists: {},
-        },
-    }
+        lat: location.geometry.location.lat(),
+        lng: location.geometry.location.lng(),
+     } }, (...rest) => {
+        console.log('rest--------post event ===', rest)
+        return rest
+    })
+    
 
-    // TODO make sure user and event are verified
-    //  if (!user.emailVerified) {
-    //     verifyEmail()
-    //     return 'verifyemail'
+    
+
+    // const eventObject = {
+    //     // ...defaultEvent,
+    //     dates: {
+    //         created: new Date().toJSON(),
+    //         eventTime,
+    //         auctionStart: null, // TODO custom campagins
+    //         auctionEnd: eventTime, // TODO custom campagins
+    //     },
+    //     fans: {},
+    //     payments: {},
+    //     owner: {
+    //         accountType,
+    //         uid: user.uid,
+    //         email: user.email,
+    //     },
+    //     currency: {
+    //         symbol: currency,
+    //         country,
+    //     },
+    //     goalPrice: goal,
+    //     priceStatus: {
+    //         level: 0,
+    //         precentage: 0,
+    //     },
+    //     ticketPrice:price,
+    //     title,
+    //     object: 'event',
+    //     eventVerified: false,
+    //     photoURL,
+    //     uid: 0,
+    //     artists: {
+    //         isOwner: isArtist,
+    //         [artist]: artist || null, // TODO add real api artist data
+    //     },
+    //     venues: {
+    //         isOwner: isVenue,
+    //         [venue]: venue|| null, // TODO implement real data venues
+    //     },
+    //     managers: {
+    //         // implement premissions to venue and artists in the event
+    //     },
+    //     isPartOfTour: false, // TODO add tour functionality
+    //     futureEvents: {}, // TODO as part of a tour feature
+    //     pastEvents: {}, // TODO as part of a tour feature
+    //     venueApproved: isVenue, // if venue approved 
+    //     artistApproved: isArtist, // if venue approved 
+    //     location: {
+    //         country,
+    //         countryShortName, 
+    //         city,
+    //     },
+    //     collaborationPartners: {
+    //         venues: {}, // TOTO aother venues and artists adding
+    //         artists: {},
+    //     },
     // }
+
 
     // TODO add validation
 
@@ -151,10 +145,10 @@ export const createEvent = (eventData) => {
      // create event
      // connect to artist and venue if exists
      // check id event or ATcvRIST
-    return req('POST', 'createEvent', { eventObject }, (...rest) => {
-        console.log('rest--------post event ===', rest)
-        return rest
-    })
+    // return post('POST', 'createEvent', { eventObject: { eventData, user} }, (...rest) => {
+    //     console.log('rest--------post event ===', rest)
+    //     return rest
+    // })
 
     // return ref.child(`events`)
     // .push(eventObject)

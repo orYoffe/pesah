@@ -98,16 +98,16 @@ class CreateEvent extends Component {
             `
         }
         // TODO fix validation for price and goal
-        if (!isNaN(parseInt(price, 10)) && price < 0) {
+        if (isNaN(parseInt(price, 10)) || parseInt(price, 10) < 0) {
             errors.push('price')
             error = `${error}
             Price is required
             `
         }
-        if (!isNaN(parseInt(goal, 10)) && goal < 0) {
+        if (isNaN(parseInt(goal, 10)) || parseInt(goal, 10) < 0 || parseInt(goal, 10) <= parseInt(price, 10)) {
             errors.push('goal')
             error = `${error}
-            Bar goal is required
+            Bar goal is required and must be higher than ticket price
             `
         }
 
@@ -153,17 +153,28 @@ class CreateEvent extends Component {
             })
             if (error && error.then) {
                 error.then(event => {
-                    debugger
+                    // debugger
                     // this.props.history.push(`/event/${event.uid}`)
+                }).catch(err => {
+                    // TODO handle errors
                 })
             }
-            if (error && error === 'login') {
-                return this.setState({ error: 'Please Login to Create Event', errors: [] })
-            } else if (error === 'verifyemail') {
-                return this.setState({
-                    error: 'Please verify your email in order to Create Event you need to verify your email',
-                    errors: []
-                })
+            if (error) {
+                switch (error) {
+                    case 'login':
+                        return this.setState({ error: 'Please Login to Create Event', errors: [] })
+                        break
+                    case 'verifyemail':
+                        return this.setState({
+                            error: 'Please verify your email in order to Create Event you need to verify your email',
+                            errors: []
+                        })
+                        
+                        break
+                
+                    default:
+                        break
+                }
             }
             
             this.setState({error: '', errors: []})
@@ -228,30 +239,6 @@ class CreateEvent extends Component {
         })
         this.onPricingChange()
     }
-
-    // example {title: "buxa tlv", date: "2017-10-31", time: "23:10", price: "50", goal: "1989", …}
-    // date
-    // :
-    // "2017-10-31"
-    // goal
-    // :
-    // "1989"
-    // location
-    // :
-    // { address_components: Array(6), adr_address: "<span class="street- address">Rothschild Blvd 31</s…</span>, <span class="country- name">Israel</span>", formatted_address: "Rothschild Blvd 31, Tel Aviv-Yafo, 6688301, Israel", formatted_phone_number: "058-511-1558", geometry: { … }, …
-// }
-// price
-// :
-// "50"
-// time
-// :
-// "23:10"
-// title
-// :
-// "buxa tlv"
-// venue
-// :
-// "buxa tlv"}
 
     onPlacesChanged = places => {} //console.log(this.eventLocation.getPlaces())
     

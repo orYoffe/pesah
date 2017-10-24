@@ -3,10 +3,9 @@ import 'firebase/database'
 import 'firebase/auth'
 import 'firebase/messaging'
 import 'firebase/storage'
-import { DB_CONFIG } from './config'
+import { DB_CONFIG, API_ENDPOINT } from './config'
 
 firebase.initializeApp(DB_CONFIG)
-firebase.auth().languageCode = 'en' // TODO add locale
 
 export default firebase
 export const ref = firebase.database().ref()
@@ -19,33 +18,23 @@ export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('valu
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
 export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback).catch(callback)
-export const req = (method, url, body, callback) => {
+export const post = (url, body, callback) => {
     if (!auth().currentUser) {
         console.log('Not authenticated. Make sure you\'re signed in!')
         return 404
     }
 
     // Get the Firebase auth token to authenticate the request
-    return firebase.auth().currentUser.getToken().then(function (token) {
-        const request = {
-            method: method,
-            // dataType: 'json',
+    return firebase.auth().currentUser.getIdToken().then(function (token) {
+        document.cookie = '__session=' + token + ';max-age=3600';
+        fetch(`${API_ENDPOINT}${url}`, {
+            method: 'POST',
             headers: {
-                authorization: `Bearer ${token}`
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             // mode: 'cors',
-            // cache: 'default'
-        }
-
-        if (method === 'POST') {
-            request.headers['Content-Type'] = 'application/json'
-            request.body = JSON.stringify(body)
-        }
-        
-        console.log('Making authenticated request:', method, url)
-        return fetch(`http://localhost:5000/earlybirdshopers/us-central1/api/${url}`, request).then(res => callback(res.json())).catch(function () {
-            console.log('Request error: ' + method + ' ' + url, request)
-            return 500
+            body: JSON.stringify(body)
         })
     })
 }

@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie'
 import en from './en'
 import hebrew from './hebrew'
+import { auth } from '../helpers/firebase'
 
 // TODO create support for rtl
 
@@ -41,6 +42,7 @@ const initTranslations = (locale) => {
 export const setLocale = (locale) => {
     currentLocale = locale
     Cookies.set('locale', currentLocale, { expires: 365 })
+    auth().languageCode = locale
     translations = initTranslations(locale)
     return translations
 }
