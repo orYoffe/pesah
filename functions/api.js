@@ -7,6 +7,9 @@ const cors = require('cors')();
 const express = require('express');
 const cookieParser = require('cookie-parser')();
 
+const isString = str => str && typeof str === 'string' && str.length > 0;
+const isNumber = num => !isNaN(parseInt(num, 10));
+
 
 const app = express();
 
@@ -64,11 +67,8 @@ app.use(authenticate);
 app.post('/createEvent', (req, res) => {
     if (req.body && req.body.eventObject) {
         if (!req.user.email_verified) {
-            console.log('-----------not email_verified---------------')
             return res.status(400).json({ errorCode: 400, errorMessage: 'email' });
-            // return
         }
-        console.log('-----------email_verified---------------')
         return admin.database().ref(`users/${req.user.uid}`).once("value").then(snapshot => {
         const user = snapshot.val();
         const event = req.body.eventObject;
@@ -82,6 +82,29 @@ app.post('/createEvent', (req, res) => {
         if (isNaN(Date.parse(event.eventTime))) {
             return res.status(400).json({ errorCode: 400, errorMessage: 'eventTime' });
         }
+        if (!isNumber(event.goal)) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'goal' });
+        }
+        if (!isNumber(event.price)) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'price' });
+        }
+        if (!isString(event.title) || event.title.length < 4) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'title' });
+        }
+        if (!isString(event.city) || !isString(event.country) || !isString(event.formatted_address) || !isString(event.countryShortName)
+            || !isNumber(event.lat) || !isNumber(event.lng)) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'location' });
+        }
+        if (!isString(event.currency) || (event.currency !== '$' && event.currency !== '₪')) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'currency' });
+        }
+        if (!isString(event.venue) || event.venue.length < 4) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'venue' });
+        }
+        if (!isString(event.artist) || event.artist.length < 4) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'artist' });
+        }
+
         // TODO add validations
 
         const newEvent = {
@@ -122,13 +145,13 @@ app.post('/createEvent', (req, res) => {
             venues: {},
             fans: {}
           },
-          description: event.description || '',
+          description: isString(event.description) ? event.description : '',
           fundStatus: {
             fundsRaised: 0,
             precentage: 0,
           },
           page: {
-            cover: event.photoURL
+              cover: isString(event.photoURL) ? event.photoURL : ''
           },
           venueVerified: false,
           artistVerified: false,

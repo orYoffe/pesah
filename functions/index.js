@@ -46,8 +46,7 @@ exports.removeUserFromDatabase = functions.auth.user()
 });
 
 exports.guard = functions.https.onRequest((req, res) => {
-  console.log('guard req.hostname ========', req.hostname)
-  if (req.body.a === 'pesah' || req.hostname === 'localhost') {
+  if (req.body.a === 'pesah') {
     res.sendFile(path.join(__dirname, 'realhtml_186231treg.html'));
   } else {
     res.redirect('https://earlybirdshopers.firebaseapp.com?a=wrong');

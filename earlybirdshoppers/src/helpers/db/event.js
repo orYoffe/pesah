@@ -1,8 +1,6 @@
 import { ref, auth, getUser, post } from '../firebase'
 import { verifyEmail } from '../auth'
 
-
-
 const defaultPayment = {
     uid: 0,
     email: '',
@@ -35,10 +33,10 @@ export const createEvent = (eventData) => {
         // TODO validate location and date and time goal price and everything else also image
         return 'login'
     }
-    // if (!user.emailVerified) {
-    //     verifyEmail()
-    //     return 'verifyemail'
-    // }
+    if (!user.emailVerified) {
+        verifyEmail()
+        return 'verifyemail'
+    }
     const country = location.address_components
         .find(prop => prop.types.indexOf('country') !== -1).long_name
     const countryShortName = location.address_components
@@ -46,7 +44,7 @@ export const createEvent = (eventData) => {
     const city = location.address_components
         .find(prop => prop.types.indexOf('locality') !== -1).long_name
 
-    if (!country || !countryShortName || !city) {
+    if (!country || !countryShortName || !city || !location.formatted_address) {
         return 'location'
     }
 
@@ -76,8 +74,8 @@ export const createEvent = (eventData) => {
      } }, (...rest) => {
         console.log('rest--------post event ===', rest)
         return rest
-        }).catch(err => {
-            console.log('err--------post event ===', err)
+    }).catch(err => {
+        console.log('err--------post event ===', err)
     })
     // TODO add validation
 
