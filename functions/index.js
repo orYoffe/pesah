@@ -31,7 +31,7 @@ exports.removeUserFromDatabase = functions.auth.user()
     // });
     
     // //TODO delete user's access but keep user
-    return admin.database().ref(`/users/${event.data.uid}/`)
+  return admin.database().ref(`/users/${event.data.uid}/disabled`)
   .then(user => {
     accountType = user.accountType;
     console.log('event==user== ', user);
@@ -41,8 +41,8 @@ exports.removeUserFromDatabase = functions.auth.user()
     return user.child('disabled').set(true)
     // return
   })
-  .then(() => accountType &&
-  admin.database().ref(`/accountTypes/${event.data.uid}`).child('disabled').set(true))
+  .then(() => (accountType === 'artist' || accountType === 'venue' || accountType === 'fan') &&
+  admin.database().ref(`/${accountType}s/${event.data.uid}`).child('disabled').set(true))
 });
 
 exports.guard = functions.https.onRequest((req, res) => {
