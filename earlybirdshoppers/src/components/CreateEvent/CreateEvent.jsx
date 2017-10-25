@@ -154,12 +154,13 @@ class CreateEvent extends Component {
             if (error && error.then) {
                 error.then(event => {
                     // debugger
+                    console.log(' new event ===', event)
                     // this.props.history.push(`/event/${event.uid}`)
                 }).catch(err => {
                     // TODO handle errors
+                    console.log('error ===', err)
                 })
-            }
-            if (error) {
+            } else {
                 switch (error) {
                     case 'login':
                         return this.setState({ error: 'Please Login to Create Event', errors: [] })
@@ -173,11 +174,11 @@ class CreateEvent extends Component {
                         break
                 
                     default:
+                    this.setState({error: '', errors: []})
                         break
                 }
             }
             
-            this.setState({error: '', errors: []})
         }
     }
 

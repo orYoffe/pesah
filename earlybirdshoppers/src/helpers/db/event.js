@@ -72,96 +72,16 @@ export const createEvent = (eventData) => {
         photoURL,
         lat: location.geometry.location.lat(),
         lng: location.geometry.location.lng(),
+        formatted_address: location.formatted_address,
      } }, (...rest) => {
         console.log('rest--------post event ===', rest)
         return rest
+        }).catch(err => {
+            console.log('err--------post event ===', err)
     })
-    
-
-    
-
-    // const eventObject = {
-    //     // ...defaultEvent,
-    //     dates: {
-    //         created: new Date().toJSON(),
-    //         eventTime,
-    //         auctionStart: null, // TODO custom campagins
-    //         auctionEnd: eventTime, // TODO custom campagins
-    //     },
-    //     fans: {},
-    //     payments: {},
-    //     owner: {
-    //         accountType,
-    //         uid: user.uid,
-    //         email: user.email,
-    //     },
-    //     currency: {
-    //         symbol: currency,
-    //         country,
-    //     },
-    //     goalPrice: goal,
-    //     priceStatus: {
-    //         level: 0,
-    //         precentage: 0,
-    //     },
-    //     ticketPrice:price,
-    //     title,
-    //     object: 'event',
-    //     eventVerified: false,
-    //     photoURL,
-    //     uid: 0,
-    //     artists: {
-    //         isOwner: isArtist,
-    //         [artist]: artist || null, // TODO add real api artist data
-    //     },
-    //     venues: {
-    //         isOwner: isVenue,
-    //         [venue]: venue|| null, // TODO implement real data venues
-    //     },
-    //     managers: {
-    //         // implement premissions to venue and artists in the event
-    //     },
-    //     isPartOfTour: false, // TODO add tour functionality
-    //     futureEvents: {}, // TODO as part of a tour feature
-    //     pastEvents: {}, // TODO as part of a tour feature
-    //     venueApproved: isVenue, // if venue approved 
-    //     artistApproved: isArtist, // if venue approved 
-    //     location: {
-    //         country,
-    //         countryShortName, 
-    //         city,
-    //     },
-    //     collaborationPartners: {
-    //         venues: {}, // TOTO aother venues and artists adding
-    //         artists: {},
-    //     },
-    // }
-
-
     // TODO add validation
 
 
-     // TODO list:
-     // create event
-     // connect to artist and venue if exists
-     // check id event or ATcvRIST
-    // return post('POST', 'createEvent', { eventObject: { eventData, user} }, (...rest) => {
-    //     console.log('rest--------post event ===', rest)
-    //     return rest
-    // })
-
-    // return ref.child(`events`)
-    // .push(eventObject)
-    // .then(newEvent => {
-    //     debugger
-    //     // event id => newEvent.key
-    //     return ref.child(`${isArtist ? 'artists' : 'venues'}/${user.uid}/events${newEvent.key}`)
-    //         .set(newEvent.key)
-    //         .then(eventId => {
-    //             debugger
-    //             return newEvent
-    //         })
-    // })
 }
 
 const createPayment = (paymentData) => {

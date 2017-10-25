@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import moment from 'moment'
 import { events, artists, venues } from '../helpers/mockData'
-import { getUser } from '../helpers/firebase'
+import { getEvent } from '../helpers/firebase'
 import NotFound from './NotFound'
 import Loader from '../components/Loader/'
 import ArtistItem from '../components/ArtistItem/'
@@ -16,12 +16,13 @@ class Event extends Component {
     componentDidMount() {
         pageView();
 
+        debugger
         const { id } = this.props.match.params
         let event = events.find(event => parseInt(id,10) === event.id)
         
 
         if (!event) {
-            getUser(id, snapshot => {
+            getEvent(id, snapshot => {
                 event = snapshot.val()
                 this.setState({ event: event || 'not found' })
             })
@@ -75,7 +76,7 @@ class Event extends Component {
             return <Loader />
         }
 
-        if(event.location) {
+        if(event.name) {
             const {
                 date,
                 location,
@@ -109,10 +110,59 @@ class Event extends Component {
                 </div>
             )
         }else{
-            const { email } = event   
+            const {
+                date: {
+                    created,
+                    eventTime,
+                    },
+                goalPrice,
+                ticketPrice,
+                title,
+                verified,
+                managers,
+                location: {
+                    country,
+                    city,
+                    short,
+                    address,
+                    lat,
+                    lng,
+                },
+                collaboration: {
+                    artists,
+                    venues,
+                    fans
+                },
+                description,
+                fundStatus: {
+                    fundsRaised,
+                    precentage,
+                },
+                page: { cover },
+                venueVerified,
+                artistVerified,
+                cancelled,
+                funded,
+            } = event   
+            const bar = fundsRaised ? ((fundsRaised / goalPrice) * 100).toFixed(3) : 0
             content = (<div className="page-content">
-                            <h5> email: {email} </h5>
-                        </div>)
+                <h3>Event title: {title} {verified ? 'event is verified' : 'event is not verified'}</h3>
+                <h4>Where: {address}</h4>
+                <p>city: {city}, country {country}, short name {short}</p>
+                <img src={cover} alt=""/>
+                <div>
+                    <div className="bar-progress"><div style={{ height: `${bar}%` }}>{fundsRaised}$</div></div>
+                    <h4>This Event already raised {fundsRaised}$</h4>
+                    <h5>Help make this event happen</h5>
+                    <p>Ticket price {ticketPrice}$</p>
+                    <button className="btn btn-success" onClick={this.raiseTheBar}>Raise The Bar</button>
+                </div>
+                <h5>When: {moment(eventTime).format('LLL')}</h5>
+                <h4>Who:</h4>
+                <div className="row">
+                    {managers && Object.keys(managers).map(artist => <div key={`artist_item_${artist.uid}`}>{artist.email}</div>)}
+                </div>
+            </div>)
         }
         console.log('event', event)
         return (

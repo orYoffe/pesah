@@ -2,7 +2,8 @@
 
 // const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const cors = require('cors')({ origin: true });
+// const cors = require('cors')({ origin: true });
+const cors = require('cors')();
 const express = require('express');
 const cookieParser = require('cookie-parser')();
 
@@ -62,12 +63,12 @@ app.use(authenticate);
 
 app.post('/createEvent', (req, res) => {
     if (req.body && req.body.eventObject) {
-
-
         if (!req.user.email_verified) {
-            res.status(200).json({ errorCode: 200, errorMessage: 'email' });
-            return
+            console.log('-----------not email_verified---------------')
+            return res.status(400).json({ errorCode: 400, errorMessage: 'email' });
+            // return
         }
+        console.log('-----------email_verified---------------')
         return admin.database().ref(`users/${req.user.uid}`).once("value").then(snapshot => {
         const user = snapshot.val();
         const event = req.body.eventObject;
@@ -76,18 +77,26 @@ app.post('/createEvent', (req, res) => {
         const isVenue = user.accountType === 'venue'
 
         if (!isArtist && !isVenue) {
-            return res.status(200).json({ errorCode: 200, errorMessage: 'account' });
+            return res.status(400).json({ errorCode: 400, errorMessage: 'account' });
         }
         if (isNaN(Date.parse(event.eventTime))) {
-            return res.status(200).json({ errorCode: 200, errorMessage: 'eventTime' });
+            return res.status(400).json({ errorCode: 400, errorMessage: 'eventTime' });
         }
+        // TODO add validations
 
         const newEvent = {
           fans: {},
           payments: {},
-          currency: {},
-          artists: {},
-          venues: {},
+          currency: {
+              symbol: event.currency,
+              name: event.currency === '$' ? 'USD' : 'ILS'
+          },
+          artists: {
+              // TODO add artist
+          },
+          venues: {
+              // TODO add venue
+          },
           date: {
             created: new Date().toJSON(),
             eventTime: event.eventTime,
@@ -104,6 +113,7 @@ app.post('/createEvent', (req, res) => {
             country: event.country,
             city: event.city,
             short: event.countryShortName,
+            address: event.formatted_address,
             lat: event.lat,
             lng: event.lng
           },
@@ -113,7 +123,10 @@ app.post('/createEvent', (req, res) => {
             fans: {}
           },
           description: event.description || '',
-          fundStatus: 'init',
+          fundStatus: {
+            fundsRaised: 0,
+            precentage: 0,
+          },
           page: {
             cover: event.photoURL
           },
@@ -126,7 +139,29 @@ app.post('/createEvent', (req, res) => {
             uid: req.user.uid,
             email: req.user.email,
             accountType: user.accountType
-        } 
+        }
+        if (isArtist) {
+            newEvent.artists[req.user.uid] = {
+                uid: req.user.uid,
+                email: req.user.email,
+                accountType: user.accountType
+            }
+            newEvent.venues[event.venue] = {
+                email: event.venue,
+                accountType: 'venue'
+            }
+        } else {
+            newEvent.venues[req.user.uid] = {
+                uid: req.user.uid,
+                email: req.user.email,
+                accountType: user.accountType
+            }
+            newEvent.artists[event.artist] = {
+                email: event.artist,
+                accountType: 'artist'
+            }
+            
+        }
 
         console.log('newEvent--------------', newEvent);
         return admin.database().ref(`events`)
@@ -135,15 +170,16 @@ app.post('/createEvent', (req, res) => {
             // event id => newDBEvent.key
                 res.status(200).json(newDBEvent);
                 return newDBEvent.update({'uid': newDBEvent.key})
-              .then(snapshot => admin.database().ref(`${isArtist ? 'artists' : 'venues'}/${user.uid}/events/${newDBEvent.key}`)
-              .set({uid: newDBEvent.key})
-              .then(eventId => {
+                .then(snapshot => admin.database().ref(`${isArtist ? 'artists' : 'venues'}/${user.uid}/events/${newDBEvent.key}`)
+                .set({uid: newDBEvent.key})
+                .then(eventId => {
+                    // TODO add venue update if it is a user
                 return newDBEvent
               }))
           });
         });
     } else {
-        res.status(200).send('eventObject');
+        res.status(400).send('eventObject');
     }
 });
 

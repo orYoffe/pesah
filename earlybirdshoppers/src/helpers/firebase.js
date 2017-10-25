@@ -27,14 +27,14 @@ export const post = (url, body, callback) => {
     // Get the Firebase auth token to authenticate the request
     return firebase.auth().currentUser.getIdToken().then(function (token) {
         document.cookie = '__session=' + token + ';max-age=3600';
-        fetch(`${API_ENDPOINT}${url}`, {
+        return fetch(`${API_ENDPOINT}${url}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            // mode: 'cors',
+            mode: 'cors',
             body: JSON.stringify(body)
-        })
+        }).then(res => res.json())
     })
 }

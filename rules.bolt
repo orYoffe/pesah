@@ -37,6 +37,7 @@ type Location {
   country: String,
   city: String,
   short: String,
+  address: String,
   lat: Number,
   lng: Number
 }
@@ -317,7 +318,7 @@ path /fans/{uid} is Fan {
 }
 
 path /events/{uid} is Event {
-  read() { isAdmin() }
+  read() { true }
   // write() { isEventOwner(uid) || isAdmin() }
   write() { isAdmin() }
 }
