@@ -89,11 +89,8 @@ export const saveUser = (user, accountType, displayName) => {
             displayName: displayName,
             accountType,
             email: user.email,
-            emailVerified: user.emailVerified,
             photoURL: user.photoURL,
-            isAnonymous: user.isAnonymous,
             uid: user.uid,
-            providerData: user.providerData,
         },
     }
 

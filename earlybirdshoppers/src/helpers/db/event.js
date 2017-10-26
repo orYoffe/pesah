@@ -1,4 +1,4 @@
-import { ref, auth, getUser, post } from '../firebase'
+import { auth, post } from '../firebase'
 import { verifyEmail } from '../auth'
 
 const defaultPayment = {
@@ -47,7 +47,8 @@ export const createEvent = (eventData) => {
     if (!country || !countryShortName || !city || !location.formatted_address) {
         return 'location'
     }
-
+    
+    // TODO add validation
     
     const eventTime = new Date(date)
     const [hours, minutes] = time.split(':')
@@ -77,7 +78,6 @@ export const createEvent = (eventData) => {
     }).catch(err => {
         console.log('err--------post event ===', err)
     })
-    // TODO add validation
 
 
 }

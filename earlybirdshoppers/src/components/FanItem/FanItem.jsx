@@ -9,14 +9,16 @@ const FanItem = props => {
         name,
         location,
         id,
+        uid,
+        displayName,
     } = props
     return (
         
         <div className="col-sm-6 col-xs-12">
-            <Link to={`/fan/${id}`} className="fan-item item user-item">
+            <Link to={`/fan/${id || uid}`} className="fan-item item user-item">
                 <div className="fan-item-content user-item-content">
-                    <h4>fan name: {name}</h4>
-                    <p>Based in: {location}</p>
+                    <h4>fan name: {name || displayName}</h4>
+                    {location && <p>Based in: {location}</p>}
                 </div>
             </Link>
         </div>

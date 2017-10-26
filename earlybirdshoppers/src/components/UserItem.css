@@ -1,5 +1,5 @@
 .user-item {
-    height: 180px;
+    /* height: 180px; */
     box-shadow: 0 0 3px #aaa;
     transition: transform 0.25s;
     transform: none;

@@ -144,6 +144,7 @@ class Event extends Component {
                 cancelled,
                 funded,
             } = event   
+            const managersArray = Object.keys(managers)
             const bar = fundsRaised ? ((fundsRaised / goalPrice) * 100).toFixed(3) : 0
             content = (<div className="page-content">
                 <h3>Event title: {title} {verified ? 'event is verified' : 'event is not verified'}</h3>
@@ -160,7 +161,8 @@ class Event extends Component {
                 <h5>When: {moment(eventTime).format('LLL')}</h5>
                 <h4>Who:</h4>
                 <div className="row">
-                    {managers && Object.keys(managers).map(artist => <div key={`artist_item_${artist.uid}`}>{artist.email}</div>)}
+                    {managersArray.length && managersArray.map(artist =>
+                    <div key={`artist_item_${managers[artist].uid}`}>{managers[artist].email}</div>)}
                 </div>
             </div>)
         }

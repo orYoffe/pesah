@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { events, artists } from '../helpers/mockData'
+import { pageView } from '../helpers/analytics'
 import { getUser } from '../helpers/firebase'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem/'
 import Loader from '../components/Loader/'
-import { pageView } from '../helpers/analytics'
+import OpenChat from '../components/OpenChat/'
 
 class Artist extends Component {
     state = {
@@ -91,10 +93,21 @@ class Artist extends Component {
                         </div>
                     )
         } else {
-            const { email } = artist
-            content = (<div className="page-content">
-                            <h5> email: {email} </h5>
-                        </div>)
+            const { userId, isLoggedIn } = this.props
+            content = (
+                <div className="page-content">
+                    <h5> email: {artist.email} </h5>
+                    {isLoggedIn && artist.uid !== userId && (
+                        <OpenChat
+                        chatPartner={{
+                            uid: artist.uid,
+                            photo: artist.photoURL,
+                            displayName: artist.displayName
+                        }} />
+                        )
+                    }
+                </div>
+            )
         }
 
         console.log('artist', artist)
@@ -106,4 +119,9 @@ class Artist extends Component {
     }
 }
 
-export default Artist
+const mapStateToProps = state => ({
+    isLoggedIn: state.auth.loggedIn,
+    userId: state.auth.user.uid,
+})
+
+export default connect(mapStateToProps)(Artist)

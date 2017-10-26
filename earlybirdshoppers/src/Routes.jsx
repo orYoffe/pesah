@@ -19,6 +19,7 @@ import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 import Menu from './components/Menu/'
 import CreateEvent from './components/CreateEvent/'
+import Chat from './components/Chat/'
 
 const Routes = (props) => (
         <Router>
@@ -42,6 +43,7 @@ const Routes = (props) => (
                             <Route path="/404" component={NotFound}/>
                             <Redirect to="/404" />
                         </Switch>
+                        <Chat />
                     </div>
                 </div>
             </div>

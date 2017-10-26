@@ -1,5 +1,3 @@
-// import { auth } from '../helpers/firebase'
-
 const LOGIN = 'LOGIN'
 const LOGOUT = 'LOGOUT'
 const SIGNUP = 'SIGNUP'

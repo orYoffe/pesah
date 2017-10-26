@@ -57,6 +57,21 @@ export default function register() {
 //               // It's the perfect time to display a "New content is
 //               // available; please refresh." message in your web app.
 //               console.log('New content is available; please refresh.');
+//               export const messaging = firebase.messaging()
+
+// for srvice worker notifs
+// messaging.setBackgroundMessageHandler(function (payload) {
+//   console.log('[firebase-messaging-sw.js] Received background message ', payload);
+//   // Customize notification here
+//   const notificationTitle = "You've got a new message";
+//   const notificationOptions = {
+//     body: "You've got a new message on Raise The Bar",
+//     icon: '/favicon.ico'
+//   };
+
+//   return self.registration.showNotification(notificationTitle, // eslint-disable-line no-restricted-globals
+//     notificationOptions);
+// });
 //             } else {
 //               // At this point, everything has been precached.
 //               // It's the perfect time to display a

@@ -4,7 +4,7 @@
 isLoggedIn() { auth != null && currentUser() != null }
 currentUser() { auth.uid }
 isSameId(uid) { auth != null && uid == currentUser() }
-isEmptyAndLogged() { auth != null && !data.exists() }
+isEmptyAndLogged() { auth != null && !data }
 isAdmin () {
   prior(root).child('users').child(currentUser()).child('isAdmin').val() == true;
 }
@@ -12,9 +12,9 @@ isAdmin () {
 
 getRoomInfo(id) { prior(root).rooms[id] }
 
-// isMember(uid) {
-//   root.child('rooms').child(uid) || root.child('rooms').child(uid).child('members').val()[uid] != null && !root.child('rooms').child(uid).child('members').val()[uid].isBanned
-// }
+isMember(uid) {
+  root.child('rooms').child(uid) || root.child('rooms').child(uid).child('members').val()[currentUser()] != null && !root.child('rooms').child(uid).child('members').val()[currentUser()].isBanned
+}
 isEventOwner(uid) {
   isLoggedIn() && prior(root).child('events').child(uid).val() != null && prior(root).child('events').child(uid).child('managers').val()[currentUser()] == true;
 }
@@ -193,50 +193,18 @@ type Ticket {
 
 // ================= messages from git WIP ======================================
 
-// type RoomInfo {
-//   read() { isMember(this) || isSameId(this.creator) }
-
-//   create() { true }
-//   update() { isSameId(prior(this).creator) }
-//   delete() { isSameId(prior(this).creator) }
-
-//   name: NameString,
-//   creator: String,
-//   members: Member[],
-// }
-// type Post {
-//   // Allow create (but not modify/delete).
-//   create() { true }
-
-//   from: String,
-//   message: MessageString,
-// }
-// type MessageString extends String {
-//   validate() { this.length > 0 && this.length <= 140 }
-// }
-
-// type Modified extends Number {
-//   validate() { this == now }
-// }
-
-// type Member {
-//   // Anyone can add themselves to a Room with their own nickname.
-//   create() { isSameId(key()) }
-
-//   displayName: NameString,
-//   isBanned: Boolean,
-// }
-
-// type NameString {
-//   validate() { this.length > 0 && this.length <= 32 }
-// }
-
-//============my own implementations WIP ======================================
-type Room {
+type Member {
   uid: String,
-  members: Object,
-  creator: Object,
-  title: Object,
+  photo: String,
+  displayName: String,
+  isBanned: Boolean,
+}
+
+type Room {
+  create() { isEmptyAndLogged() }
+  delete() { isSameId(prior(this).creator) }
+  creator: String,
+  uid: String,
   messages: Object,
   timeCreated: Object,
   last: Object,
@@ -246,8 +214,9 @@ type Room {
 type Message {
   uid: String,
   from: String,
-  message: String,
-  time: String,
+  userUid: String,
+  text: String,
+  timeCreated: InitialTimestamp,
   seenBy: Object,
   room: Object
 }
@@ -258,48 +227,11 @@ type Message {
   // Make sure that the only value allowed to be written is now.
   //validate() { this.modified == now }
 
-
-
-
-//=========================example from git
-
-
-  // read: {
-  //   read() { true },
-  //   write() { isSameId()}
-  // },
-  // writeAuth: {
-
-  // },
-  // writeOwner: {
-
-  // },
-  // adminWrite: {
-
-  // },
-
-// path /userReadable/{objectType}/{uid} {
-//   read() { isSameId(uid) || isAdmin() }
-//   write() { isAdmin() }
-// }
-
-// path /userWriteable/{objectType}/{uid} {
-//   read() { isAdmin() }
-//   write() { isSameId(uid) || isAdmin() }
-// }
-
-// path /userOwned/{objectType}/{uid} {
-//   read() { isSameId(uid) || isAdmin() }
-//   write() { isSameId(uid) || isAdmin() }
-// }
-
-
 //======================================PATHS
 
 path /users/{uid} is UserData {
   read() { isSameId(uid) || isAdmin() }
   write() { isAdmin() }
-  // index() { ["email"] }
 }
 
 path /artists/{uid} is Artist {
@@ -334,10 +266,22 @@ path /tickets/{uid} is Ticket {
 }
 
 path /rooms/{uid} is Room {
-  read() { isAdmin() }
-  write() { isAdmin() }
+  read() { isMember(uid) }
+  update() { isMember(uid) }
+  create() { isEmptyAndLogged() }
 }
-path /messages/{uid} is Message {
-  read() { isAdmin() }
-  write() { isAdmin() }
+path /rooms/{id}/uid is String {
+  validate() { id == this }
+}
+
+path /rooms/{roomUid}/messages/{id} is Message {
+  index() { ["timeCreated"] }
+}
+path /rooms/{roomUid}/messages/{id}/uid is String {
+  validate() { id == this }
+}
+
+path /rooms/{roomUid}/members/{id} is Member {}
+path /rooms/{roomUid}/members/{id}/uid is String {
+  validate() { id == this }
 }
