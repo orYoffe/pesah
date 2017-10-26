@@ -2,17 +2,18 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
-// exports.createProfile = functions.auth.user()
-//     .onCreate(event => {
-//         console.log('event==onCreate== ', event);
-//         const user = event.data;
+exports.createProfile = functions.auth.user()
+    .onCreate(event => {
+        console.log('event==onCreate== ', event);
+        const user = event.data;
 
-//         return admin.database().ref(`/users/${user.uid}`).set({
-//             creationTime: user.metadata.creationTime,
-//             email: user.email,
-//             uid: user.uid
-//         });
-//     });
+        return admin.database().ref(`/users/${user.uid}`).set({
+            creationTime: user.metadata.creationTime,
+            email: user.email,
+            rooms: {},
+            uid: user.uid
+        });
+    });
 
 exports.disableUser = functions.auth.user()
     .onDelete((event) => {

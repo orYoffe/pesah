@@ -6,6 +6,7 @@ import { setRoom } from '../../reducers/chat'
 class OpenChat extends Component {
     createRoom = (chatPartner) => {
         const { userId, photoURL, displayName } = this.props
+        // TODO fix undefined values - can't have undefined when updating the db
         ref.child(`rooms`).push({
             creator: userId,
             messages: {},
@@ -35,9 +36,9 @@ class OpenChat extends Component {
         const { userId, chatPartner } = this.props
         ref.child(`users/${userId}/rooms`).once('value', snapshot => {
             const userRooms = snapshot.val()
-            const rooms = Object.keys(userRooms)
+            const rooms = userRooms && Object.keys(userRooms)
     
-            if (rooms.length) {
+            if (rooms && rooms.length) {
                 const room = rooms.find(room => {
                     // check if users have a private room
                     const members = Object.keys(userRooms[room].members)

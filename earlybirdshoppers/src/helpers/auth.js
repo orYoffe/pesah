@@ -66,6 +66,7 @@ export const resetPassword = (email) => auth().sendPasswordResetEmail(email)
 
 export const verifyEmail = () => auth().currentUser.sendEmailVerification()
 
+// TODO FIX SIGNUP PROCESS
 export const signup = ({
     email,
     password,

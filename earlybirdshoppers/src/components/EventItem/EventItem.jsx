@@ -42,7 +42,6 @@ const EventItem = props => {
             title,
             date,
             location,
-        artists: eventArtists,
         venue,
         price,
         managers,
@@ -53,16 +52,16 @@ const EventItem = props => {
             <Link to={`/event/${uid}`} className="event-item  user-item">
                 <div className="event-item-content user-item-content">
                     <h4>Event title: {title}</h4>
-                    {location.address && <p>address: {location.address}</p>}
+                    {location && location.address && <p>address: {location.address}</p>}
                     <p> at {venue}</p>
-                    <p>city: {location.city}</p>
-                    <p>coutry: {location.coutry}</p>
+                    {location && <p>city: {location.city}</p>}
+                    {location && <p>coutry: {location.coutry}</p>}
                     <p>Price: {price}$</p>
-                    <p>date {moment(date.eventTime).format('LLL')}</p>
-                    <p>date created{moment(date.created).format('LLL')}</p>
-                    <p>
+                    {date && <p>date {moment(date.eventTime).format('LLL')}</p>}
+                    {date && <p>date created{moment(date.created).format('LLL')}</p>}
+                    {managers && <p>
                         created by: {Object.keys(managers).map(manager => managers[manager].accountType + ' ' + managers[manager].email)}
-                    </p>
+                    </p>}
                 </div>
             </Link>
         </div>

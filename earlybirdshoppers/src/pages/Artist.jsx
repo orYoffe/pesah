@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { events, artists } from '../helpers/mockData'
 import { pageView } from '../helpers/analytics'
-import { getUser } from '../helpers/firebase'
+import { getArtist } from '../helpers/firebase'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem/'
 import Loader from '../components/Loader/'
@@ -20,7 +20,7 @@ class Artist extends Component {
         let artist = artists.find(artist => parseInt(id,10) === artist.id)
 
         if (!artist) {
-            getUser(id, snapshot => {
+            getArtist(id, snapshot => {
                 artist = snapshot.val()
                 this.setState({ artist: artist || 'not found' })
             })
@@ -29,6 +29,23 @@ class Artist extends Component {
             })
         } else {
             this.setState({ artist })
+        }
+    }
+
+    renderEvents = () => {
+        const { artist } = this.state
+        const events = artist.events && Object.keys(artist.events)
+        if (events && events.length) {
+            return (
+                <div>
+                    <hr />
+                    <h4>Artist Events</h4>
+                    <div className="row">
+                        {events.map(event =>
+                        <EventItem key={`event_item_${artist.events[event].uid}`} {...artist.events[event]} />)}
+                    </div>
+                </div>
+            )
         }
     }
 
@@ -42,7 +59,7 @@ class Artist extends Component {
         } else if(!artist) {
             return <Loader />
         }
-        if(artist.location) {
+        if(artist.id) {
             // fake data
             const {
                 events: artistEvents,
@@ -94,15 +111,17 @@ class Artist extends Component {
                     )
         } else {
             const { userId, isLoggedIn } = this.props
+            const { displayName, email, uid, photoURL } = this.state.artist
             content = (
                 <div className="page-content">
-                    <h5> email: {artist.email} </h5>
-                    {isLoggedIn && artist.uid !== userId && (
+                    <h5> email: {email} </h5>
+                    {this.renderEvents()}
+                    {isLoggedIn && uid !== userId && (
                         <OpenChat
                         chatPartner={{
-                            uid: artist.uid,
-                            photo: artist.photoURL,
-                            displayName: artist.displayName
+                            uid: uid,
+                            photo: photoURL || '',
+                            displayName: displayName
                         }} />
                         )
                     }
