@@ -70,6 +70,6 @@ export const saveUser = (user, accountType, displayName) => {
         uid: user.uid
     }, res => {
         console.log('createUser res ==== ', res)
-        debugger
+        return res
     }))
 }

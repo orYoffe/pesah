@@ -10,27 +10,33 @@ class OpenChat extends Component {
         const room = {
             creator: userId,
             messages: {},
-            timeCreated: new Date(),
+            timeCreated: new Date().toJSON(),
             members: {
                 [userId]: {
                     uid: userId,
-                    photo: photoURL,
-                    displayName
+                    photo: photoURL || '',
+                    displayName: displayName || ''
                 },
                 [chatPartner.uid]: {
                     uid: chatPartner.uid,
-                    photo: chatPartner.photoURL,
-                    displayName: chatPartner.displayName
+                    photo: chatPartner.photoURL || '',
+                    displayName: chatPartner.displayName || ''
                 }
             }
         }
         console.log('new room ========== ', room)
-        // ref.child(`rooms`).push()
-        // .then(newRoom => newRoom.update({ uid: newRoom.key })
-        //     .then(() => {
-        //         this.props.setRoom(newRoom.key)
-        //     })
-        // )
+        window.ref = ref
+        window.room = room
+        // ref.child(`rooms`).push(room)
+        // .then(newRoom => {
+        //         console.log('newRoom ========== ', newRoom)
+        //         //     this.props.setRoom(newRoom.key)
+        //         return newRoom.update({ uid: newRoom.key })
+        // }).catch(err => {
+        //     console.log('newRoom ======err==== ', err)
+        //     console.log('newRoom ======err.code==== ', err.code)
+        //     console.dir(err)
+        // })
         
     }
     
@@ -58,12 +64,12 @@ class OpenChat extends Component {
     }
 
     render() {
-        const { isLoggedIn, userId } = this.props
+        const { isLoggedIn, userId, chatPartner } = this.props
         if (!isLoggedIn || !userId) {
             return null
         }
         return (
-            <button onClick={this.startChat}>Send Message</button>
+            <button className="btn btn-primary" onClick={this.startChat}>Send {chatPartner.displayName} a Message</button>
         )
     }
 }

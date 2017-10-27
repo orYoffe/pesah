@@ -3,7 +3,7 @@ export const pageView = () => {
         'event',
         'page_view',
         {
-            date: new Date(),
+            date: new Date().toJSON(),
             url: window.location.href
         }
     )
