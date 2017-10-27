@@ -7,7 +7,7 @@ class OpenChat extends Component {
     createRoom = (chatPartner) => {
         const { userId, photoURL, displayName } = this.props
         // TODO fix undefined values - can't have undefined when updating the db
-        ref.child(`rooms`).push({
+        const room = {
             creator: userId,
             messages: {},
             timeCreated: new Date(),
@@ -23,12 +23,14 @@ class OpenChat extends Component {
                     displayName: chatPartner.displayName
                 }
             }
-        })
-        .then(newRoom => newRoom.update({ uid: newRoom.key })
-            .then(() => {
-                this.props.setRoom(newRoom.key)
-            })
-        )
+        }
+        console.log('new room ========== ', room)
+        // ref.child(`rooms`).push()
+        // .then(newRoom => newRoom.update({ uid: newRoom.key })
+        //     .then(() => {
+        //         this.props.setRoom(newRoom.key)
+        //     })
+        // )
         
     }
     

@@ -4,7 +4,7 @@
 isLoggedIn() { auth != null && currentUser() != null }
 currentUser() { auth.uid }
 isSameId(uid) { auth != null && uid == currentUser() }
-isEmptyAndLogged() { auth != null && !data }
+isEmptyAndLogged() { auth != null && isInitial(data) }
 isAdmin () {
   prior(root).child('users').child(currentUser()).child('isAdmin').val() == true;
 }
@@ -24,14 +24,6 @@ isInitial(value) { prior(value) == null }
 // Returns true if the value is intialized to init, or if it retains it's prior
 // value, otherwise.
 
-//type Post {
-//  read() { isSameId(uid) || isAdmin() }
-//  write() { isAdmin() }
-//  index() { ["email"] }
-//  message: String,
-//  modified: CurrentTimestamp,
-//  created: InitialTimestamp,
-//}
 
 type Location {
   country: String,
@@ -201,7 +193,6 @@ type Member {
 }
 
 type Room {
-  create() { isEmptyAndLogged() }
   delete() { isSameId(prior(this).creator) }
   creator: String,
   uid: String,
@@ -231,7 +222,9 @@ type Message {
 
 path /users/{uid} is UserData {
   read() { isSameId(uid) || isAdmin() }
-  write() { isAdmin() }
+  create() { isSameId(uid) || isAdmin() }
+  update() { isSameId(uid) || isAdmin() }
+  delete() { isAdmin() }
 }
 
 path /artists/{uid} is Artist {
@@ -251,8 +244,8 @@ path /fans/{uid} is Fan {
 
 path /events/{uid} is Event {
   read() { true }
-  // write() { isEventOwner(uid) || isAdmin() }
-  write() { isAdmin() }
+  update() { isEventOwner(uid) || isAdmin() }
+  create() { isAdmin() }
 }
 
 path /payments/{uid} is Payment {

@@ -5,11 +5,13 @@ import 'firebase/messaging'
 import 'firebase/storage'
 import {
     DB_CONFIG,
-    API_ENDPOINT,
     GET_ARTISTS,
     GET_VENUES,
     GET_EVENTS,
     GET_FANS,
+    GET_EXPLORE,
+    CREATE_EVENT,
+    CREATE_USER,
  } from './config'
 
 firebase.initializeApp(DB_CONFIG)
@@ -17,6 +19,8 @@ firebase.initializeApp(DB_CONFIG)
 export default firebase
 export const ref = firebase.database().ref()
 export const auth = firebase.auth
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
+export const fbProvider = new firebase.auth.FacebookAuthProvider();
 // for service worker
 // export const messaging = firebase.messaging()
 
@@ -34,12 +38,17 @@ export const auth = firebase.auth
 //         notificationOptions);
 // });
 
+// ======== Firebase functions
 export const getUser = (id, callback) => ref.child(`users/${id}`).once('value', callback).catch(callback)
 export const getFan = (id, callback) => ref.child(`fans/${id}`).once('value', callback).catch(callback)
 export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('value', callback).catch(callback)
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
 export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback).catch(callback)
+
+
+// ======== API functions
+export const get = (url) => fetch(url).then(res => res.json())
 export const post = (url, body, callback) => {
     if (!auth().currentUser) {
         console.log('Not authenticated. Make sure you\'re signed in!')
@@ -49,7 +58,7 @@ export const post = (url, body, callback) => {
     // Get the Firebase auth token to authenticate the request
     return firebase.auth().currentUser.getIdToken().then(function (token) {
         document.cookie = '__session=' + token + ';max-age=3600';
-        return fetch(`${API_ENDPOINT}${url}`, {
+        return fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -60,8 +69,14 @@ export const post = (url, body, callback) => {
         }).then(res => res.json())
     })
 }
-export const get = (url) => fetch(url).then(res => res.json())
+
+// ======= GET
 export const getEvents = (callback) => get(GET_EVENTS).then(callback).catch(callback)
 export const getArtists = (callback) => get(GET_ARTISTS).then(callback).catch(callback)
 export const getVenues = (callback) => get(GET_VENUES).then(callback).catch(callback)
 export const getFans = (callback) => get(GET_FANS).then(callback).catch(callback)
+export const getExplore = (callback) => get(GET_EXPLORE).then(callback).catch(callback)
+
+// ======= POST
+export const createEvent = (body, callback) => post(CREATE_EVENT, body, callback).then(callback).catch(callback)
+export const createUser = (body, callback) => post(CREATE_USER, body, callback).then(callback).catch(callback)

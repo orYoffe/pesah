@@ -14,6 +14,9 @@ class Signup extends Component {
         pass: {
             value: '',
         },
+        passConfirm: {
+            value: '',
+        },
         name: {
             value: '',
         },
@@ -60,10 +63,17 @@ class Signup extends Component {
             this.setState({ pass: { value }})
         }
     }
+    passConfirmChange = (e) => {
+        const value = e.target.value
+        if (!!value && this.state.passConfirm.value !== value) {
+            this.setState({ passConfirm: { value }})
+        }
+    }
 
     isValid = () => {
         const email = this.state.email.value
-        const password = this.state.pass.value
+        const password = this.state.passConfirm.value
+        const passwordConfirm = this.state.passConfirm.value
         const displayName = this.state.name.value
         if (displayName.length < 4) {
             this.setMessage('error', 'Please enter a Name or a Title.')
@@ -77,6 +87,14 @@ class Signup extends Component {
             this.setMessage('error', 'Please enter a password.')
             return false
         }
+        if (passwordConfirm.length < 4) {
+            this.setMessage('error', 'Please enter a the password again for confirmation.')
+            return false
+        }
+        if (passwordConfirm !== password) {
+            this.setMessage('error', 'The password and the password confirmation must be the same.')
+            return false
+        }
         return true
     }
 
@@ -86,6 +104,7 @@ class Signup extends Component {
         if(!this.isValid()) {
             return false
         }
+        const { login } = this.props
         const email = this.state.email.value
         const password = this.state.pass.value
         const displayName = this.state.name.value
@@ -95,7 +114,16 @@ class Signup extends Component {
             accountType: this.state.type,
             displayName,
         })
-        .then(user => verifyEmail())
+        .then(res => {
+            verifyEmail()
+            const user = res.user
+            return login({
+                email,
+                uid: user.uid,
+                displayName: displayName,
+                accountType: this.state.type,
+            })
+        })
         .catch((error) => {
             const errorMessage = error.message
             this.setMessage('error', errorMessage)
@@ -173,6 +201,17 @@ class Signup extends Component {
                         id="password"
                         name="password"
                         placeholder="Password"
+                        required
+                    />
+                    <br />
+                    <label htmlFor="passwordConfirm">Password Confirmation:</label>
+                    <input
+                        className="form-control"
+                        type="password"
+                        onChange={this.passConfirmChange}
+                        id="passwordConfirm"
+                        name="passwordConfirm"
+                        placeholder="Password Confirmation"
                         required
                     />
                     <br />

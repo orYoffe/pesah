@@ -6,10 +6,8 @@ const api = require('./api.js');
 
 admin.initializeApp(functions.config().firebase);
 
-
-// exports.createProfile = events.createProfile
-    
-exports.removeUserFromDatabase = events.disableUser
+exports.disableUser = events.disableUser
+exports.createRoom = events.createRoom
 
 exports.guard = functions.https.onRequest((req, res) => {
   if (req.body.a === 'pesah') {
@@ -18,7 +16,6 @@ exports.guard = functions.https.onRequest((req, res) => {
     res.redirect('https://earlybirdshopers.firebaseapp.com?a=wrong');
   }
 });
-
 
 // Expose the API as a function
 exports.api = functions.https.onRequest(api.default);

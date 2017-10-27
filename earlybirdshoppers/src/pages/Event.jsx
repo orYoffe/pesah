@@ -16,7 +16,6 @@ class Event extends Component {
     componentDidMount() {
         pageView();
 
-        debugger
         const { id } = this.props.match.params
         let event = events.find(event => parseInt(id,10) === event.id)
         
@@ -60,7 +59,7 @@ class Event extends Component {
 
     raiseTheBar = () => {
         const { event } = this.state
-        this.setState({event: {...event, fundsRaised: event.fundsRaised + event.price}})
+        this.setState({event: {...event, fundsRaised: event.fundsRaised + (event.price || event.ticketPrice)}})
     }
 
     render() {     
@@ -109,10 +108,10 @@ class Event extends Component {
                     </div>
                 </div>
             )
-        }else{
+        } else {
             const {
                 date: {
-                    created,
+                    // created,
                     eventTime,
                     },
                 goalPrice,
@@ -125,46 +124,43 @@ class Event extends Component {
                     city,
                     short,
                     address,
-                    lat,
-                    lng,
+                    // lat,
+                    // lng,
                 },
-                collaboration: {
-                    artists,
-                    venues,
-                    fans
-                },
-                description,
+                // description,
                 fundStatus: {
                     fundsRaised,
-                    precentage,
+                    // precentage,
                 },
-                page: { cover },
-                venueVerified,
-                artistVerified,
-                cancelled,
-                funded,
+                page,
+                // venueVerified,
+                // artistVerified,
+                // cancelled,
+                // funded,
             } = event   
             const managersArray = Object.keys(managers)
             const bar = fundsRaised ? ((fundsRaised / goalPrice) * 100).toFixed(3) : 0
-            content = (<div className="page-content">
-                <h3>Event title: {title} {verified ? 'event is verified' : 'event is not verified'}</h3>
-                <h4>Where: {address}</h4>
-                <p>city: {city}, country {country}, short name {short}</p>
-                <img src={cover} alt=""/>
-                <div>
-                    <div className="bar-progress"><div style={{ height: `${bar}%` }}>{fundsRaised}$</div></div>
-                    <h4>This Event already raised {fundsRaised}$</h4>
-                    <h5>Help make this event happen</h5>
-                    <p>Ticket price {ticketPrice}$</p>
-                    <button className="btn btn-success" onClick={this.raiseTheBar}>Raise The Bar</button>
+            content = (
+                <div className="page-content">
+                    <h3>Event title: {title} {verified ? 'event is verified' : 'event is not verified'}</h3>
+                    <h4>Where: {address}</h4>
+                    <p>city: {city}, country {country}, short name {short}</p>
+                    {page && <img src={page.cover} alt=""/> }
+                    <div>
+                        <div className="bar-progress"><div style={{ height: `${bar}%` }}>{fundsRaised}$</div></div>
+                        <h4>This Event already raised {fundsRaised}$</h4>
+                        <h5>Help make this event happen</h5>
+                        <p>Ticket price {ticketPrice}$</p>
+                        <button className="btn btn-success" onClick={this.raiseTheBar}>Raise The Bar</button>
+                    </div>
+                    <h5>When: {moment(eventTime).format('LLL')}</h5>
+                    <h4>Who:</h4>
+                    <div className="row">
+                        {managersArray.length && managersArray.map(artist =>
+                        <div key={`artist_item_${managers[artist].uid}`}>{managers[artist].email}</div>)}
+                    </div>
                 </div>
-                <h5>When: {moment(eventTime).format('LLL')}</h5>
-                <h4>Who:</h4>
-                <div className="row">
-                    {managersArray.length && managersArray.map(artist =>
-                    <div key={`artist_item_${managers[artist].uid}`}>{managers[artist].email}</div>)}
-                </div>
-            </div>)
+            )
         }
         console.log('event', event)
         return (

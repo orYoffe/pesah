@@ -1,4 +1,4 @@
-import { auth, post } from '../firebase'
+import { auth, createEvent as createEventPost } from '../firebase'
 import { verifyEmail } from '../auth'
 
 const defaultPayment = {
@@ -55,7 +55,7 @@ export const createEvent = (eventData) => {
     eventTime.setHours(hours)
     eventTime.setMinutes(minutes)
     
-    return post('createEvent', { eventObject: {
+    return createEventPost({ eventObject: {
         eventTime: eventTime.toJSON(),
         city: city,
         countryShortName: countryShortName,

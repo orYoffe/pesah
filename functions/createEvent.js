@@ -5,6 +5,8 @@ const isNumber = num => !isNaN(parseInt(num, 10));
 
 
 const createEvent = (req, res) => {
+    console.log('createEvent was called ===== ', new Date().toJSON());
+        // TODO validate user given strings
     if (req.body && req.body.eventObject) {
         if (!req.user.email_verified) {
             return res.status(400).json({ errorCode: 400, errorMessage: 'email' });
