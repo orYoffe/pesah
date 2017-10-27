@@ -5,19 +5,19 @@ isLoggedIn() { auth != null && currentUser() != null }
 currentUser() { auth.uid }
 isSameId(uid) { auth != null && uid == currentUser() }
 isEmptyAndLogged() { auth != null && isInitial(data) }
-isAdmin () {
-  prior(root).child('users').child(currentUser()).child('isAdmin').val() == true;
-}
+// isAdmin () {
+//   prior(root).child('users').child(currentUser()).child('isAdmin').val() == true;
+// }
 
-
-getRoomInfo(id) { prior(root).rooms[id] }
-
-isMember(uid) {
-  root.child('rooms').child(uid) || root.child('rooms').child(uid).child('members').val()[currentUser()] != null && !root.child('rooms').child(uid).child('members').val()[currentUser()].isBanned
+// isMember(id, this) {
+//   isLoggedIn() && prior(this).child('members').val()[currentUser()] != null && !prior(this).child('members').val()[currentUser()].isBanned
+// }
+isMember(roomInfo) {
+  roomInfo.members[currentUser()] != null && !roomInfo.members[currentUser()].isBanned
 }
-isEventOwner(uid) {
-  isLoggedIn() && prior(root).child('events').child(uid).val() != null && prior(root).child('events').child(uid).child('managers').val()[currentUser()] == true;
-}
+// isEventOwner(uid) {
+//   isLoggedIn() && prior(root).child('events').child(uid).val() != null && prior(root).child('events').child(uid).child('managers').val()[currentUser()] == true;
+// }
 
 initial(value, init) { value == (isInitial(value) ? init : prior(value)) }
 isInitial(value) { prior(value) == null }
@@ -42,8 +42,6 @@ type InitialTimestamp extends Number {
   validate() { initial(this, now) }
 }
 
-
-
 type CurrentTimestamp extends Number {
   validate() { this == now }
 }
@@ -56,12 +54,7 @@ type CurrentTimestamp extends Number {
 
 // ================== Objects
 type DisplayName extends String {
-  validate() { this.length > 2 && this.length <= 32 }
-}
-type ProviderData {
-  uid: String,
-  email: String,
-  providerId: String
+  validate() { this.length > 4 && this.length <= 32 }
 }
 type UserData {
   displayName: DisplayName,
@@ -70,7 +63,7 @@ type UserData {
   isAnonymous: Boolean,
   emailVerified: Boolean,
   email: String,
-  providerData: ProviderData
+  providerData: Object
 }
 type User extends UserData {
   photoURL: String,
@@ -171,7 +164,6 @@ type Payment {
   processed: Boolean
 }
 
-
 type Ticket {
   buyer: Object,
   buyerEmail: Object,
@@ -186,34 +178,34 @@ type Ticket {
 // ================= messages from git WIP ======================================
 
 type Member {
-  uid: String,
   photo: String,
+  uid: String,
   displayName: String,
   isBanned: Boolean,
 }
 
 type Room {
-  delete() { isSameId(prior(this).creator) }
+  // delete() { isSameId(prior(this).creator) }
+  // index() { ["timeCreated"] }
+  read() { isMember(this) }
   creator: String,
   uid: String,
-  messages: Object,
+  members: Map<String, Member>,
+  messages: Map<String, Message>,
   timeCreated: Object,
   last: Object,
   notifs: Object
 }
 
 type Message {
-  uid: String,
   from: String,
   userUid: String,
+  uid: String,
   text: String,
   timeCreated: InitialTimestamp,
   seenBy: Object,
   room: Object
 }
-
-
-
 
   // Make sure that the only value allowed to be written is now.
   //validate() { this.modified == now }
@@ -221,60 +213,58 @@ type Message {
 //======================================PATHS
 
 path /users/{uid} is UserData {
-  read() { isSameId(uid) || isAdmin() }
-  create() { isSameId(uid) || isAdmin() }
-  update() { isSameId(uid) || isAdmin() }
-  delete() { isAdmin() }
+  read() { isSameId(uid) }
+  create() { isSameId(uid) }
+  update() { isSameId(uid) }
+  // delete() { isAdmin() }
 }
 
 path /artists/{uid} is Artist {
   read() { true }
-  write() { isSameId(uid) || isAdmin() }
+  write() { isSameId(uid) }
 }
 
 path /venues/{uid} is Venue {
   read() { true }
-  write() { isSameId(uid) || isAdmin() }
+  write() { isSameId(uid) }
 }
 
 path /fans/{uid} is Fan {
   read() { true }
-  write() { isSameId(uid) || isAdmin() }
+  write() { isSameId(uid) }
 }
 
 path /events/{uid} is Event {
   read() { true }
-  update() { isEventOwner(uid) || isAdmin() }
-  create() { isAdmin() }
+  // update() { isEventOwner(uid) }
+  // create() { isAdmin() }
 }
 
 path /payments/{uid} is Payment {
-  read() { isAdmin() }
-  write() { isAdmin() }
+  // read() { isAdmin() }
+  // write() { isAdmin() }
 }
 
 path /tickets/{uid} is Ticket {
-  read() { isAdmin() }
-  write() { isAdmin() }
+  // read() { isAdmin() }
+  // write() { isAdmin() }
 }
 
 path /rooms/{uid} is Room {
-  read() { isMember(uid) }
-  update() { isMember(uid) }
-  create() { isEmptyAndLogged() }
+  // update() { isMember(uid, this) }
+  // create() { isEmptyAndLogged() }
+  create() { isLoggedIn() }
 }
-path /rooms/{id}/uid is String {
-  validate() { id == this }
-}
+// path /rooms/{id}/uid is String {
+//   validate() { id == this }
+// }
 
-path /rooms/{roomUid}/messages/{id} is Message {
-  index() { ["timeCreated"] }
-}
-path /rooms/{roomUid}/messages/{id}/uid is String {
-  validate() { id == this }
-}
+// path /rooms/{roomUid}
+// path /rooms/{roomUid}/messages/{id}/uid is String {
+//   validate() { id == this }
+// }
 
-path /rooms/{roomUid}/members/{id} is Member {}
-path /rooms/{roomUid}/members/{id}/uid is String {
-  validate() { id == this }
-}
+// path /rooms/{roomUid}/members/{id} is Member {}
+// path /rooms/{roomUid}/members/{id}/uid is String {
+//   validate() { id == this }
+// }

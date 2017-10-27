@@ -10,7 +10,7 @@ export const DB_CONFIG = {
 
 //isDev ? 'http://localhost:5000/earlybirdshopers/us-central1/api/' : 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/' 
 
-export const API_ENDPOINT = 'http://localhost:5000/earlybirdshopers/us-central1/api/' 
+export const API_ENDPOINT = 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/' 
 export const GET_ARTISTS = `${API_ENDPOINT}getArtists`
 export const GET_VENUES = `${API_ENDPOINT}getVenues`
 export const GET_EVENTS = `${API_ENDPOINT}getEvents`

@@ -16,6 +16,10 @@ class Artist extends Component {
     componentDidMount() {
         pageView();
         
+        this.getArtistData()
+    }
+    
+    getArtistData = () => {
         const { id } = this.props.match.params
         let artist = artists.find(artist => parseInt(id,10) === artist.id)
 
@@ -52,6 +56,11 @@ class Artist extends Component {
     render() {     
         // TODO if the artist belongs to the user show edit options
         const { artist } = this.state
+        const { id } = this.props.match.params
+
+        if (artist && id !== artist.uid) {
+            this.getArtistData()
+        }
         let content
         
         if(artist === 'not found') {
@@ -114,7 +123,8 @@ class Artist extends Component {
             const { displayName, email, uid, photoURL } = this.state.artist
             content = (
                 <div className="page-content">
-                    <h5> email: {email} </h5>
+                    {email && <h5> email: {email} </h5>}
+                    {displayName && <h5> displayName: {displayName} </h5>}
                     {this.renderEvents()}
                     {isLoggedIn && uid !== userId && (
                         <OpenChat

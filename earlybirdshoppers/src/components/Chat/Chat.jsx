@@ -17,7 +17,7 @@ class Chat extends Component {
             return
         }
         this.messagesRef = ref.child(`rooms/${roomId}/messages`)
-        this.messagesRef.limitToLast(10).on("child_added", function (snapshot) {
+        this.messagesRef.orderByChild('timeCreated').limitToLast(10).on("child_added", function (snapshot) {
             const message = snapshot.val()
             // mark as seenBy
             message.child('seenBy').once('value', seenBy => {

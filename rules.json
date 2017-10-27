@@ -4,7 +4,7 @@
       "$uid": {
         ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData'])",
         "displayName": {
-          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+          ".validate": "newData.isString() && newData.val().length > 4 && newData.val().length <= 32"
         },
         "accountType": {
           ".validate": "newData.isString()"
@@ -22,32 +22,20 @@
           ".validate": "newData.isString()"
         },
         "providerData": {
-          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
-          "uid": {
-            ".validate": "newData.isString()"
-          },
-          "email": {
-            ".validate": "newData.isString()"
-          },
-          "providerId": {
-            ".validate": "newData.isString()"
-          },
-          "$other": {
-            ".validate": "false"
-          }
+          ".validate": "newData.hasChildren()"
         },
         "$other": {
           ".validate": "false"
         },
-        ".read": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "data.val() == null && (auth != null && $uid == auth.uid) || data.val() != null && newData.val() != null && (auth != null && $uid == auth.uid)",
+        ".read": "auth != null && $uid == auth.uid"
       }
     },
     "artists": {
       "$uid": {
         ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData', 'photoURL', 'isAnonymous', 'following', 'followers', 'rooms', 'notifs', 'payments', 'futureEvents', 'pastEvents', 'accounts', 'page', 'bank', 'tickets', ('location'), ('members'), ('managers'), ('claimed'), ('collaboration'), ('openDates'), ('bookedDates'), ('accountType')])",
         "displayName": {
-          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+          ".validate": "newData.isString() && newData.val().length > 4 && newData.val().length <= 32"
         },
         "accountType": {
           ".validate": "newData.isString() && newData.isString() && 'artist' == newData.val()"
@@ -65,19 +53,7 @@
           ".validate": "newData.isString()"
         },
         "providerData": {
-          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
-          "uid": {
-            ".validate": "newData.isString()"
-          },
-          "email": {
-            ".validate": "newData.isString()"
-          },
-          "providerId": {
-            ".validate": "newData.isString()"
-          },
-          "$other": {
-            ".validate": "false"
-          }
+          ".validate": "newData.hasChildren()"
         },
         "$other": {
           ".validate": "false"
@@ -119,7 +95,7 @@
           ".validate": "newData.hasChildren()"
         },
         "location": {
-          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'address', 'lat', 'lng'])",
           "country": {
             ".validate": "newData.isString()"
           },
@@ -127,6 +103,9 @@
             ".validate": "newData.isString()"
           },
           "short": {
+            ".validate": "newData.isString()"
+          },
+          "address": {
             ".validate": "newData.isString()"
           },
           "lat": {
@@ -170,14 +149,14 @@
           ".validate": "newData.hasChildren()"
         },
         ".read": "true",
-        ".write": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "auth != null && $uid == auth.uid"
       }
     },
     "venues": {
       "$uid": {
         ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData', 'photoURL', 'isAnonymous', 'following', 'followers', 'rooms', 'notifs', 'payments', 'futureEvents', 'pastEvents', 'accounts', 'page', 'bank', 'tickets', ('location'), ('members'), ('managers'), ('claimed'), ('collaboration'), ('openDates'), ('bookedDates'), ('accountType')])",
         "displayName": {
-          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+          ".validate": "newData.isString() && newData.val().length > 4 && newData.val().length <= 32"
         },
         "accountType": {
           ".validate": "newData.isString() && newData.isString() && 'venue' == newData.val()"
@@ -195,19 +174,7 @@
           ".validate": "newData.isString()"
         },
         "providerData": {
-          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
-          "uid": {
-            ".validate": "newData.isString()"
-          },
-          "email": {
-            ".validate": "newData.isString()"
-          },
-          "providerId": {
-            ".validate": "newData.isString()"
-          },
-          "$other": {
-            ".validate": "false"
-          }
+          ".validate": "newData.hasChildren()"
         },
         "$other": {
           ".validate": "false"
@@ -249,7 +216,7 @@
           ".validate": "newData.hasChildren()"
         },
         "location": {
-          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'address', 'lat', 'lng'])",
           "country": {
             ".validate": "newData.isString()"
           },
@@ -257,6 +224,9 @@
             ".validate": "newData.isString()"
           },
           "short": {
+            ".validate": "newData.isString()"
+          },
+          "address": {
             ".validate": "newData.isString()"
           },
           "lat": {
@@ -300,14 +270,14 @@
           ".validate": "newData.hasChildren()"
         },
         ".read": "true",
-        ".write": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "auth != null && $uid == auth.uid"
       }
     },
     "fans": {
       "$uid": {
         ".validate": "newData.hasChildren(['displayName', 'accountType', 'uid', 'isAnonymous', 'emailVerified', 'email', 'providerData', 'photoURL', 'isAnonymous', 'following', 'followers', 'rooms', 'notifs', 'payments', 'futureEvents', 'pastEvents', 'accounts', 'page', 'bank', 'tickets', ('location'), ('accountType')])",
         "displayName": {
-          ".validate": "newData.isString() && newData.val().length > 2 && newData.val().length <= 32"
+          ".validate": "newData.isString() && newData.val().length > 4 && newData.val().length <= 32"
         },
         "accountType": {
           ".validate": "newData.isString() && newData.isString() && 'fan' == newData.val()"
@@ -325,19 +295,7 @@
           ".validate": "newData.isString()"
         },
         "providerData": {
-          ".validate": "newData.hasChildren(['uid', 'email', 'providerId'])",
-          "uid": {
-            ".validate": "newData.isString()"
-          },
-          "email": {
-            ".validate": "newData.isString()"
-          },
-          "providerId": {
-            ".validate": "newData.isString()"
-          },
-          "$other": {
-            ".validate": "false"
-          }
+          ".validate": "newData.hasChildren()"
         },
         "$other": {
           ".validate": "false"
@@ -379,7 +337,7 @@
           ".validate": "newData.hasChildren()"
         },
         "location": {
-          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'address', 'lat', 'lng'])",
           "country": {
             ".validate": "newData.isString()"
           },
@@ -387,6 +345,9 @@
             ".validate": "newData.isString()"
           },
           "short": {
+            ".validate": "newData.isString()"
+          },
+          "address": {
             ".validate": "newData.isString()"
           },
           "lat": {
@@ -400,7 +361,7 @@
           }
         },
         ".read": "true",
-        ".write": "auth != null && $uid == auth.uid || root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".write": "auth != null && $uid == auth.uid"
       }
     },
     "events": {
@@ -422,7 +383,7 @@
           ".validate": "newData.hasChildren()"
         },
         "location": {
-          ".validate": "newData.hasChildren(['country', 'city', 'short', 'lat', 'lng'])",
+          ".validate": "newData.hasChildren(['country', 'city', 'short', 'address', 'lat', 'lng'])",
           "country": {
             ".validate": "newData.isString()"
           },
@@ -430,6 +391,9 @@
             ".validate": "newData.isString()"
           },
           "short": {
+            ".validate": "newData.isString()"
+          },
+          "address": {
             ".validate": "newData.isString()"
           },
           "lat": {
@@ -520,8 +484,7 @@
         "$other": {
           ".validate": "false"
         },
-        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".read": "true"
       }
     },
     "payments": {
@@ -568,9 +531,7 @@
         },
         "$other": {
           ".validate": "false"
-        },
-        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        }
       }
     },
     "tickets": {
@@ -602,27 +563,67 @@
         },
         "$other": {
           ".validate": "false"
-        },
-        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        }
       }
     },
     "rooms": {
       "$uid": {
-        ".validate": "newData.hasChildren(['uid', 'members', 'creator', 'title', 'messages', 'timeCreated', 'last', 'notifs'])",
+        ".validate": "newData.hasChildren(['creator', 'uid', 'timeCreated', 'last', 'notifs'])",
+        "creator": {
+          ".validate": "newData.isString()"
+        },
         "uid": {
           ".validate": "newData.isString()"
         },
         "members": {
-          ".validate": "newData.hasChildren()"
-        },
-        "creator": {
-          ".validate": "newData.hasChildren()"
-        },
-        "title": {
+          "$key1": {
+            ".validate": "newData.hasChildren(['photo', 'uid', 'displayName', 'isBanned'])",
+            "photo": {
+              ".validate": "newData.isString()"
+            },
+            "uid": {
+              ".validate": "newData.isString()"
+            },
+            "displayName": {
+              ".validate": "newData.isString()"
+            },
+            "isBanned": {
+              ".validate": "newData.isBoolean()"
+            },
+            "$other": {
+              ".validate": "false"
+            }
+          },
           ".validate": "newData.hasChildren()"
         },
         "messages": {
+          "$key2": {
+            ".validate": "newData.hasChildren(['from', 'userUid', 'uid', 'text', 'timeCreated', 'seenBy', 'room'])",
+            "from": {
+              ".validate": "newData.isString()"
+            },
+            "userUid": {
+              ".validate": "newData.isString()"
+            },
+            "uid": {
+              ".validate": "newData.isString()"
+            },
+            "text": {
+              ".validate": "newData.isString()"
+            },
+            "timeCreated": {
+              ".validate": "newData.isNumber() && newData.val() == (data.val() == null ? now : data.val())"
+            },
+            "seenBy": {
+              ".validate": "newData.hasChildren()"
+            },
+            "room": {
+              ".validate": "newData.hasChildren()"
+            },
+            "$other": {
+              ".validate": "false"
+            }
+          },
           ".validate": "newData.hasChildren()"
         },
         "timeCreated": {
@@ -637,36 +638,8 @@
         "$other": {
           ".validate": "false"
         },
-        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
-      }
-    },
-    "messages": {
-      "$uid": {
-        ".validate": "newData.hasChildren(['uid', 'from', 'message', 'time', 'seenBy', 'room'])",
-        "uid": {
-          ".validate": "newData.isString()"
-        },
-        "from": {
-          ".validate": "newData.isString()"
-        },
-        "message": {
-          ".validate": "newData.isString()"
-        },
-        "time": {
-          ".validate": "newData.isString()"
-        },
-        "seenBy": {
-          ".validate": "newData.hasChildren()"
-        },
-        "room": {
-          ".validate": "newData.hasChildren()"
-        },
-        "$other": {
-          ".validate": "false"
-        },
-        ".read": "root.child('users').child(auth.uid).child('isAdmin').val() == true",
-        ".write": "root.child('users').child(auth.uid).child('isAdmin').val() == true"
+        ".read": "data.child('members').child(auth.uid).val() != null && !(data.child('members').child(auth.uid).child('isBanned').val() == true)",
+        ".write": "data.val() == null && (auth != null && auth.uid != null)"
       }
     }
   }
