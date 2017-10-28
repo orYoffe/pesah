@@ -575,57 +575,6 @@
         "uid": {
           ".validate": "newData.isString()"
         },
-        "members": {
-          "$key1": {
-            ".validate": "newData.hasChildren(['photo', 'uid', 'displayName', 'isBanned'])",
-            "photo": {
-              ".validate": "newData.isString()"
-            },
-            "uid": {
-              ".validate": "newData.isString()"
-            },
-            "displayName": {
-              ".validate": "newData.isString()"
-            },
-            "isBanned": {
-              ".validate": "newData.isBoolean()"
-            },
-            "$other": {
-              ".validate": "false"
-            }
-          },
-          ".validate": "newData.hasChildren()"
-        },
-        "messages": {
-          "$key2": {
-            ".validate": "newData.hasChildren(['from', 'userUid', 'uid', 'text', 'timeCreated', 'seenBy', 'room'])",
-            "from": {
-              ".validate": "newData.isString()"
-            },
-            "userUid": {
-              ".validate": "newData.isString()"
-            },
-            "uid": {
-              ".validate": "newData.isString()"
-            },
-            "text": {
-              ".validate": "newData.isString()"
-            },
-            "timeCreated": {
-              ".validate": "newData.isNumber() && newData.val() == (data.val() == null ? now : data.val())"
-            },
-            "seenBy": {
-              ".validate": "newData.hasChildren()"
-            },
-            "room": {
-              ".validate": "newData.hasChildren()"
-            },
-            "$other": {
-              ".validate": "false"
-            }
-          },
-          ".validate": "newData.hasChildren()"
-        },
         "timeCreated": {
           ".validate": "newData.hasChildren()"
         },
@@ -638,8 +587,63 @@
         "$other": {
           ".validate": "false"
         },
-        ".read": "data.child('members').child(auth.uid).val() != null && !(data.child('members').child(auth.uid).child('isBanned').val() == true)",
-        ".write": "data.val() == null && (auth != null && auth.uid != null)"
+        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true"
+      }
+    },
+    "messages": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['from', 'userUid', 'uid', 'text', 'timeCreated', 'seenBy', 'room'])",
+        "from": {
+          ".validate": "newData.isString()"
+        },
+        "userUid": {
+          ".validate": "newData.isString()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "text": {
+          ".validate": "newData.isString()"
+        },
+        "timeCreated": {
+          ".validate": "newData.isNumber() && newData.val() == (data.val() == null ? now : data.val())"
+        },
+        "seenBy": {
+          ".validate": "newData.hasChildren()"
+        },
+        "room": {
+          ".validate": "newData.hasChildren()"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".write": "data.val() != null && newData.val() != null && root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true",
+        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true",
+        ".indexOn": [
+          "timeCreated"
+        ]
+      }
+    },
+    "members": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['photo', 'uid', 'displayName', 'isBanned'])",
+        "photo": {
+          ".validate": "newData.isString()"
+        },
+        "uid": {
+          ".validate": "newData.isString()"
+        },
+        "displayName": {
+          ".validate": "newData.isString()"
+        },
+        "isBanned": {
+          ".validate": "newData.isBoolean()"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".write": "data.val() != null && newData.val() != null && root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true",
+        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true"
       }
     }
   }

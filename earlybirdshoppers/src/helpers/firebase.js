@@ -12,11 +12,13 @@ import {
     GET_EXPLORE,
     CREATE_EVENT,
     CREATE_USER,
+    GET_ROOM,
  } from './config'
 
 firebase.initializeApp(DB_CONFIG)
 
 export default firebase
+export const database = firebase.database
 export const ref = firebase.database().ref()
 export const auth = firebase.auth
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
@@ -45,7 +47,6 @@ export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('valu
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
 export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback).catch(callback)
-
 
 // ======== API functions
 export const get = (url) => fetch(url).then(res => res.json())
@@ -80,3 +81,4 @@ export const getExplore = (callback) => get(GET_EXPLORE).then(callback).catch(ca
 // ======= POST
 export const createEvent = (body, callback) => post(CREATE_EVENT, body, callback).then(callback).catch(callback)
 export const createUser = (body, callback) => post(CREATE_USER, body, callback).then(callback).catch(callback)
+export const getRoom = (body, callback) => post(GET_ROOM, body, callback).then(callback).catch(callback)

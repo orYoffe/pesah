@@ -164,21 +164,16 @@ class CreateEvent extends Component {
                 switch (error) {
                     case 'login':
                         return this.setState({ error: 'Please Login to Create Event', errors: [] })
-                        break
                     case 'verifyemail':
                         return this.setState({
                             error: 'Please verify your email in order to Create Event you need to verify your email',
                             errors: []
                         })
-                        
-                        break
-                
                     default:
                     this.setState({error: '', errors: []})
                         break
                 }
             }
-            
         }
     }
 
@@ -214,8 +209,8 @@ class CreateEvent extends Component {
     }
 
     onInputChange = () => {
-        const { trans, accountType } = this.props
-        const { image } = this.state
+        const { accountType } = this.props
+        // const { image } = this.state
         let venue
         let artist
 
@@ -232,7 +227,7 @@ class CreateEvent extends Component {
         } else {
             artist = this.artist.value.trim() 
         }
-        const photoURL = image
+        // const photoURL = image
 
         store.set(LOCALSTORAGE_CREATEEVENT_KEY, {
             title, date: date, time, price, goal,

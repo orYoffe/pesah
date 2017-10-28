@@ -1,43 +1,23 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { ref, post } from '../../helpers/firebase'
+import { ref, getRoom } from '../../helpers/firebase'
 import { setRoom } from '../../reducers/chat'
 
 class OpenChat extends Component {
     createRoom = (chatPartner) => {
-        const { userId, photoURL, displayName } = this.props
-        // TODO fix undefined values - can't have undefined when updating the db
-        const room = {
-            creator: userId,
-            messages: {},
-            timeCreated: new Date().toJSON(),
-            members: {
-                [userId]: {
-                    uid: userId,
-                    photo: photoURL || '',
-                    displayName: displayName || ''
-                },
-                [chatPartner.uid]: {
-                    uid: chatPartner.uid,
-                    photo: chatPartner.photoURL || '',
-                    displayName: chatPartner.displayName || ''
-                }
-            }
-        }
-        console.log('new room ========== ', room)
-        window.ref = ref
-        window.room = room
-        // ref.child(`rooms`).push(room)
-        // .then(newRoom => {
-        //         console.log('newRoom ========== ', newRoom)
-        //         //     this.props.setRoom(newRoom.key)
-        //         return newRoom.update({ uid: newRoom.key })
-        // }).catch(err => {
-        //     console.log('newRoom ======err==== ', err)
-        //     console.log('newRoom ======err.code==== ', err.code)
-        //     console.dir(err)
-        // })
-        
+        getRoom({
+            uid: chatPartner.uid,
+            photo: chatPartner.photo || '',
+            displayName: chatPartner.displayName || ''
+        })
+        .then(res => {
+            console.log('newRoom ========== ', res)
+            this.props.setRoom(res.roomId)
+        }).catch(err => {
+            console.log('newRoom ======err==== ', err)
+            console.log('newRoom ======err.code==== ', err.code)
+            console.dir(err)
+        })
     }
     
     startChat = () => {
@@ -79,8 +59,6 @@ const mapDispatchToProps = dispatch => ({ setRoom: (roomId) => dispatch(setRoom(
 const mapStateToProps = state => ({
     isLoggedIn: state.auth.loggedIn,
     userId: state.auth.user.uid,
-    photoURL: state.auth.user.photoURL,
-    displayName: state.auth.user.displayName,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(OpenChat)

@@ -5,10 +5,10 @@ const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
 const express = require('express');
 const cookieParser = require('cookie-parser')();
-const createEvent = require('./createEvent.js');
-const createUser = require('./createUser.js');
-const getters = require('./getters.js');
-
+const createEvent = require('./createEvent');
+const createUser = require('./createUser');
+const getRoom = require('./getRoom');
+const getters = require('./getters');
 
 const app = express();
 
@@ -64,6 +64,7 @@ app.use(authenticate);
 
 app.post('/createEvent', createEvent.default);
 app.post('/createUser', createUser.default);
+app.post('/getRoom', getRoom.default);
 
 const notFound = (req, res) => {
     res.status(404).send('Not Found');

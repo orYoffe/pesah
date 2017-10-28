@@ -19,29 +19,29 @@ class Menu extends Component {
             if (!isFan) {
                 links.push(
                     <li key={`menu_item_${id}_page`}>
-                        <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to={`/${accountType}/${id}`}>{trans.My_Page}</NavLink>
+                        <NavLink className="nav-link" data-toggle="collapse" to={`/${accountType}/${id}`}>{trans.My_Page}</NavLink>
                     </li>
                 )
                 links.push(
                     <li key={`menu_item_${id}_create_event`}>
-                        <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/create-event">{trans.Create_Event} +</NavLink>
+                        <NavLink className="nav-link" data-toggle="collapse" to="/create-event">{trans.Create_Event} +</NavLink>
                     </li>
                 )
             }
             links.push(
                 <li key={`menu_item_${id}_logout`}>
-                    <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/" onClick={this.logout}>{trans.Logout}</NavLink>
+                    <NavLink className="nav-link" data-toggle="collapse" to="/" onClick={this.logout}>{trans.Logout}</NavLink>
                 </li>
             )
         } else {
             links.push(
                 <li key={`menu_item_01_signup`}>
-                    <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/signup">{trans.Signup}</NavLink>
+                    <NavLink className="nav-link" data-toggle="collapse" to="/signup">{trans.Signup}</NavLink>
                 </li>
             )
             links.push(
                 <li key={`menu_item_02_login`}>
-                    <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/login">{trans.Login}</NavLink>
+                    <NavLink className="nav-link" data-toggle="collapse" to="/login">{trans.Login}</NavLink>
                 </li>
             )
         }
@@ -63,12 +63,12 @@ class Menu extends Component {
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                         </button>
-                        <NavLink className="navbar-brand" data-toggle="collapse" data-target=".navbar-collapse" to="/">Raise The Bar</NavLink>
+                        <NavLink className="navbar-brand" data-toggle="collapse" to="/">Raise The Bar</NavLink>
                     </div>
                     <div className="collapse navbar-collapse">
                         <ul className="nav navbar-nav">
                             <li>
-                                <NavLink className="nav-link" data-toggle="collapse" data-target=".navbar-collapse" to="/">{trans.Explore}</NavLink>
+                                <NavLink className="nav-link" data-toggle="collapse" to="/">{trans.Explore}</NavLink>
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right">

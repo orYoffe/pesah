@@ -12,8 +12,11 @@ isEmptyAndLogged() { auth != null && isInitial(data) }
 // isMember(id, this) {
 //   isLoggedIn() && prior(this).child('members').val()[currentUser()] != null && !prior(this).child('members').val()[currentUser()].isBanned
 // }
-isMember(roomInfo) {
-  roomInfo.members[currentUser()] != null && !roomInfo.members[currentUser()].isBanned
+isMember(roomId) {
+  prior(root).members[roomId].hasChildren([auth.uid]) //&& prior(root).child('rooms').child(room).child('members').val()[auth.uid].isBanned != true
+}
+isNotBanned(roomId) {
+  prior(root).members[roomId][auth.uid].isBanned != true
 }
 // isEventOwner(uid) {
 //   isLoggedIn() && prior(root).child('events').child(uid).val() != null && prior(root).child('events').child(uid).child('managers').val()[currentUser()] == true;
@@ -45,12 +48,6 @@ type InitialTimestamp extends Number {
 type CurrentTimestamp extends Number {
   validate() { this == now }
 }
-
-//path /users/{uid} is User {
-//  read() { true }
-//  write() { isSameId(uid) }
-//}
-
 
 // ================== Objects
 type DisplayName extends String {
@@ -187,17 +184,15 @@ type Member {
 type Room {
   // delete() { isSameId(prior(this).creator) }
   // index() { ["timeCreated"] }
-  read() { isMember(this) }
   creator: String,
   uid: String,
-  members: Map<String, Member>,
-  messages: Map<String, Message>,
   timeCreated: Object,
   last: Object,
   notifs: Object
 }
 
 type Message {
+  // read() { isMember(this) && isNotBanned(this) }
   from: String,
   userUid: String,
   uid: String,
@@ -251,20 +246,18 @@ path /tickets/{uid} is Ticket {
 }
 
 path /rooms/{uid} is Room {
+  read() { isMember(uid) && isNotBanned(uid) }
   // update() { isMember(uid, this) }
   // create() { isEmptyAndLogged() }
-  create() { isLoggedIn() }
+  // create() { isLoggedIn() }
 }
-// path /rooms/{id}/uid is String {
-//   validate() { id == this }
-// }
 
-// path /rooms/{roomUid}
-// path /rooms/{roomUid}/messages/{id}/uid is String {
-//   validate() { id == this }
-// }
-
-// path /rooms/{roomUid}/members/{id} is Member {}
-// path /rooms/{roomUid}/members/{id}/uid is String {
-//   validate() { id == this }
-// }
+path /messages/{uid} is Message {
+  index() { ["timeCreated"] }
+  read() { isMember(uid) && isNotBanned(uid) }
+  update() { isMember(uid) && isNotBanned(uid) }
+}
+path /members/{uid} is Member {
+  read() { isMember(uid) && isNotBanned(uid) }
+  update() { isMember(uid) && isNotBanned(uid) }
+}

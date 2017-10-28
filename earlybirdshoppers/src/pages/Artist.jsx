@@ -150,7 +150,7 @@ class Artist extends Component {
 
 const mapStateToProps = state => ({
     isLoggedIn: state.auth.loggedIn,
-    userId: state.auth.user.uid,
+    userId: state.auth.user && state.auth.user.uid,
 })
 
 export default connect(mapStateToProps)(Artist)

@@ -1,7 +1,5 @@
 const admin = require('firebase-admin');
-
-const isString = str => str && typeof str === 'string' && str.length > 0;
-const isNumber = num => !isNaN(parseInt(num, 10));
+const common = require('./common');
 
 
 const createEvent = (req, res) => {
@@ -24,26 +22,26 @@ const createEvent = (req, res) => {
             if (isNaN(Date.parse(event.eventTime))) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'eventTime' });
             }
-            if (!isNumber(event.goal)) {
+            if (!common.isNumber(event.goal)) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'goal' });
             }
-            if (!isNumber(event.price)) {
+            if (!common.isNumber(event.price)) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'price' });
             }
-            if (!isString(event.title) || event.title.length < 4) {
+            if (!common.isString(event.title) || event.title.length < 4) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'title' });
             }
-            if (!isString(event.city) || !isString(event.country) || !isString(event.formatted_address) || !isString(event.countryShortName)
-                || !isNumber(event.lat) || !isNumber(event.lng)) {
+            if (!common.isString(event.city) || !common.isString(event.country) || !common.isString(event.formatted_address) || !common.isString(event.countryShortName)
+                || !common.isNumber(event.lat) || !common.isNumber(event.lng)) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'location' });
             }
-            if (!isString(event.currency) || (event.currency !== '$' && event.currency !== '₪')) {
+            if (!common.isString(event.currency) || (event.currency !== '$' && event.currency !== '₪')) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'currency' });
             }
-            if (!isString(event.venue) || event.venue.length < 4) {
+            if (!common.isString(event.venue) || event.venue.length < 4) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'venue' });
             }
-            if (!isString(event.artist) || event.artist.length < 4) {
+            if (!common.isString(event.artist) || event.artist.length < 4) {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'artist' });
             }
 
@@ -87,13 +85,13 @@ const createEvent = (req, res) => {
                     venues: {},
                     fans: {}
                 },
-                description: isString(event.description) ? event.description : '',
+                description: common.isString(event.description) ? event.description : '',
                 fundStatus: {
                     fundsRaised: 0,
                     precentage: 0,
                 },
                 page: {
-                    cover: isString(event.photoURL) ? event.photoURL : ''
+                    cover: common.isString(event.photoURL) ? event.photoURL : ''
                 },
                 venueVerified: false,
                 artistVerified: false,

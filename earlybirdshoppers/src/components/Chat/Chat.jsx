@@ -4,6 +4,7 @@ import { ref } from '../../helpers/firebase'
 import ChatForm from '../ChatForm/'
 import Message from '../Message/'
 import { setRoom } from '../../reducers/chat'
+import './Chat.css'
 
 class Chat extends Component {
     messagesRef = ''
@@ -16,8 +17,7 @@ class Chat extends Component {
         if (!roomId || !isLoggedIn) {
             return
         }
-        this.messagesRef = ref.child(`rooms/${roomId}/messages`)
-        this.messagesRef.orderByChild('timeCreated').limitToLast(10).on("child_added", function (snapshot) {
+        ref.child(`rooms/${roomId}/messages`).orderByChild('timeCreated').limitToLast(10).on("child_added", function (snapshot) {
             const message = snapshot.val()
             // mark as seenBy
             message.child('seenBy').once('value', seenBy => {
@@ -40,7 +40,7 @@ class Chat extends Component {
         }
         const { messages } = this.state
         return (
-            <div>
+            <div className="chat-box">
                 <h3>Chat</h3>
                 <button onClick={this.closeChat}>Close Chat</button>
                 <div>
@@ -55,7 +55,7 @@ class Chat extends Component {
                         ) : 'No messages yet.. maybe write them something :)'
                     }
                 </div>
-                <ChatForm messagesRef={this.messagesRef} roomId={roomId} user={{displayName, photoURL, uid}}/>
+                <ChatForm roomId={roomId} user={{displayName, photoURL, uid}}/>
             </div>
         )
     }

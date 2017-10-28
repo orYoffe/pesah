@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { events, venues } from '../helpers/mockData'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem/'
 import Loader from '../components/Loader/'
 import { getUser } from '../helpers/firebase'
 import { pageView } from '../helpers/analytics'
+import OpenChat from '../components/OpenChat/'
 import '../components/VenueItem/VenueItem.css'
 
 class Venue extends Component {
@@ -63,9 +65,19 @@ class Venue extends Component {
                 </div>
             )
         } else {
-            const { email } = venue
+            const { email, displayName, uid, photoURL } = venue
+            const { userId, isLoggedIn } = this.props
             content = (<div className="page-content">
                             <h5> email: {email} </h5>
+                            {isLoggedIn && uid !== userId && (
+                                <OpenChat
+                                chatPartner={{
+                                    uid: uid,
+                                    photo: photoURL || '',
+                                    displayName: displayName
+                                }} />
+                                )
+                            }
                         </div>)
         }
 
@@ -79,4 +91,9 @@ class Venue extends Component {
     }
 }
 
-export default Venue
+const mapStateToProps = state => ({
+    isLoggedIn: state.auth.loggedIn,
+    userId: state.auth.user && state.auth.user.uid,
+})
+
+export default connect(mapStateToProps)(Venue)

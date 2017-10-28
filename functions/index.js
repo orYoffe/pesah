@@ -1,13 +1,13 @@
 const path = require('path');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const events = require('./events.js');
-const api = require('./api.js');
+const events = require('./events');
+const api = require('./api');
 
 admin.initializeApp(functions.config().firebase);
 
 exports.disableUser = events.disableUser
-exports.createRoom = events.createRoom
+// exports.createRoom = events.createRoom
 
 exports.guard = functions.https.onRequest((req, res) => {
   if (req.body.a === 'pesah') {
