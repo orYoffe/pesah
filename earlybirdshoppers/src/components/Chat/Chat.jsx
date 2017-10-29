@@ -17,7 +17,8 @@ class Chat extends Component {
         if (!roomId || !isLoggedIn) {
             return
         }
-        ref.child(`rooms/${roomId}/messages`).orderByChild('timeCreated').limitToLast(10).on("child_added", function (snapshot) {
+        ref.child(`messages/${roomId}`).orderByChild('timeCreated')
+        .limitToLast(10).on("child_added", function (snapshot) {
             const message = snapshot.val()
             // mark as seenBy
             message.child('seenBy').once('value', seenBy => {

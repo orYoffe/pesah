@@ -16,7 +16,7 @@ isMember(roomId) {
   prior(root).members[roomId].hasChildren([auth.uid]) //&& prior(root).child('rooms').child(room).child('members').val()[auth.uid].isBanned != true
 }
 isNotBanned(roomId) {
-  prior(root).members[roomId][auth.uid].isBanned != true
+  !prior(root).members[roomId][auth.uid].hasChildren(['isBanned']) || prior(root).members[roomId][auth.uid].isBanned != true
 }
 // isEventOwner(uid) {
 //   isLoggedIn() && prior(root).child('events').child(uid).val() != null && prior(root).child('events').child(uid).child('managers').val()[currentUser()] == true;
@@ -47,6 +47,9 @@ type InitialTimestamp extends Number {
 
 type CurrentTimestamp extends Number {
   validate() { this == now }
+}
+type ISODate extends String {
+  validate() { this.test(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/) }
 }
 
 // ================== Objects
@@ -186,7 +189,7 @@ type Room {
   // index() { ["timeCreated"] }
   creator: String,
   uid: String,
-  timeCreated: Object,
+  timeCreated: ISODate,
   last: Object,
   notifs: Object
 }
@@ -195,11 +198,11 @@ type Message {
   // read() { isMember(this) && isNotBanned(this) }
   from: String,
   userUid: String,
-  uid: String,
+  // uid: String,
   text: String,
-  timeCreated: InitialTimestamp,
+  timeCreated: ISODate,
   seenBy: Object,
-  room: Object
+  room: String
 }
 
   // Make sure that the only value allowed to be written is now.
@@ -255,7 +258,8 @@ path /rooms/{uid} is Room {
 path /messages/{uid} is Message {
   index() { ["timeCreated"] }
   read() { isMember(uid) && isNotBanned(uid) }
-  update() { isMember(uid) && isNotBanned(uid) }
+  // write() { isMember(uid) && isNotBanned(uid) }
+  write() { true } // WARNING DELETE THIS =======================================
 }
 path /members/{uid} is Member {
   read() { isMember(uid) && isNotBanned(uid) }

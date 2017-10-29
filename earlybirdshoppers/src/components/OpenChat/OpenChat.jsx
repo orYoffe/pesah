@@ -22,25 +22,25 @@ class OpenChat extends Component {
     
     startChat = () => {
         const { userId, chatPartner } = this.props
-        ref.child(`users/${userId}/rooms`).once('value', snapshot => {
-            const userRooms = snapshot.val()
-            const rooms = userRooms && Object.keys(userRooms)
+        // ref.child(`users/${userId}/rooms`).once('value', snapshot => {
+        //     const userRooms = snapshot.val()
+        //     const rooms = userRooms && Object.keys(userRooms)
     
-            if (rooms && rooms.length) {
-                const room = rooms.find(room => {
-                    // check if users have a private room
-                    const members = Object.keys(userRooms[room].members)
-                    return members.length === 2 && members.includes(userId) && members.includes(chatPartner.uid)
-                })
-                if (room && userRooms[room] && userRooms[room].uid) {
-                    this.props.setRoom(userRooms[room].uid)
-                } else {
-                    this.createRoom(chatPartner)
-                }
-            } else {
+        //     if (rooms && rooms.length) {
+        //         const room = rooms.find(room => {
+        //             // check if users have a private room
+        //             const members = Object.keys(userRooms[room].members)
+        //             return members.length === 2 && members.includes(userId) && members.includes(chatPartner.uid)
+        //         })
+        //         if (room && userRooms[room] && userRooms[room].uid) {
+        //             this.props.setRoom(userRooms[room].uid)
+        //         } else {
+        //             this.createRoom(chatPartner)
+        //         }
+        //     } else {
                 this.createRoom(chatPartner)
-            }
-        })
+        //     }
+        // })
     }
 
     render() {

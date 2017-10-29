@@ -576,7 +576,7 @@
           ".validate": "newData.isString()"
         },
         "timeCreated": {
-          ".validate": "newData.hasChildren()"
+          ".validate": "newData.isString() && newData.val().matches(/\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d+([+-][0-2]\\d:[0-5]\\d|Z)/)"
         },
         "last": {
           ".validate": "newData.hasChildren()"
@@ -587,38 +587,35 @@
         "$other": {
           ".validate": "false"
         },
-        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true"
+        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && (!root.child('members').child($uid).child(auth.uid).hasChildren(['isBanned']) || root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true)"
       }
     },
     "messages": {
       "$uid": {
-        ".validate": "newData.hasChildren(['from', 'userUid', 'uid', 'text', 'timeCreated', 'seenBy', 'room'])",
+        ".validate": "newData.hasChildren(['from', 'userUid', 'text', 'timeCreated', 'seenBy', 'room'])",
         "from": {
           ".validate": "newData.isString()"
         },
         "userUid": {
           ".validate": "newData.isString()"
         },
-        "uid": {
-          ".validate": "newData.isString()"
-        },
         "text": {
           ".validate": "newData.isString()"
         },
         "timeCreated": {
-          ".validate": "newData.isNumber() && newData.val() == (data.val() == null ? now : data.val())"
+          ".validate": "newData.isString() && newData.val().matches(/\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d+([+-][0-2]\\d:[0-5]\\d|Z)/)"
         },
         "seenBy": {
           ".validate": "newData.hasChildren()"
         },
         "room": {
-          ".validate": "newData.hasChildren()"
+          ".validate": "newData.isString()"
         },
         "$other": {
           ".validate": "false"
         },
-        ".write": "data.val() != null && newData.val() != null && root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true",
-        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true",
+        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && (!root.child('members').child($uid).child(auth.uid).hasChildren(['isBanned']) || root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true)",
+        ".write": "true",
         ".indexOn": [
           "timeCreated"
         ]
@@ -642,8 +639,8 @@
         "$other": {
           ".validate": "false"
         },
-        ".write": "data.val() != null && newData.val() != null && root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true",
-        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true"
+        ".write": "data.val() != null && newData.val() != null && root.child('members').child($uid).hasChildren([auth.uid]) && (!root.child('members').child($uid).child(auth.uid).hasChildren(['isBanned']) || root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true)",
+        ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && (!root.child('members').child($uid).child(auth.uid).hasChildren(['isBanned']) || root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true)"
       }
     }
   }
