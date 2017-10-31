@@ -9,6 +9,7 @@ const createEvent = require('./createEvent');
 const createUser = require('./createUser');
 const getRoom = require('./getRoom');
 const getters = require('./getters');
+const adminEndpoint = require('./admin');
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use(authenticate);
 app.post('/createEvent', createEvent.default);
 app.post('/createUser', createUser.default);
 app.post('/getRoom', getRoom.default);
+app.post('/admin', adminEndpoint.default);
 
 const notFound = (req, res) => {
     res.status(404).send('Not Found');

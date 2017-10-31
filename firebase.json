@@ -11,8 +11,12 @@
     ],
     "rewrites": [
       {
+        "source": "/guard",
+        "function": "guard"
+      },
+      {
         "source": "**",
-        "destination": "/index.html"
+        "function": "guard"
       }
     ]
   }

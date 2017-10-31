@@ -160,6 +160,8 @@ function renameIndexHTML() {
   // copy new real file
   fs.createReadStream(paths.appBuild + '/realhtml_186231treg.html')
     .pipe(fs.createWriteStream(paths.appBuild + '/../functions/realhtml_186231treg.html'));
+  fs.createReadStream(paths.appBuild + '/index.html')
+    .pipe(fs.createWriteStream(paths.appBuild + '/../functions/index.html'));
 
   // remove new real file from public
   fs.unlinkSync(paths.appBuild + '/firebaseIndex.html')

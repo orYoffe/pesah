@@ -41,6 +41,7 @@ const Routes = (props) => (
                             <PrivateRoute authed={props.isLoggedIn} path='/create-event' component={CreateEvent} />
                             <PrivateRoute authed={props.isLoggedIn} path='/admin' component={Admin} />
                             <Route path="/404" component={NotFound}/>
+                            <Redirect from="/guard" to="/" />
                             <Redirect to="/404" />
                         </Switch>
                         <Chat />

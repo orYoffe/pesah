@@ -13,7 +13,7 @@ exports.guard = functions.https.onRequest((req, res) => {
   if (req.body.a === 'pesah') {
     res.sendFile(path.join(__dirname, 'realhtml_186231treg.html'));
   } else {
-    res.redirect('https://earlybirdshopers.firebaseapp.com?a=wrong');
+    res.sendFile(path.join(__dirname, 'index.html'));
   }
 });
 
