@@ -22,6 +22,7 @@ class CreateVenue extends Component {
         hasLocalAudience: null,
         hasGuarantee: null,
         location: null,
+        isLazarya: true,
     }
 
     componentDidMount() {
@@ -254,6 +255,7 @@ class CreateVenue extends Component {
             hasLocalAudience,
             hasGuarantee,
             location,
+            isLazarya,
         } = this.state
         console.log('values=========', values)
         if (values) {
@@ -264,6 +266,16 @@ class CreateVenue extends Component {
                 <h3>Create Venue</h3>
                 <form onSubmit={this.onSubmit}>
                     {error && <div className="error" >{error}</div>}
+                    <div className="form-group">
+                        <label className="form-control checkbox">
+                            <input
+                                type="checkbox"
+                                checked={isLazarya}
+                                onChange={this.onLazaryaChange}
+                            />
+                            Is from Lazarya?
+                        </label>
+                    </div>
                     <Input
                         refFunc={node => this.venueName = node}
                         isRequired
@@ -489,6 +501,8 @@ class CreateVenue extends Component {
                                 lat: {location.lat}
                                 <br/>
                                 lng: {location.lng}
+                                <br/>
+                                website: {location.website}
                                 <br/>
                                 icon: <img src={location.icon} alt=""/>
                                 <br/>

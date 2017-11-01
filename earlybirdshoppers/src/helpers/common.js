@@ -72,6 +72,7 @@ export const getLocation = (location, photoOps) => {
       photo,
       lat,
       lng,
+      website: location.website,
     }
   } catch (error) {
     return false
