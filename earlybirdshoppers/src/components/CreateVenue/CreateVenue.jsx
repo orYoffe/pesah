@@ -3,17 +3,16 @@ import store from 'store'
 import { connect } from 'react-redux'
 // import '../UserItem.css'
 // import './CreateVenue.css'
-import { readFile } from '../../helpers/common'
+import { readFile, getLocation, getLocationImage } from '../../helpers/common'
 // import { createVenue } from '../../helpers/db/venue'
 import GSearchInput from '../GSearchInput/'
 import Input from '../Input'
-import ExploreCalendar from '../ExploreCalendar'
+import Map from '../Map'
 
 const LOCALSTORAGE_CREATE_VENUE_KEY = 'create_venue_values'
 
 class CreateVenue extends Component {
     state = {
-        numberOfTickets: null,
         image: null,
         error: '',
         errors: [],
@@ -22,6 +21,7 @@ class CreateVenue extends Component {
         venueSize: 'S',
         hasLocalAudience: null,
         hasGuarantee: null,
+        location: null,
     }
 
     componentDidMount() {
@@ -125,7 +125,7 @@ class CreateVenue extends Component {
     // }
     
     onSubmit = e => {
-        e.prvenueDefault()
+        e && e.preventDefault()
         // const { trans, accountType } = this.props
         // const { image } = this.state
         // let venue
@@ -218,25 +218,58 @@ class CreateVenue extends Component {
         // this.onPricingChange()
     }
 
-    onPlacesChanged = places => {} //console.log(this.eventLocation.getPlaces())
+    setLocationImage = e => {
+        e && e.preventDefault()
+        const place = this.venueLocation.getPlaces()[0]
+        const image = getLocationImage(place, {
+            maxHeight: 200,
+            maxWidth: 200,
+        })
+        if (image) {
+            this.setState({ image })
+        }
+    }
+    checkSize = e => this.setState({venueSize: e.target.value})
+    onPlacesChanged = () => {
+        const place = this.venueLocation.getPlaces()[0]
+        const location = getLocation(place)
+        console.log('place======', place)
+        console.log('location object======', location)
+        if (place && location) {
+            this.setState({
+                location
+            })
+        } else if (this.state.location) {
+            this.setState({ location: null })
+        }
+    }
     getError = (key) => this.state.errors.indexOf(key) !== -1 ? 'has-warning' : ''
     render() {
-        const { image, error, values, paidEntrance, venueSize, hasLocalAudience, hasGuarantee } = this.state
+        const {
+            image,
+            error,
+            values,
+            paidEntrance,
+            venueSize,
+            hasLocalAudience,
+            hasGuarantee,
+            location,
+        } = this.state
         console.log('values=========', values)
         if (values) {
             store.set(LOCALSTORAGE_CREATE_VENUE_KEY, values)
         }
         return (
             <div className="container">
+                <h3>Create Venue</h3>
                 <form onSubmit={this.onSubmit}>
                     {error && <div className="error" >{error}</div>}
                     <Input
                         refFunc={node => this.venueName = node}
                         isRequired
-                        value={values ? (values.name || '') : ''}
                         className={this.getError('name')}
                         id="venueName"
-                        label="Venue Name"
+                        label="Name"
                         type="text"
                         onInputChange={this.onInputChange}
                         placeholder="Venue Name"
@@ -244,29 +277,36 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.contactPerson = node}
                         isRequired
-                        value={values ? (values.contactPerson || '') : ''}
                         className={this.getError('contactPerson')}
                         id="contactPerson"
-                        label="Venue Contact Person"
+                        label="Contact Person"
                         type="text"
                         onInputChange={this.onInputChange}
                         placeholder="Venue Contact Person"
                         />
                     <Input
+                        refFunc={node => this.venueEmail = node}
+                        isRequired
+                        className={this.getError('venueEmail')}
+                        id="email"
+                        label="Email"
+                        type="email"
+                        onInputChange={this.onInputChange}
+                        placeholder="example@example.com"
+                        />
+                    <Input
                         refFunc={node => this.phoneNumber = node}
                         isRequired
-                        value={values ? (values.phoneNumber || '') : ''}
                         className={this.getError('phone')}
                         id="phoneNumber"
                         label="Phone number"
                         type="tel"
                         onInputChange={this.onInputChange}
-                        placeholder="0526486..."
+                        placeholder="XXX-XXXXXXX"
                         />
                     <Input
                         refFunc={node => this.website = node}
                         isRequired
-                        value={values ? (values.website || '') : ''}
                         className={this.getError('db')}
                         id="website"
                         label="Website"
@@ -277,7 +317,6 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.fb = node}
                         isRequired
-                        value={values ? (values.fb || '') : ''}
                         className={this.getError('fb')}
                         id="fb"
                         label="Facebook"
@@ -288,7 +327,6 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.venueType = node}
                         isRequired
-                        value={values ? (values.venueType || '') : ''}
                         className={this.getError('venueType')}
                         id="venueType"
                         label="Type of venue"
@@ -299,7 +337,6 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.genre = node}
                         isRequired
-                        value={values ? (values.genre || '') : ''}
                         className={this.getError('genre')}
                         id="venueGenre"
                         label="Genre"
@@ -310,13 +347,22 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.capacity = node}
                         isRequired
-                        value={values ? (values.capacity || '') : ''}
                         className={this.getError('capacity')}
                         id="venueCapacity"
                         label="Capacity"
                         type="number"
                         onInputChange={this.onInputChange}
-                        placeholder="Capacity"
+                        placeholder="200"
+                    />
+                    <Input
+                        refFunc={node => this.date = node}
+                        isRequired
+                        className={this.getError('date')}
+                        id="venueLastEdit"
+                        label="Last edited"
+                        type="date"
+                        onInputChange={this.onInputChange}
+                        placeholder="Last edited"
                     />
                     <p>Venue size</p>
                     <div className="radio">
@@ -384,7 +430,6 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.businessPlan = node}
                         isRequired
-                        value={values ? (values.businessPlan || '') : ''}
                         className={this.getError('businessPlan')}
                         id="businessPlan"
                         label="Business Plan"
@@ -395,7 +440,6 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.description = node}
                         isRequired
-                        value={values ? (values.description || '') : ''}
                         className={this.getError('description')}
                         id="description"
                         label="Description"
@@ -406,7 +450,6 @@ class CreateVenue extends Component {
                     <Input
                         refFunc={node => this.comments = node}
                         isRequired
-                        value={values ? (values.comments || '') : ''}
                         className={this.getError('comments')}
                         id="comments"
                         label="Comments"
@@ -414,7 +457,6 @@ class CreateVenue extends Component {
                         onInputChange={this.onInputChange}
                         placeholder="Comments..."
                     />
-                    <ExploreCalendar />
                     <div className={`form-group ${this.getError('location')} `}>
                         <label htmlFor="venueLocation">Venue Location</label>
                         <GSearchInput 
@@ -425,6 +467,42 @@ class CreateVenue extends Component {
                             onPlacesChanged={this.onPlacesChanged}
                         />
                     </div>
+                    {location && (
+                        <div>
+                            <p>
+                                city: {location.city}
+                                <br/>
+                                country: {location.country}
+                                <br/>
+                                countryShortName: {location.countryShortName}
+                                <br/>
+                                district: {location.district}
+                                <br/>
+                                address: {location.address}
+                                <br/>
+                                intphone: {location.intphone}
+                                <br/>
+                                phone: {location.phone}
+                                <br/>
+                                name: {location.name}
+                                <br/>
+                                lat: {location.lat}
+                                <br/>
+                                lng: {location.lng}
+                                <br/>
+                                icon: <img src={location.icon} alt=""/>
+                                <br/>
+                                {location.photo && <span>
+                                    photo: <img src={location.photo} alt="" /> <button onClick={this.setLocationImage}>Set as profile picture</button>
+                                    </span>}
+                            </p>
+                            <Map markers={[
+                                {
+                                    position: { lng: location.lng, lat: location.lat }
+                                },
+                            ]}/>
+                        </div>
+                    )}
                     <div className={`form-group ${this.getError('venuePhoto')} `}>
                         <label htmlFor="venuePhoto">Upload venue profile picture</label>
                         <input
@@ -434,16 +512,16 @@ class CreateVenue extends Component {
                             id="venuePhoto" />
                     </div>
                     <br />
+                    {image && [
+                        <h5 key="venue-cover-image-display-header">Venue Profile picture</h5>,
+                        <img src={image} alt="venue cover" title="venue cover" key="venue-cover-image-display-picture" />
+                    ]}
                     <input
                         className="btn btn-primary form-control"
                         onClick={this.onSubmit}
                         type="submit"
                         value="Create Venue"
                     />
-                    {image && [
-                        <h5 key="venue-cover-image-display-header">Venue Cover</h5>,
-                        <img src={image} alt="venue cover" title="venue cover" key="venue-cover-image-display-picture" />
-                    ]}
                 </form>
             </div>
         )

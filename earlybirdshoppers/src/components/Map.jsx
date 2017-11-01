@@ -2,7 +2,7 @@ import React from 'react'
 import noop from 'lodash/noop'
 import { GoogleMap, Marker, withGoogleMap } from "react-google-maps"
 
-const GettingStartedGoogleMap = withGoogleMap(({
+const Gmap = withGoogleMap(({
   markers,
   onMapLoad,
   onMapClick,
@@ -16,6 +16,7 @@ const GettingStartedGoogleMap = withGoogleMap(({
   >
     {markers && markers.map((marker, index) => (
       <Marker
+          key={`marker_${marker.position.lat}_${marker.position.lng}`}
         {...marker}
         onRightClick={() => onMarkerRightClick(index)}
       />
@@ -28,12 +29,12 @@ const Map = ({
   onMapClick,
   onMarkerRightClick,
 }) => (
-  <GettingStartedGoogleMap
+  <Gmap
     containerElement={
-      <div style={{ height: `100%`, minHeight: '400px' }} />
+      <div style={{ height: `100%`, minHeight: '200px' }} />
     }
     mapElement={
-      <div style={{ height: `100%`, minHeight: '400px' }} />
+      <div style={{ height: `100%`, minHeight: '200px' }} />
     }
     onMapLoad={noop}
     onMapClick={noop}

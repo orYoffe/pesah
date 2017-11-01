@@ -6,7 +6,6 @@ const Input = props => (
         <input
             ref={props.refFunc}
             required={props.isRequired}
-            value={props.value || ''}
             className={props.inputClassName || "form-control"}
             type={props.type}
             onChange={props.onInputChange}

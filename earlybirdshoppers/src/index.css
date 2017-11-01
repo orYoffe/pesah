@@ -33,6 +33,9 @@ body {
 .page {
   height: auto;
 }
+form {
+  padding-bottom: 20px;
+}
 
 .page::after,
 .page::before {

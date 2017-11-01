@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-// import { connect } from 'react-redux'
+import { connect } from 'react-redux'
 // import { Link, Redirect } from 'react-router-dom'
 import { pageView } from '../helpers/analytics'
 import CreateVenue from '../components/CreateVenue/'
@@ -40,10 +40,9 @@ class Admin extends Component {
     }
 
     render() {
-        // const { messages: { message, error } } = this.state
+        const { isAdmin } = this.props
         
-        // TODO add auth for admign and admin panel for venues
-        if (true) {
+        if (isAdmin) {
             return  (
                 <div>
                     <h2>Admin panel</h2>
@@ -56,6 +55,6 @@ class Admin extends Component {
 
 // const mapDispatchToProps = dispatch => ({ Admin: (user) => dispatch(AdminAction(user)) })
 
-// const mapStateToProps = state => ({isLoggedIn: state.auth.loggedIn})
+const mapStateToProps = state => ({ isAdmin: state.auth.user && state.auth.user.isAdmin })
 
-export default Admin
+export default connect(mapStateToProps)(Admin)

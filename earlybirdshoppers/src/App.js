@@ -45,7 +45,6 @@ class App extends Component {
 
   render() {
     const { isAdmin, isLoggedIn } = this.props
-    console.log('app-props -------------', this.props)
     if (this.state.loading) return <Loader />
     return <Routes isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
   }

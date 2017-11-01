@@ -4276,6 +4276,10 @@ marker-clusterer-plus@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/marker-clusterer-plus/-/marker-clusterer-plus-2.1.4.tgz#f8eff74d599dab3b7d0e3fed5264ea0e704f5d67"
 
+markerwithlabel@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/markerwithlabel/-/markerwithlabel-2.0.1.tgz#822f4eb68c488c2509c5ebdb75982eb84a856096"
+
 math-expression-evaluator@^1.2.14:
   version "1.2.17"
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.17.tgz#de819fdbcd84dccd8fae59c6aeb79615b9d266ac"
@@ -5479,9 +5483,9 @@ react-error-overlay@^2.0.1:
     settle-promise "1.0.0"
     source-map "0.5.6"
 
-react-google-maps@8.5.0:
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/react-google-maps/-/react-google-maps-8.5.0.tgz#1261b331fa528978ba12ffb8395dbe64a1e1b261"
+react-google-maps@9.2.1:
+  version "9.2.1"
+  resolved "https://registry.yarnpkg.com/react-google-maps/-/react-google-maps-9.2.1.tgz#9318a164a44a70b9aef857cdb9d0efbc5a7cd0ad"
   dependencies:
     babel-runtime "^6.11.6"
     can-use-dom "^0.1.0"
@@ -5489,8 +5493,9 @@ react-google-maps@8.5.0:
     invariant "^2.2.1"
     lodash "^4.16.2"
     marker-clusterer-plus "^2.1.4"
+    markerwithlabel "^2.0.1"
     prop-types "^15.5.8"
-    recompose "^0.25.0"
+    recompose "^0.26.0"
     scriptjs "^2.5.8"
     warning "^3.0.0"
 
@@ -5614,9 +5619,9 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
-recompose@^0.25.0:
-  version "0.25.1"
-  resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.25.1.tgz#5eb9d6cf6e25a9ffad73cbbae5658b5b55d6e728"
+recompose@^0.26.0:
+  version "0.26.0"
+  resolved "https://registry.yarnpkg.com/recompose/-/recompose-0.26.0.tgz#9babff039cb72ba5bd17366d55d7232fbdfb2d30"
   dependencies:
     change-emitter "^0.1.2"
     fbjs "^0.8.1"

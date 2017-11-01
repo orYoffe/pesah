@@ -65,7 +65,6 @@ class Menu extends Component {
         
         const { trans } = this.props
         const { isOpen } = this.state
-        console.log('menu-props -------------', this.props)
 
         return (
             <div className="navbar navbar-default navbar-fixed-top" role="navigation">

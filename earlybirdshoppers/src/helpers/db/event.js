@@ -101,6 +101,7 @@ const createPayment = (paymentData) => {
         ...defaultPayment,
         ...paymentData
     }
+    console.log('paymentObject===', paymentObject)
      // TODO make account type (artist/venue) dynamic
 
      // TODO save payment to event, payments and user
