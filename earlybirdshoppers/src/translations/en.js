@@ -7,5 +7,6 @@ export default  {
     My_Page: 'My Page',
     Explore: 'Explore',
     Create_Event: 'Create Event',
+    Admin_pannel: 'Admin pannel',
 
 }

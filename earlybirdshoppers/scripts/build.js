@@ -150,6 +150,9 @@ function copyPublicFolder() {
     filter: file => file !== paths.appHtml || file.indexOf('indexSecure') !== -1,
   });
 }
+
+
+// current wall of security is moving the html files to the functions dir and serving it from guard
 function renameIndexHTML() {
   fs.renameSync(paths.appBuild + '/index.html', paths.appBuild + '/realhtml_186231treg.html')
   fs.renameSync(paths.appBuild + '/indexSecure.html', paths.appBuild + '/index.html')

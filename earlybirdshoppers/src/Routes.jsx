@@ -39,7 +39,7 @@ const Routes = (props) => (
                             <Route path="/event/:id" component={Event}/>
                             <Route path="/fan/:id" component={Fan}/>
                             <PrivateRoute authed={props.isLoggedIn} path='/create-event' component={CreateEvent} />
-                            <PrivateRoute authed={props.isLoggedIn} path='/admin' component={Admin} />
+                            <PrivateRoute authed={props.isLoggedIn && props.isAdmin} path='/admin' component={Admin} />
                             <Route path="/404" component={NotFound}/>
                             <Redirect from="/guard" to="/" />
                             <Redirect to="/404" />

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 // import { connect } from 'react-redux'
 // import { Link, Redirect } from 'react-router-dom'
 import { pageView } from '../helpers/analytics'
+import CreateVenue from '../components/CreateVenue/'
 
 // TODO start implementing admin panel to see data and change certain types of data
 // TODO block anyone without admin access
@@ -43,7 +44,12 @@ class Admin extends Component {
         
         // TODO add auth for admign and admin panel for venues
         if (true) {
-            return  <div>Admin panel</div>
+            return  (
+                <div>
+                    <h2>Admin panel</h2>
+                    <CreateVenue />
+                </div>
+            )
         }
     }
 }
