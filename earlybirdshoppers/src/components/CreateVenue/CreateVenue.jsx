@@ -351,16 +351,18 @@ class CreateVenue extends Component {
                             XL
                         </label>
                     </div>
-                    <label className="form-group checkbox">
-                        <input
-                            type="checkbox"
-                            checked={hasLocalAudience}
-                            onChange={this.onLocalAudienceChange}
-                        />
-                        Has local Audience?
-                    </label>
                     <div className="form-group">
-                        <label className="checkbox">
+                        <label className="form-control checkbox">
+                            <input
+                                type="checkbox"
+                                checked={hasLocalAudience}
+                                onChange={this.onLocalAudienceChange}
+                            />
+                            Has local Audience?
+                        </label>
+                    </div>
+                    <div className="form-group">
+                        <label className="form-control checkbox">
                             <input
                                 type="checkbox"
                                 checked={paidEntrance}
@@ -370,13 +372,13 @@ class CreateVenue extends Component {
                         </label>
                     </div>
                     <div className="form-group">
-                        <label className="checkbox">
+                        <label className="form-control checkbox">
                             <input
                                 type="checkbox"
                                 checked={hasGuarantee}
-                                onChange={this.onPaidEntranceChange}
+                                onChange={this.onGuaranteeChange}
                             />
-                            paid entrance?
+                            Has Guarantee?
                         </label>
                     </div>
                     <Input
@@ -451,7 +453,6 @@ class CreateVenue extends Component {
 
 const mapStateToProps = (state) => ({
     trans: state.locale.trans,
-    accountType: state.auth.user && state.auth.user.accountType,
 })
 
 export default connect(mapStateToProps)(CreateVenue)

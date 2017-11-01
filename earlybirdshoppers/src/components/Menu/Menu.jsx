@@ -71,7 +71,7 @@ class Menu extends Component {
             <div className="navbar navbar-default navbar-fixed-top" role="navigation">
                 <div className="container">
                     <div className="navbar-header">
-                        <button type="button" className="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" onClick={this.toggleMenu}>
+                        <button type="button" className="navbar-toggle"  onClick={this.toggleMenu}>
                             <span className="sr-only">Toggle navigation</span>
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
@@ -79,7 +79,7 @@ class Menu extends Component {
                         </button>
                         <NavLink  onClick={this.closeMenu}className="navbar-brand"  to={"/"}>Raise The Bar</NavLink>
                     </div>
-                    <div className={`collapse ${isOpen ? 'in' : ''}`}>
+                    <div className={`collapse ${isOpen ? 'in' : ''} navbar-collapse`}>
                         <ul className="nav navbar-nav">
                             <li>
                                 <NavLink  onClick={this.closeMenu}  to={"/"}>{trans.Explore}</NavLink>
