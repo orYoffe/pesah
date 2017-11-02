@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
+import { events, artists, venues, fans } from '../helpers/mockData'
+import { pageView } from '../helpers/analytics'
+import { getExplore } from '../helpers/firebase'
 // import ExploreCalendar from '../components/ExploreCalendar'
 import EventItem from '../components/EventItem/'
 import ArtistItem from '../components/ArtistItem/'
 import VenueItem from '../components/VenueItem/'
 import FanItem from '../components/FanItem/'
-import { events, artists, venues, fans } from '../helpers/mockData'
-import { pageView } from '../helpers/analytics'
-import { getExplore } from '../helpers/firebase'
 
 class Explore extends Component {
   state = {

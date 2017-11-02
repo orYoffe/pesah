@@ -3,220 +3,188 @@ import store from 'store'
 import { connect } from 'react-redux'
 // import '../UserItem.css'
 // import './CreateVenue.css'
-import { readFile, getLocation, getLocationImage } from '../../helpers/common'
-// import { createVenue } from '../../helpers/db/venue'
+import { readFile, getLocation, getLocationImage, scrollToTop } from '../../helpers/common'
+import { createNonUserVenue } from '../../helpers/firebase'
 import GSearchInput from '../GSearchInput/'
 import Input from '../Input'
+import Checkbox from '../Checkbox'
+import RadioButtons from '../RadioButtons'
 import Map from '../Map'
+import Modal from '../Modal/'
 
-const LOCALSTORAGE_CREATE_VENUE_KEY = 'create_venue_values'
+const LOCALSTORAGE_CREATE_VENUE_KEY = 'create_venue_admin_values'
+
+const defaultValues = {
+    isModalOpen: null,
+    image: null,
+    error: '',
+    errors: [],
+    paidEntrance: null,
+    venueSize: '',
+    hasLocalAudience: null,
+    hasGuarantee: null,
+    location: null,
+    isLazarya: true,
+    contactPerson: '',
+    venueEmail: '',
+    phoneNumber: '',
+    website: '',
+    fb: '',
+    venueType: '',
+    genre: '',
+    capacity: '',
+    date: '',
+    businessPlan: '',
+    description: '',
+    comments: '',
+    name: '',
+}
 
 class CreateVenue extends Component {
-    state = {
-        image: null,
-        error: '',
-        errors: [],
-        values: null,
-        paidEntrance: null,
-        venueSize: 'S',
-        hasLocalAudience: null,
-        hasGuarantee: null,
-        location: null,
-        isLazarya: true,
-    }
+    state = defaultValues
 
     componentDidMount() {
-        // TODO keep values in local storage better
-        // const storedValues = store.get(LOCALSTORAGE_CREATE_VENUE_KEY)
-        // if (storedValues) {
-        //     this.setState({values: storedValues})
-        // }
+        const storedValues = store.get(LOCALSTORAGE_CREATE_VENUE_KEY)
+        if (storedValues) {
+            storedValues.error = ''
+            storedValues.errors = []
+            storedValues.isModalOpen = false
+            this.setState(storedValues)
+        }
     }
-    // componentWillUpdate(nextProps, nextState) {
-    //     // TODO keep values in local storage better
-    //     const storedValues = store.get(LOCALSTORAGE_CREATE_VENUE_KEY)
-    //     if (storedValues) {
-    //         this.setState({values: storedValues})
-    //     }
-    // }
+    componentWillUpdate(nextProps, nextState) {
+        store.set(LOCALSTORAGE_CREATE_VENUE_KEY, nextState)
+    }
 
-    // isValid = ({
-    //     title, date, location, venue, artist, price, accountType, goal, time
-    // }) => {
-    //     const errors = []
-    //     let error = ''
+    clearValues = () => this.setState(defaultValues)
+    onModalClose = () => this.setState({ isModalOpen: false })
+
+    isValid = ({ name, location }) => {
+        const errors = []
+        let error = ''
         
-    //     if (title.length < 5) {
-    //         errors.push('title')
-    //         error = `
+        if (name.length < 4) {
+            errors.push('name')
+            error = `
 
-    //         Title must be longer than 4 chars
-    //         `
-    //     }
+            Name must be longer than 3 chars
+            `
+        }
         
-    //     if (!moment(date, 'YYYY-MM-DD', true).isValid()) {
-    //         errors.push('date')
-    //         error = `${error}
+        if (
+            !location ||
+            !location.city ||
+            !location.country ||
+            !location.countryShortName ||
+            !location.district ||
+            !location.address ||
+            !location.lat ||
+            !location.lng
+        ) {
+            errors.push('location')
+            error = `${error}
 
-    //         Date is required
-    //         `
-    //     } else {
-    //         const now = new Date()
-    //         if (new Date(date).getTime() <= now.getTime()) {
-    //             errors.push('date')
-    //             error = `${error}
+            Location is required
+            `
+        }
 
-    //             Date must be in the future
-    //             `
-    //         }
-    //     }
-    //     if (!moment(time, 'HH:mm', true).isValid()) {
-    //         errors.push('time')
-    //         error = `${error}
+        if (errors.length) {
+            this.setState({ error, errors })
+            scrollToTop()
+            return false
+        }
 
-    //         Time is required
-    //         `
-    //     }
-    //     if (
-    //         !location ||
-    //         !location.address_components ||
-    //         !location.address_components
-    //         .find(prop => prop.types.indexOf('country') !== -1) ||
-    //         !location.address_components
-    //             .find(prop => prop.types.indexOf('locality') !== -1)
-    //         ) {
-    //         errors.push('location')
-    //         error = `${error}
-
-    //         Location is required
-    //         `
-    //     }
-    //     if (accountType === 'artist' && venue.length < 5) {
-    //         errors.push('venue')
-    //         error = `${error}
-    //         Venue must be longer than 4 chars
-    //         `
-    //     }
-    //     if (accountType === 'venue' && artist.length < 5) {
-    //         errors.push('artist')
-    //         error = `${error}
-    //         Artists must be longer than 4 chars
-    //         `
-    //     }
-    //     // TODO fix validation for price and goal
-    //     if (isNaN(parseInt(price, 10)) || parseInt(price, 10) < 0) {
-    //         errors.push('price')
-    //         error = `${error}
-    //         Price is required
-    //         `
-    //     }
-    //     if (isNaN(parseInt(goal, 10)) || parseInt(goal, 10) < 0 || parseInt(goal, 10) <= parseInt(price, 10)) {
-    //         errors.push('goal')
-    //         error = `${error}
-    //         Bar goal is required and must be higher than ticket price
-    //         `
-    //     }
-
-    //     if (errors.length) {
-    //         this.setState({ error, errors })
-    //         return false
-    //     }
-
-    //     return true
-    // }
+        return true
+    }
     
     onSubmit = e => {
         e && e.preventDefault()
-        // const { trans, accountType } = this.props
-        // const { image } = this.state
-        // let venue
-        // let artist
-
-        // const places = this.venueLocation.getPlaces() || []
+        const { location, name } = this.state
         
-        // const title = this.venueName.value.trim()
-        // const date = this.venueDate.value
-        // const time = this.time.value
-        // const price = this.ticketPrice.value
-        // const goal = this.goal.value
-        // const currency = trans.currency
-        // const location = places[0]
-        // if (accountType === 'artist') {
-        //     venue = this.venue.value.trim() 
+        if (this.isValid({ name, location })) {
+            this.setState({isModalOpen: true})
+        }
+    }
+    onConfirm = () => {
+        const {
+            image, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson,
+            venueEmail, phoneNumber, website, fb, venueType, genre, capacity, date,
+            businessPlan, description, comments, name, location,
+        } = this.state
+    
+        console.log('submit============ ', {
+            contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
+            capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
+            paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...location,
+        })
+        this.onModalClose()
+    // createNonUserVenue()
+        // const error = createNonUserVenue({
+        //     title, date: new Date(date).toJSON(), time, price, goal,
+        //     currency, location, venue, artist, photoURL, accountType,
+        // })
+        // if (error && error.then) {
+        //     error.then(venue => {
+        //         // debugger
+        //         console.log(' new venue ===', venue)
+        //         // this.props.history.push(`/venue/${venue.uid}`)
+        //     }).catch(err => {
+        //         // TODO handle errors
+        //         console.log('error ===', err)
+        //     })
         // } else {
-        //     artist = this.artist.value.trim() 
+        //     switch (error) {
+        //         case 'login':
+        //             return this.setState({ error: 'Please Login to Create Venue', errors: [] })
+        //         case 'verifyemail':
+        //             return this.setState({
+        //                 error: 'Please verify your email in order to Create Venue you need to verify your email',
+        //                 errors: []
+        //             })
+        //         default:
+        //         this.setState({error: '', errors: []})
+        //             break
+        //     }
         // }
-        // // TODO connect to real venues
-        // // TODO if venue is not in platform add details and add venue
-        // const photoURL = image
-        
-        // if (this.isValid({
-        //     title, date, time, location, venue, artist, price, goal, accountType
-        // })) {
-            // const error = createVenue({
-            //     title, date: new Date(date).toJSON(), time, price, goal,
-            //     currency, location, venue, artist, photoURL, accountType,
-            // })
-            // if (error && error.then) {
-            //     error.then(venue => {
-            //         // debugger
-            //         console.log(' new venue ===', venue)
-            //         // this.props.history.push(`/venue/${venue.uid}`)
-            //     }).catch(err => {
-            //         // TODO handle errors
-            //         console.log('error ===', err)
-            //     })
-            // } else {
-            //     switch (error) {
-            //         case 'login':
-            //             return this.setState({ error: 'Please Login to Create Venue', errors: [] })
-            //         case 'verifyemail':
-            //             return this.setState({
-            //                 error: 'Please verify your email in order to Create Venue you need to verify your email',
-            //                 errors: []
-            //             })
-            //         default:
-            //         this.setState({error: '', errors: []})
-            //             break
-            //     }
-            // }
-        // }
+
+    }
+    getModalquestion = () => {
+        const {
+            image, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail,
+            phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
+            location, name,
+            } = this.state
+        const values = {
+            contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, date: new Date(date).toJSON(), businessPlan,
+            description, comments, isLazarya, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, image, name, ...location,
+        }
+        return (
+            <div>
+                <h3>Are you sure you want to submit a new venue with these values?</h3>
+                <br/>
+                <h4>without these values</h4>
+                {Object.keys(values).map(itemKey => !values[itemKey] && <p style={{
+                    display: 'inline-block',
+                    margin: '5px'
+                }}>
+                    <span style={{ color: 'red' }}>{itemKey}</span>,
+                </p>)}
+                <br />
+                <h4>and with these values</h4>
+                {Object.keys(values).map(itemKey => values[itemKey] && <p style={{
+                    display: 'inline-block',
+                    margin: '5px'
+                    }}>
+                    <span style={{ color: 'green'}}>{itemKey}</span>: {values[itemKey]}
+                </p>)}
+            </div>
+        )
     }
 
     onFileChange = e => {
         readFile(e.target.files, venue => {
             this.setState({image: venue.target.result})
         })
-    }
-
-    renderHowMany = numberOfTickets => numberOfTickets && <p>Number of tickets required to reach Bar goal is {numberOfTickets} tickets</p>
-    onPricingChange = () => {
-    }
-
-    onInputChange = () => {
-        // const { accountType } = this.props
-        // // const { image } = this.state
-        // let venue
-        // let artist
-
-        // const places = this.venueName.value.trim()
-        // const date = this.eventDate.value
-        // const time = this.time.value
-        // const price = this.ticketPrice.value
-        // const goal = this.goal.value
-        // const location = places[0]
-        // if (accountType === 'artist') {
-        //     venue = this.venue.value.trim() 
-        // } else {
-        //     artist = this.artist.value.trim() 
-        // }
-        // // const photoURL = image
-
-        // store.set(LOCALSTORAGE_CREATE_VENUE_KEY, {
-        //     title, date: date, time, price, goal,
-        //     location, venue, artist,
-        // })
-        // this.onPricingChange()
     }
 
     setLocationImage = e => {
@@ -231,6 +199,24 @@ class CreateVenue extends Component {
         }
     }
     checkSize = e => this.setState({venueSize: e.target.value})
+    onLazaryaChange = e => {this.setState({ isLazarya: !this.state.isLazarya })}
+    onLocalAudienceChange = e => this.setState({ hasLocalAudience: !this.state.hasLocalAudience })
+    onPaidEntranceChange = e => this.setState({ paidEntrance: !this.state.paidEntrance })
+    onGuaranteeChange = e => this.setState({ hasGuarantee: !this.state.hasGuarantee })
+    onContactChange = e => this.setState({ contactPerson: e.target.value })
+    onEmailChange = e => this.setState({ venueEmail: e.target.value })
+    onPhoneChange = e => this.setState({ phoneNumber: e.target.value })
+    onSiteChange = e => this.setState({ website: e.target.value })
+    onFBChange = e => this.setState({ fb: e.target.value })
+    onVenueTypeChange = e => this.setState({ venueType: e.target.value })
+    onGenreChange = e => this.setState({ genre: e.target.value })
+    onCapacityChange = e => this.setState({ capacity: e.target.value })
+    onDateChange = e => this.setState({ date: e.target.value })
+    onBusinessPlanChange = e => this.setState({ businessPlan: e.target.value })
+    onDescriptionChange = e => this.setState({ description: e.target.value })
+    onCommentsChange = e => this.setState({ comments: e.target.value })
+    onNameChange = e => this.setState({ name: e.target.value })
+
     onPlacesChanged = () => {
         const place = this.venueLocation.getPlaces()[0]
         const location = getLocation(place)
@@ -245,228 +231,168 @@ class CreateVenue extends Component {
         }
     }
     getError = (key) => this.state.errors.indexOf(key) !== -1 ? 'has-warning' : ''
+
     render() {
         const {
-            image,
-            error,
-            values,
-            paidEntrance,
-            venueSize,
-            hasLocalAudience,
-            hasGuarantee,
-            location,
-            isLazarya,
+            image, error, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, location, isLazarya,
+            contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity,
+            date, businessPlan, description, comments, isModalOpen,
         } = this.state
-        console.log('values=========', values)
-        if (values) {
-            store.set(LOCALSTORAGE_CREATE_VENUE_KEY, values)
-        }
         return (
             <div className="container">
                 <h3>Create Venue</h3>
+                <button onClick={this.clearValues}>Clear Fields</button>
                 <form onSubmit={this.onSubmit}>
                     {error && <div className="error" >{error}</div>}
                     <div className="form-group">
-                        <label className="form-control checkbox">
-                            <input
-                                type="checkbox"
-                                checked={isLazarya}
-                                onChange={this.onLazaryaChange}
-                            />
-                            Is from Lazarya?
-                        </label>
+                        <Checkbox
+                            checked={isLazarya}
+                            onChange={this.onLazaryaChange}
+                            label="Is from Lazarya?"
+                        />
                     </div>
                     <Input
-                        refFunc={node => this.venueName = node}
                         isRequired
                         className={this.getError('name')}
+                        value={name}
                         id="venueName"
                         label="Name"
                         type="text"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onNameChange}
                         placeholder="Venue Name"
                         />
                     <Input
-                        refFunc={node => this.contactPerson = node}
-                        isRequired
                         className={this.getError('contactPerson')}
+                        value={contactPerson}
                         id="contactPerson"
                         label="Contact Person"
                         type="text"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onContactChange}
                         placeholder="Venue Contact Person"
                         />
                     <Input
-                        refFunc={node => this.venueEmail = node}
-                        isRequired
                         className={this.getError('venueEmail')}
+                        value={venueEmail}
                         id="email"
                         label="Email"
                         type="email"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onEmailChange}
                         placeholder="example@example.com"
                         />
                     <Input
-                        refFunc={node => this.phoneNumber = node}
-                        isRequired
                         className={this.getError('phone')}
                         id="phoneNumber"
                         label="Phone number"
                         type="tel"
-                        onInputChange={this.onInputChange}
+                        value={phoneNumber}
+                        onChange={this.onPhoneChange}
                         placeholder="XXX-XXXXXXX"
                         />
                     <Input
-                        refFunc={node => this.website = node}
-                        isRequired
-                        className={this.getError('db')}
+                        className={this.getError('website')}
                         id="website"
+                        value={website}
                         label="Website"
                         type="url"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onSiteChange}
                         placeholder="www.something.co..."
                         />
                     <Input
-                        refFunc={node => this.fb = node}
-                        isRequired
                         className={this.getError('fb')}
+                        value={fb}
                         id="fb"
                         label="Facebook"
                         type="url"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onFBChange}
                         placeholder="www.facebook.com/username..."
                     />
                     <Input
-                        refFunc={node => this.venueType = node}
-                        isRequired
                         className={this.getError('venueType')}
                         id="venueType"
+                        value={venueType}
                         label="Type of venue"
                         type="text"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onVenueTypeChange}
                         placeholder="Type of venue"
                     />
                     <Input
-                        refFunc={node => this.genre = node}
-                        isRequired
                         className={this.getError('genre')}
                         id="venueGenre"
+                        value={genre}
                         label="Genre"
                         type="text"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onGenreChange}
                         placeholder="Genre"
                     />
                     <Input
-                        refFunc={node => this.capacity = node}
-                        isRequired
                         className={this.getError('capacity')}
                         id="venueCapacity"
                         label="Capacity"
+                        value={capacity}
                         type="number"
-                        onInputChange={this.onInputChange}
+                        onChange={this.onCapacityChange}
                         placeholder="200"
                     />
                     <Input
-                        refFunc={node => this.date = node}
-                        isRequired
                         className={this.getError('date')}
                         id="venueLastEdit"
                         label="Last edited"
                         type="date"
-                        onInputChange={this.onInputChange}
+                        value={date}
+                        onChange={this.onDateChange}
                         placeholder="Last edited"
                     />
-                    <p>Venue size</p>
-                    <div className="radio">
-                        <label>
-                            <input type="radio"
-                                checked={venueSize === 'S'}
-                                onChange={this.checkSize} name="optionsVenueSizeRadios" id="optionsVenueSizeRadios0" value="S" />
-                            S
-                        </label>
-                    </div>
-                    <div className="radio">
-                        <label>
-                            <input type="radio"
-                                checked={venueSize === 'M'}
-                                onChange={this.checkSize} name="optionsVenueSizeRadios" id="optionsVenueSizeRadios1" value="M" />
-                            M
-                        </label>
-                    </div>
-                    <div className="radio">
-                        <label>
-                            <input type="radio"
-                                checked={venueSize === 'L'}
-                                onChange={this.checkSize} name="optionsVenueSizeRadios" id="optionsVenueSizeRadios2" value="L" />
-                            L
-                        </label>
-                    </div>
-                    <div className="radio">
-                        <label>
-                            <input type="radio"
-                                checked={venueSize === 'XL'}
-                                onChange={this.checkSize} name="optionsVenueSizeRadios" id="optionsVenueSizeRadios3" value="XL" />
-                            XL
-                        </label>
-                    </div>
+                    <RadioButtons
+                        label="Venue size"
+                        checked={venueSize}
+                        name="optionsVenueSizeRadios"
+                        onChange={this.checkSize}
+                        options={[
+                            'S', 'M', 'L', 'XL'
+                        ]}
+                    />
                     <div className="form-group">
-                        <label className="form-control checkbox">
-                            <input
-                                type="checkbox"
-                                checked={hasLocalAudience}
-                                onChange={this.onLocalAudienceChange}
-                            />
-                            Has local Audience?
-                        </label>
-                    </div>
-                    <div className="form-group">
-                        <label className="form-control checkbox">
-                            <input
-                                type="checkbox"
-                                checked={paidEntrance}
-                                onChange={this.onPaidEntranceChange}
-                            />
-                            paid entrance?
-                        </label>
-                    </div>
-                    <div className="form-group">
-                        <label className="form-control checkbox">
-                            <input
-                                type="checkbox"
-                                checked={hasGuarantee}
-                                onChange={this.onGuaranteeChange}
-                            />
-                            Has Guarantee?
-                        </label>
+                        <Checkbox 
+                            checked={hasLocalAudience}
+                            onChange={this.onLocalAudienceChange}
+                            label="Has local Audience?"
+                        />
+                        <Checkbox 
+                            checked={paidEntrance}
+                            onChange={this.onPaidEntranceChange}
+                            label="Has paid entrance?"
+                        />
+                        <Checkbox 
+                            checked={hasGuarantee}
+                            onChange={this.onGuaranteeChange}
+                            label="Has Guarantee?"
+                        />
                     </div>
                     <Input
-                        refFunc={node => this.businessPlan = node}
-                        isRequired
                         className={this.getError('businessPlan')}
                         id="businessPlan"
                         label="Business Plan"
                         type="text"
-                        onInputChange={this.onInputChange}
+                        value={businessPlan}
+                        onChange={this.onBusinessPlanChange}
                         placeholder="Business Plan"
                     />
                     <Input
-                        refFunc={node => this.description = node}
-                        isRequired
                         className={this.getError('description')}
                         id="description"
                         label="Description"
                         type="text"
-                        onInputChange={this.onInputChange}
+                        value={description}
+                        onChange={this.onDescriptionChange}
                         placeholder="Description..."
                     />
                     <Input
-                        refFunc={node => this.comments = node}
-                        isRequired
                         className={this.getError('comments')}
                         id="comments"
                         label="Comments"
                         type="text"
-                        onInputChange={this.onInputChange}
+                        value={comments}
+                        onChange={this.onCommentsChange}
                         placeholder="Comments..."
                     />
                     <div className={`form-group ${this.getError('location')} `}>
@@ -537,6 +463,7 @@ class CreateVenue extends Component {
                         value="Create Venue"
                     />
                 </form>
+                {isModalOpen && <Modal question={this.getModalquestion()} onConfirm={this.onConfirm} onClose={this.onModalClose} />}
             </div>
         )
     }

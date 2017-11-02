@@ -78,3 +78,5 @@ export const getLocation = (location, photoOps) => {
     return false
   }
 }
+
+export const scrollToTop = () => window.scrollTo(0, 0)

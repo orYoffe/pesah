@@ -19,3 +19,4 @@ export const GET_EXPLORE = `${API_ENDPOINT}explore`
 export const CREATE_EVENT = `${API_ENDPOINT}createEvent`
 export const CREATE_USER = `${API_ENDPOINT}createUser`
 export const GET_ROOM = `${API_ENDPOINT}getRoom`
+export const CREATE_NON_USER_VENUE = `${API_ENDPOINT}createNonUserVenue`
