@@ -19,11 +19,11 @@ const app = express();
 // when decoded successfully, the ID Token content will be added as `req.user`.
 const authenticate = (req, res, next) => {
     if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
-        !req.cookies.__session) {
+    !req.cookies.__session) {
         console.error('No ID token was passed as a Bearer token in the Authorization header.',
-            'Make sure you authorize your request by providing the following HTTP header:',
-            'Authorization: Bearer <ID Token>',
-            'or by passing a "__session" cookie.');
+        'Make sure you authorize your request by providing the following HTTP header:',
+        'Authorization: Bearer <ID Token>',
+        'or by passing a "__session" cookie.');
         res.status(401).send('Unauthorized');
         return;
     }
@@ -47,7 +47,22 @@ const authenticate = (req, res, next) => {
         res.status(401).send('Unauthorized');
     });
 };
-app.options('*', cors) // include before other routes 
+const adminAuthenticate = (req, res, next) => {
+    if (req.user && req.user.uid) {
+        admin.database().ref(`admins/${req.user.uid}`).once("value").then(snapshot => {
+            if (snapshot && snapshot.val()) {
+                req.user.isAdmin = true;
+                next();
+            } else {
+                res.status(401).send('Unauthorized');
+            }
+        });
+    } else {
+        res.status(401).send('Unauthorized');
+    }
+};
+
+app.options('*', cors); // include before other routes 
 app.use(cors);
 app.use(cookieParser);
 
@@ -67,8 +82,8 @@ app.post('/createEvent', createEvent.default);
 app.post('/createUser', createUser.default);
 app.post('/getRoom', getRoom.default);
 
-
-// TODO add middleware to check if admin user
+// Admin api
+app.use(adminAuthenticate);
 app.post('/createNonUserVenue', adminApis.adminCreateVenue);
 
 const notFound = (req, res) => {

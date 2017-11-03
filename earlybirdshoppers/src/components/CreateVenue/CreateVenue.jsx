@@ -182,6 +182,7 @@ class CreateVenue extends Component {
         this.onModalClose()
     }
     getModalquestion = () => {
+        const { match: { params: { venueUid } } } = this.props
         const {
             image, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail,
             phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
@@ -195,7 +196,7 @@ class CreateVenue extends Component {
         }
         return (
             <div>
-                <h3>Are you sure you want to submit a new venue with these values?</h3>
+                <h3>Are you sure you want to {venueUid ? 'update this venue' : 'create a new venue'} with these values?</h3>
                 <br/>
                 <h4>without these values</h4>
                 {Object.keys(values).map((itemKey, index) => !values[itemKey] && <p key={`${itemKey}_empty_value${index}`} style={{
@@ -270,8 +271,6 @@ class CreateVenue extends Component {
     getError = (key) => this.state.errors.indexOf(key) !== -1 ? 'has-warning' : ''
 
     render() {
-
-        console.log('Create Venue--- this.props ====', this.props)
         const { match: { params: { venueUid } } } = this.props
         const {
             image, error, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, location, isLazarya,
@@ -280,7 +279,7 @@ class CreateVenue extends Component {
         } = this.state
         return (
             <div className="container">
-                <h3>Create Venue</h3>
+                <h3>{venueUid ? 'Edit' : 'Create'} Venue</h3>
                 <button onClick={this.clearValues}>Clear Fields</button>
                 <form onSubmit={this.onSubmit}>
                     {error && <div className="error" >{error}</div>}
