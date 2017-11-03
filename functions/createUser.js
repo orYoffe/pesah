@@ -47,6 +47,7 @@ const createUser = (req, res) => {
                     creationTime: creationTime,
                     uid: req.user.uid,
                     displayName: req.body.displayName,
+                    name: req.body.displayName,
                     accountType: req.body.accountType
                 }).then(() => {
 

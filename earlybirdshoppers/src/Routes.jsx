@@ -20,6 +20,7 @@ import NotFound from './pages/NotFound'
 import Menu from './components/Menu/'
 import CreateEvent from './components/CreateEvent/'
 import Chat from './components/Chat/'
+import Venues from './components/Venues'
 
 const Routes = (props) => (
         <Router>
@@ -31,6 +32,7 @@ const Routes = (props) => (
                         <Switch>
                             <Route exact path="/realhtml_186231treg.html" component={Explore}/>
                             <Route exact path="/" component={Explore}/>
+                            <Route exact path="/venues" component={Venues}/>
                             <PublicRoute exact path="/login" authed={props.isLoggedIn} component={Login}/>
                             <PublicRoute exact path="/signup" authed={props.isLoggedIn} component={SignUp}/>
                             <Route exact path="/password-reset" component={PassReset}/>

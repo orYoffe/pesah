@@ -163,14 +163,14 @@ class Signup extends Component {
                             I am an Artist
                         </label>
                     </div>
-                    {/* <div className="radio">
+                    <div className="radio">
                         <label>
                             <input type="radio"
                             checked={type === 'venue'}
                             onChange={this.checkType} name="optionsRadios" id="optionsRadios2" value="venue" />
-                            I own a Venue
+                            I manage a Venue
                         </label>
-                    </div> */}
+                    </div>
                     <label htmlFor="name">Name{type !== 'fan' ? '/Title' : ''}:</label>
                     <input
                         className="form-control"

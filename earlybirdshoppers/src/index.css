@@ -67,3 +67,8 @@ a:focus, a:hover {
   color: #768A9B;
   text-decoration: none;
 }
+
+.map-label {
+  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.05);
+}

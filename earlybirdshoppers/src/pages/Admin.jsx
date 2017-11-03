@@ -2,38 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, Route } from 'react-router-dom'
 import { pageView } from '../helpers/analytics'
-import { getVenues } from '../helpers/firebase'
-import CreateVenue from '../components/CreateVenue/'
-import VenueItem from '../components/VenueItem/'
-
-// TODO start implementing admin panel to see data and change certain types of data
-// TODO block anyone without admin access
-
-class RenderVenues extends Component {
-    state = {
-        venues: []
-    }
-    componentDidMount() {
-        pageView();
-        getVenues(res => {
-            if (res && res.length) {
-                this.setState({ venues: res })
-            }
-        })
-    }
-    render() {
-        const { venues } = this.state
-         return !!venues.length && (
-            <div>
-                <hr />
-                <h4>Real Trending Venues</h4>
-                <div className="row">
-                    {venues.map(venue => <VenueItem key={`venue_item_${venue.uid}`} {...venue} />)}
-                </div>
-            </div>
-        )
-    }
-}
+import CreateVenue from '../components/CreateVenue'
+import Venues from '../components/Venues'
 
 class Admin extends Component {
     componentDidMount() {
@@ -61,7 +31,7 @@ class Admin extends Component {
                     />
                     <Route
                         path={match.url + '/venues'}
-                        component={RenderVenues}
+                        component={Venues}
                     />
                 </div>
             )

@@ -7,6 +7,7 @@ import './VenueItem.css'
 const VenueItem = props => {
     const {
         name,
+        displayName,
         uid, 
         locationAddress,
     } = props
@@ -14,7 +15,7 @@ const VenueItem = props => {
         <div className="col-sm-6 col-xs-12">
             <Link to={`/venue/${uid}`} className="venue-item user-item">
                 <div className="venue-item-content user-item-content">
-                    <h4>Venue name: {name}</h4>
+                    <h4>Venue name: {name || displayName}</h4>
                     <p>Address: {locationAddress}</p>
                 </div>
             </Link>
@@ -23,7 +24,8 @@ const VenueItem = props => {
 }
 
 VenueItem.proptypes = {
-    name: Proptypes.string.isRequired,
+    name: Proptypes.string,
+    displayName: Proptypes.string,
     location: Proptypes.string.isRequired,
     uid: Proptypes.string.isRequired,
 }

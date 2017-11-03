@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import store from 'store'
 import { connect } from 'react-redux'
-import { readFile, getLocation, getLocationImage, scrollToTop, capitalize } from '../../helpers/common'
+import { getLocation, scrollToTop, capitalize } from '../../helpers/common'
 import { createNonUserVenue, getVenue, updateNonUserVenue } from '../../helpers/firebase'
 import GSearchInput from '../GSearchInput/'
 import Input from '../Input'
@@ -14,14 +14,14 @@ const LOCALSTORAGE_CREATE_VENUE_KEY = 'create_venue_admin_values'
 
 const defaultValues = {
     isModalOpen: false,
-    image: null,
     error: '',
     errors: [],
     paidEntrance: false,
     venueSize: '',
     hasLocalAudience: false,
     hasGuarantee: false,
-    location: null,
+    guaranteeAmount: 0,
+    location: false,
     isLazarya: true,
     contactPerson: '',
     venueEmail: '',
@@ -30,7 +30,8 @@ const defaultValues = {
     fb: '',
     venueType: '',
     genre: '',
-    capacity: '',
+    capacity: 0,
+    sittingCapacity: 0,
     date: '',
     businessPlan: '',
     description: '',
@@ -80,7 +81,6 @@ class CreateVenue extends Component {
 
     clearValues = () => this.setState(defaultValues)
     onModalClose = () => this.setState({ isModalOpen: false })
-    clearImage = () => this.setState({ image: null })
 
     isValid = ({ name, location }) => {
         const errors = []
@@ -129,9 +129,9 @@ class CreateVenue extends Component {
     }
     onConfirm = () => {
         const {
-            image, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson,
-            venueEmail, phoneNumber, website, fb, venueType, genre, capacity, date,
-            businessPlan, description, comments, name, location,
+            paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson,
+            venueEmail, phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, date,
+            businessPlan, description, comments, name, location, guaranteeAmount, 
         } = this.state
         const { match: { params: { venueUid } } } = this.props
         let error
@@ -141,21 +141,21 @@ class CreateVenue extends Component {
     
         console.log('submit============ ', {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
-            capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
-            paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
+            capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
+            paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, 
         })
         if (venueUid) {
             error = updateNonUserVenue({
                 uid: venueUid,
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
-                capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
-                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
+                capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
+                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount,
             })
         } else {
             error = createNonUserVenue({
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
-                capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
-                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
+                capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
+                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount,
             })
         }
         if (error && error.then) {
@@ -189,15 +189,15 @@ class CreateVenue extends Component {
     getModalquestion = () => {
         const { match: { params: { venueUid } } } = this.props
         const {
-            image, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail,
-            phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
-            location, name,
+            paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail,
+            phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, date, businessPlan, description, comments,
+            location, name, guaranteeAmount
         } = this.state
         const locationProps = {}
         Object.keys(location).forEach(itemKey => locationProps[`location${capitalize(itemKey)}`] = location[itemKey])
         const values = {
-            contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, date: new Date(date).toJSON(), businessPlan,
-            description, comments, isLazarya, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, image, name, ...locationProps,
+            contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan,
+            description, comments, isLazarya, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, name, ...locationProps, guaranteeAmount,
         }
         return (
             <div>
@@ -224,28 +224,10 @@ class CreateVenue extends Component {
         )
     }
 
-    onFileChange = e => {
-        readFile(e.target.files, venue => {
-            this.setState({image: venue.target.result})
-        })
-    }
-
-    setLocationImage = e => {
-        e && e.preventDefault()
-        const place = this.venueLocation.getPlaces()[0]
-        const image = getLocationImage(place, {
-            maxHeight: 200,
-            maxWidth: 200,
-        })
-        if (image) {
-            this.setState({ image })
-        }
-    }
     checkSize = e => this.setState({venueSize: e.target.value})
     onLazaryaChange = e => {this.setState({ isLazarya: !this.state.isLazarya })}
     onLocalAudienceChange = e => this.setState({ hasLocalAudience: !this.state.hasLocalAudience })
     onPaidEntranceChange = e => this.setState({ paidEntrance: !this.state.paidEntrance })
-    onGuaranteeChange = e => this.setState({ hasGuarantee: !this.state.hasGuarantee })
     onContactChange = e => this.setState({ contactPerson: e.target.value })
     onEmailChange = e => this.setState({ venueEmail: e.target.value })
     onPhoneChange = e => this.setState({ phoneNumber: e.target.value })
@@ -254,6 +236,15 @@ class CreateVenue extends Component {
     onVenueTypeChange = e => this.setState({ venueType: e.target.value })
     onGenreChange = e => this.setState({ genre: e.target.value })
     onCapacityChange = e => this.setState({ capacity: e.target.value })
+    onSittingCapacityChange = e => this.setState({ sittingCapacity: e.target.value })
+    onGuaranteeChange = e => {
+        if (this.state.hasGuarantee) {
+            this.setState({ hasGuarantee: !this.state.hasGuarantee, guaranteeAmount: 0 })
+        } else {
+            this.setState({ hasGuarantee: !this.state.hasGuarantee })
+        }
+    }
+    onGuaranteeAmountChange = e => this.setState({ guaranteeAmount: e.target.value })
     onDateChange = e => this.setState({ date: e.target.value })
     onBusinessPlanChange = e => this.setState({ businessPlan: e.target.value })
     onDescriptionChange = e => this.setState({ description: e.target.value })
@@ -276,8 +267,8 @@ class CreateVenue extends Component {
     render() {
         const { match: { params: { venueUid } } } = this.props
         const {
-            image, error, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, location, isLazarya,
-            contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity,
+            error, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, location, isLazarya,
+            contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, guaranteeAmount,
             date, businessPlan, description, comments, isModalOpen,
         } = this.state
         return (
@@ -295,7 +286,7 @@ class CreateVenue extends Component {
                     </div>
                     <Input
                         isRequired
-                        className={this.getError('name')}
+                        className={this.getError('name') + ' col-md-6'}
                         value={name}
                         id="venueName"
                         label="Name"
@@ -303,54 +294,8 @@ class CreateVenue extends Component {
                         onChange={this.onNameChange}
                         placeholder="Venue Name*"
                         />
-                    <div className={`form-group ${this.getError('location')} `}>
-                        <label htmlFor="venueLocation">Venue Location</label>
-                        <GSearchInput 
-                            placeholder="Somewhere street 54..."
-                            className="form-control"
-                            id="venueLocation"
-                            refrence={node => this.venueLocation = node}
-                            onPlacesChanged={this.onPlacesChanged}
-                        />
-                    </div>
-                    {location && (
-                        <div>
-                            <p>
-                                city: {location.city}
-                                <br/>
-                                country: {location.country}
-                                <br/>
-                                countryShortName: {location.countryShortName}
-                                <br/>
-                                district: {location.district}
-                                <br/>
-                                address: {location.address}
-                                <br/>
-                                intphone: {location.intphone}
-                                <br/>
-                                phone: {location.phone}
-                                <br/>
-                                name: {location.name}
-                                <br/>
-                                lat: {location.lat}
-                                <br/>
-                                lng: {location.lng}
-                                <br/>
-                                website: {location.website}
-                                <br/>
-                                {location.photo && <span>
-                                    photo: <img src={location.photo} alt="" /> <button onClick={this.setLocationImage}>Set as profile picture</button>
-                                    </span>}
-                            </p>
-                            <Map markers={[
-                                {
-                                    position: { lng: location.lng, lat: location.lat }
-                                },
-                            ]}/>
-                        </div>
-                    )}
                     <Input
-                        className={this.getError('contactPerson')}
+                        className={this.getError('contactPerson') + ' col-md-6'}
                         value={contactPerson}
                         id="contactPerson"
                         label="Contact Person"
@@ -359,7 +304,7 @@ class CreateVenue extends Component {
                         placeholder="Venue Contact Person"
                         />
                     <Input
-                        className={this.getError('venueEmail')}
+                        className={this.getError('venueEmail') + ' col-md-6'}
                         value={venueEmail}
                         id="email"
                         label="Email"
@@ -368,7 +313,7 @@ class CreateVenue extends Component {
                         placeholder="example@example.com"
                         />
                     <Input
-                        className={this.getError('phone')}
+                        className={this.getError('phone') + ' col-md-6'}
                         id="phoneNumber"
                         label="Phone number"
                         type="tel"
@@ -377,7 +322,7 @@ class CreateVenue extends Component {
                         placeholder="XXX-XXXXXXX"
                         />
                     <Input
-                        className={this.getError('website')}
+                        className={this.getError('website') + ' col-md-6'}
                         id="website"
                         value={website}
                         label="Website"
@@ -386,7 +331,7 @@ class CreateVenue extends Component {
                         placeholder="www.something.co..."
                         />
                     <Input
-                        className={this.getError('fb')}
+                        className={this.getError('fb') + ' col-md-6'}
                         value={fb}
                         id="fb"
                         label="Facebook"
@@ -395,7 +340,7 @@ class CreateVenue extends Component {
                         placeholder="www.facebook.com/username..."
                     />
                     <Input
-                        className={this.getError('venueType')}
+                        className={this.getError('venueType') + ' col-md-6'}
                         id="venueType"
                         value={venueType}
                         label="Type of venue"
@@ -404,7 +349,7 @@ class CreateVenue extends Component {
                         placeholder="Type of venue"
                     />
                     <Input
-                        className={this.getError('genre')}
+                        className={this.getError('genre') + ' col-md-6'}
                         id="venueGenre"
                         value={genre}
                         label="Genre"
@@ -413,7 +358,7 @@ class CreateVenue extends Component {
                         placeholder="Genre"
                     />
                     <Input
-                        className={this.getError('capacity')}
+                        className={this.getError('capacity') + ' col-md-6'}
                         id="venueCapacity"
                         label="Capacity"
                         value={capacity}
@@ -422,7 +367,16 @@ class CreateVenue extends Component {
                         placeholder="200"
                     />
                     <Input
-                        className={this.getError('date')}
+                        className={this.getError('sittingCapacity') + ' col-md-6'}
+                        id="sittingCapacity"
+                        label="Sitting Capacity"
+                        value={sittingCapacity}
+                        type="number"
+                        onChange={this.onSittingCapacityChange}
+                        placeholder="100"
+                    />
+                    <Input
+                        className={this.getError('date') + ' col-md-6'}
                         id="venueLastEdit"
                         label="Last edited"
                         type="date"
@@ -430,7 +384,35 @@ class CreateVenue extends Component {
                         onChange={this.onDateChange}
                         placeholder="Last edited"
                     />
+                    <Input
+                        className={this.getError('businessPlan') + ' col-md-6'}
+                        id="businessPlan"
+                        label="Business Plan"
+                        type="text"
+                        value={businessPlan}
+                        onChange={this.onBusinessPlanChange}
+                        placeholder="Business Plan"
+                    />
+                    <Input
+                        className={this.getError('description') + ' col-md-6'}
+                        id="description"
+                        label="Description"
+                        type="text"
+                        value={description}
+                        onChange={this.onDescriptionChange}
+                        placeholder="Description..."
+                    />
+                    <Input
+                        className={this.getError('comments') + ' col-md-6'}
+                        id="comments"
+                        label="Comments"
+                        type="text"
+                        value={comments}
+                        onChange={this.onCommentsChange}
+                        placeholder="Comments..."
+                    />
                     <RadioButtons
+                        className="col-md-6"
                         label="Venue size"
                         checked={venueSize}
                         name="optionsVenueSizeRadios"
@@ -439,7 +421,7 @@ class CreateVenue extends Component {
                             'S', 'M', 'L', 'XL'
                         ]}
                     />
-                    <div className="form-group">
+                    <div className="form-group col-md-6">
                         <Checkbox 
                             checked={hasLocalAudience}
                             onChange={this.onLocalAudienceChange}
@@ -456,53 +438,65 @@ class CreateVenue extends Component {
                             label="Has Guarantee?"
                         />
                     </div>
-                    <Input
-                        className={this.getError('businessPlan')}
-                        id="businessPlan"
-                        label="Business Plan"
-                        type="text"
-                        value={businessPlan}
-                        onChange={this.onBusinessPlanChange}
-                        placeholder="Business Plan"
-                    />
-                    <Input
-                        className={this.getError('description')}
-                        id="description"
-                        label="Description"
-                        type="text"
-                        value={description}
-                        onChange={this.onDescriptionChange}
-                        placeholder="Description..."
-                    />
-                    <Input
-                        className={this.getError('comments')}
-                        id="comments"
-                        label="Comments"
-                        type="text"
-                        value={comments}
-                        onChange={this.onCommentsChange}
-                        placeholder="Comments..."
-                    />
-                    {/* <div className={`form-group ${this.getError('venuePhoto')} `}>
-                        <label htmlFor="venuePhoto">Upload venue profile picture</label>
-                        <input
+                    {hasGuarantee && <Input
+                        className={this.getError('guaranteeAmount') + ' col-md-6'}
+                        id="guaranteeAmount"
+                        label="Guarantee Amount"
+                        value={guaranteeAmount}
+                        type="number"
+                        onChange={this.onGuaranteeAmountChange}
+                        placeholder="3500"
+                    />}
+                    <div className={`form-group ${this.getError('location')} `}>
+                        <label htmlFor="venueLocation">Venue Location</label>
+                        <GSearchInput
+                            placeholder="Somewhere street 54..."
                             className="form-control"
-                            type="file"
-                            onChange={this.onFileChange}
-                            id="venuePhoto" />
+                            id="venueLocation"
+                            refrence={node => this.venueLocation = node}
+                            onPlacesChanged={this.onPlacesChanged}
+                        />
                     </div>
-                    <button className="btn btn-default" onClick={this.clearImage}>Clear picture</button>
-                    <br />
-                    {image && [
-                        <h5 key="venue-cover-image-display-header">Venue Profile picture</h5>,
-                        <img src={image} alt="venue cover" title="venue cover" key="venue-cover-image-display-picture" />
-                    ]} */}
+                    {location && (
+                        <div>
+                            <p>
+                                city: {location.city}
+                                <br />
+                                country: {location.country}
+                                <br />
+                                countryShortName: {location.countryShortName}
+                                <br />
+                                district: {location.district}
+                                <br />
+                                address: {location.address}
+                                <br />
+                                intphone: {location.intphone}
+                                <br />
+                                phone: {location.phone}
+                                <br />
+                                name: {location.name}
+                                <br />
+                                lat: {location.lat}
+                                <br />
+                                lng: {location.lng}
+                                <br />
+                                website: {location.website}
+                                <br />
+                            </p>
+                            <Map markers={[
+                                {
+                                    position: { lng: location.lng, lat: location.lat }
+                                },
+                            ]} />
+                        </div>
+                    )}
                     <input
                         className="btn btn-primary form-control"
                         onClick={this.onSubmit}
                         type="submit"
                         value={venueUid ? 'Update Venue' : "Create Venue"}
                     />
+
                 </form>
                 {isModalOpen === 'submit' && <Modal question={this.getModalquestion()} onConfirm={this.onConfirm} onClose={this.onModalClose} />}
                 {isModalOpen === 'error' && <Modal question={<div>we got an error the data wasn't uploaded to the database</div>} onClose={this.onModalClose} />}

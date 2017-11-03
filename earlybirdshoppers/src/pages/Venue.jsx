@@ -70,14 +70,14 @@ class Venue extends Component {
             const {
                 displayName, uid, photoURL, locationLng, locationLat,
                 name, locationAddress, locationCity, locationCountry, locationCountryShortName,
-                venueSize, contactPerson, isLazarya,
-                image, paidEntrance, hasLocalAudience, hasGuarantee, venueEmail,
+                venueSize, contactPerson, isLazarya, email, sittingCapacity,
+                image, paidEntrance, hasLocalAudience, hasGuarantee, venueEmail, guaranteeAmount,
                 phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
             } = venue
             const { userId, isLoggedIn, isAdmin } = this.props
             content = (<div className="page-content">
-                {isAdmin && isLazarya && <Link to={`/admin/edit-venue/${uid}`} className="btn btn-default">Edit This Venue</Link>}
-                            {venueEmail && <p> email: {venueEmail} </p>}
+                {isAdmin && (isLazarya || uid === userId) && <Link to={`/admin/edit-venue/${uid}`} className="btn btn-default">Edit This Venue</Link>}
+                {(venueEmail || email) && <p> email: {venueEmail || email} </p>}
                             {isLoggedIn && uid !== userId && !isLazarya && (
                                 <OpenChat
                                 chatPartner={{
@@ -87,34 +87,35 @@ class Venue extends Component {
                                 }} />
                                 )
                             }
-                            <h4>Venue name: {name}</h4>
-                            <p>Address: {locationAddress}</p>
-                            <p>City: {locationCity}</p>
-                            <p>Country: {locationCountry}</p>
-                            <p>CountryShortName: {locationCountryShortName}</p>
+                            {(displayName || name) && <h4>Venue name: {displayName || name}</h4>}
+                            {locationAddress && <p>Address: {locationAddress}</p>}
+                            {locationCity && <p>City: {locationCity}</p>}
+                            {locationCountry && <p>Country: {locationCountry}</p>}
+                            {locationCountryShortName && <p>CountryShortName: {locationCountryShortName}</p>}
                             {venueSize && <p> size: {venueSize} </p>}
                             {contactPerson && <p> contactPerson: {contactPerson} </p>}
                             {isLazarya && <p> *From Lazarya </p>}
                             {paidEntrance && <p> *Has paid Entrance </p>}
                             {hasLocalAudience && <p> *Has local audience </p>}
                             {hasGuarantee && <p> *Has Guarantee </p>}
+                            {guaranteeAmount && <p>guaranteeAmount: {guaranteeAmount}</p>}
                             {venueType && <p>venueType: {venueType}</p>}
                             {phoneNumber && <p>phoneNumber: {phoneNumber}</p>}
                             {genre && <p>genre: {genre}</p>}
                             {capacity && <p>capacity: {capacity}</p>}
+                            {sittingCapacity && <p>sittingCapacity: {sittingCapacity}</p>}
                             {businessPlan && <p>businessPlan: {businessPlan}</p>}
                             {description && <p>description: {description}</p>}
-                            {capacity && <p>capacity: {capacity}</p>}
                             {comments && <p>comments: {comments}</p>}
                             {date && <p>last edited: {date}</p>}
                             {fb && <a href={fb} target="_blank" >FB link</a>}
                             {website && <a href={website} target="_blank" >Website link</a>}
                             {image && <img src={image} alt="venue"/>}
-                            <Map markers={[
+                            {locationLng && locationLat && <Map markers={[
                                 {
                                     position: { lng: locationLng, lat: locationLat }
                                 },
-                            ]} />
+                            ]} />}
                         </div>)
         }
 

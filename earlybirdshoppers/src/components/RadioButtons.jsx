@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const RadioButtons = props => (
-    <div>
+    <div className={props.className}>
         <p>{props.label}</p>
         {props.options.map((option, index) => {
             const key = `radio_${props.name}_${props.checked}_${index}`

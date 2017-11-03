@@ -14,6 +14,7 @@ class Menu extends Component {
     toggleMenu = () => this.setState({ isOpen: !this.state.isOpen })
     closeMenu = () => this.state.isOpen && this.toggleMenu()
     logout = () => {
+        this.closeMenu()
         logout().then(() => logoutAction())
     }
     renderDynamicLinks = () => {
@@ -42,7 +43,7 @@ class Menu extends Component {
             }
             links.push(
                 <li key={`menu_item_${id}_logout`}>
-                    <NavLink  onClick={this.closeMenu}  to={"/"} onClick={this.logout}>{trans.Logout}</NavLink>
+                    <NavLink to={"/"} onClick={this.logout}>{trans.Logout}</NavLink>
                 </li>
             )
         } else {
@@ -82,6 +83,9 @@ class Menu extends Component {
                         <ul className="nav navbar-nav">
                             <li>
                                 <NavLink  onClick={this.closeMenu}  to={"/"}>{trans.Explore}</NavLink>
+                            </li>
+                            <li>
+                                <NavLink  onClick={this.closeMenu}  to={"/venues"}>{trans.Venues}</NavLink>
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right">
