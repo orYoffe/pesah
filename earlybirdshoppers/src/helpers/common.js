@@ -68,7 +68,6 @@ export const getLocation = (location, photoOps) => {
       intphone: location.international_phone_number,
       phone: location.formatted_phone_number,
       name: location.name,
-      icon: location.icon,
       photo,
       lat,
       lng,
@@ -78,5 +77,7 @@ export const getLocation = (location, photoOps) => {
     return false
   }
 }
+const capitalRegex = /\b\w/g
 
 export const scrollToTop = () => window.scrollTo(0, 0)
+export const capitalize = str => str.replace(capitalRegex, l => l.toUpperCase())

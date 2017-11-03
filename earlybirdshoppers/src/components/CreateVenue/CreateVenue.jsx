@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import store from 'store'
 import { connect } from 'react-redux'
-// import '../UserItem.css'
-// import './CreateVenue.css'
-import { readFile, getLocation, getLocationImage, scrollToTop } from '../../helpers/common'
-import { createNonUserVenue } from '../../helpers/firebase'
+import { readFile, getLocation, getLocationImage, scrollToTop, capitalize } from '../../helpers/common'
+import { createNonUserVenue, getVenue, editNonUserVenue } from '../../helpers/firebase'
 import GSearchInput from '../GSearchInput/'
 import Input from '../Input'
 import Checkbox from '../Checkbox'
@@ -15,14 +13,14 @@ import Modal from '../Modal/'
 const LOCALSTORAGE_CREATE_VENUE_KEY = 'create_venue_admin_values'
 
 const defaultValues = {
-    isModalOpen: null,
+    isModalOpen: false,
     image: null,
     error: '',
     errors: [],
-    paidEntrance: null,
+    paidEntrance: false,
     venueSize: '',
-    hasLocalAudience: null,
-    hasGuarantee: null,
+    hasLocalAudience: false,
+    hasGuarantee: false,
     location: null,
     isLazarya: true,
     contactPerson: '',
@@ -44,12 +42,36 @@ class CreateVenue extends Component {
     state = defaultValues
 
     componentDidMount() {
-        const storedValues = store.get(LOCALSTORAGE_CREATE_VENUE_KEY)
-        if (storedValues) {
-            storedValues.error = ''
-            storedValues.errors = []
-            storedValues.isModalOpen = false
-            this.setState(storedValues)
+        const { match: { params: { venueUid } } } = this.props
+        if (venueUid) {
+            getVenue(venueUid, snapshot => {
+                const venue = snapshot.val()
+                if (venue) {
+                    const {
+                        locationLng, locationLat, locationAddress, locationCity, locationCountry, locationCountryShortName,
+                    } = venue
+                    const location = {
+                        lng: locationLng, lat: locationLat,
+                        address: locationAddress,
+                        city: locationCity, country: locationCountry, countryShortName: locationCountryShortName,
+                    }
+                    venue.location = location
+                    this.setState(venue)
+                } else {
+                    this.setState({ error: 'not found' })
+                }
+            })
+            .catch(snapshot => {
+                this.setState({ error: 'not found' })
+            })
+        } else {
+            const storedValues = store.get(LOCALSTORAGE_CREATE_VENUE_KEY)
+            if (storedValues) {
+                storedValues.error = ''
+                storedValues.errors = []
+                storedValues.isModalOpen = false
+                this.setState(storedValues)
+            }
         }
     }
     componentWillUpdate(nextProps, nextState) {
@@ -111,59 +133,72 @@ class CreateVenue extends Component {
             venueEmail, phoneNumber, website, fb, venueType, genre, capacity, date,
             businessPlan, description, comments, name, location,
         } = this.state
+        const { match: { params: { venueUid } } } = this.props
+        let error
+
+        const locationProps = {}
+        Object.keys(location).forEach(itemKey => locationProps[`location${capitalize(itemKey)}`] = location[itemKey])
     
         console.log('submit============ ', {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
             capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
-            paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...location,
+            paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
         })
-        this.onModalClose()
-    // createNonUserVenue()
-        // const error = createNonUserVenue({
-        //     title, date: new Date(date).toJSON(), time, price, goal,
-        //     currency, location, venue, artist, photoURL, accountType,
-        // })
-        // if (error && error.then) {
-        //     error.then(venue => {
-        //         // debugger
-        //         console.log(' new venue ===', venue)
-        //         // this.props.history.push(`/venue/${venue.uid}`)
-        //     }).catch(err => {
-        //         // TODO handle errors
-        //         console.log('error ===', err)
-        //     })
-        // } else {
-        //     switch (error) {
-        //         case 'login':
-        //             return this.setState({ error: 'Please Login to Create Venue', errors: [] })
-        //         case 'verifyemail':
-        //             return this.setState({
-        //                 error: 'Please verify your email in order to Create Venue you need to verify your email',
-        //                 errors: []
-        //             })
-        //         default:
-        //         this.setState({error: '', errors: []})
-        //             break
-        //     }
-        // }
+        if (venueUid) {
+            error = editNonUserVenue({
+                contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
+                capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
+                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
+            })
+        } else {
+            error = createNonUserVenue({
+                contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
+                capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
+                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
+            })
+        }
+        if (error && error.then) {
+            error.then(venue => {
+                // debugger
+                console.log(' new venue ===', venue)
+                // this.props.history.push(`/venue/${venue.uid}`)
+            }).catch(err => {
+                // TODO handle errors
+                console.log('error ===', err)
+            })
+        } else {
+            switch (error) {
+                case 'login':
+                    return this.setState({ error: 'Please Login to Create Venue', errors: [] })
+                case 'admin':
+                this.props.history.push('/')
+                    break
+                    default:
+                this.setState({error: '', errors: []})
+                break
+            }
+        }
 
+        this.onModalClose()
     }
     getModalquestion = () => {
         const {
             image, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail,
             phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
             location, name,
-            } = this.state
+        } = this.state
+        const locationProps = {}
+        Object.keys(location).forEach(itemKey => locationProps[`location${capitalize(itemKey)}`] = location[itemKey])
         const values = {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, date: new Date(date).toJSON(), businessPlan,
-            description, comments, isLazarya, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, image, name, ...location,
+            description, comments, isLazarya, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, image, name, ...locationProps,
         }
         return (
             <div>
                 <h3>Are you sure you want to submit a new venue with these values?</h3>
                 <br/>
                 <h4>without these values</h4>
-                {Object.keys(values).map(itemKey => !values[itemKey] && <p style={{
+                {Object.keys(values).map((itemKey, index) => !values[itemKey] && <p key={`${itemKey}_empty_value${index}`} style={{
                     display: 'inline-block',
                     margin: '5px'
                 }}>
@@ -171,7 +206,9 @@ class CreateVenue extends Component {
                 </p>)}
                 <br />
                 <h4>and with these values</h4>
-                {Object.keys(values).map(itemKey => values[itemKey] && <p style={{
+                {Object.keys(values).map((itemKey, index) => values[itemKey] && <p
+                key={`${itemKey}_full_value${index}`}
+                style={{
                     display: 'inline-block',
                     margin: '5px'
                     }}>
@@ -233,6 +270,9 @@ class CreateVenue extends Component {
     getError = (key) => this.state.errors.indexOf(key) !== -1 ? 'has-warning' : ''
 
     render() {
+
+        console.log('Create Venue--- this.props ====', this.props)
+        const { match: { params: { venueUid } } } = this.props
         const {
             image, error, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, location, isLazarya,
             contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity,
@@ -259,8 +299,54 @@ class CreateVenue extends Component {
                         label="Name"
                         type="text"
                         onChange={this.onNameChange}
-                        placeholder="Venue Name"
+                        placeholder="Venue Name*"
                         />
+                    <div className={`form-group ${this.getError('location')} `}>
+                        <label htmlFor="venueLocation">Venue Location</label>
+                        <GSearchInput 
+                            placeholder="Somewhere street 54..."
+                            className="form-control"
+                            id="venueLocation"
+                            refrence={node => this.venueLocation = node}
+                            onPlacesChanged={this.onPlacesChanged}
+                        />
+                    </div>
+                    {location && (
+                        <div>
+                            <p>
+                                city: {location.city}
+                                <br/>
+                                country: {location.country}
+                                <br/>
+                                countryShortName: {location.countryShortName}
+                                <br/>
+                                district: {location.district}
+                                <br/>
+                                address: {location.address}
+                                <br/>
+                                intphone: {location.intphone}
+                                <br/>
+                                phone: {location.phone}
+                                <br/>
+                                name: {location.name}
+                                <br/>
+                                lat: {location.lat}
+                                <br/>
+                                lng: {location.lng}
+                                <br/>
+                                website: {location.website}
+                                <br/>
+                                {location.photo && <span>
+                                    photo: <img src={location.photo} alt="" /> <button onClick={this.setLocationImage}>Set as profile picture</button>
+                                    </span>}
+                            </p>
+                            <Map markers={[
+                                {
+                                    position: { lng: location.lng, lat: location.lat }
+                                },
+                            ]}/>
+                        </div>
+                    )}
                     <Input
                         className={this.getError('contactPerson')}
                         value={contactPerson}
@@ -395,54 +481,6 @@ class CreateVenue extends Component {
                         onChange={this.onCommentsChange}
                         placeholder="Comments..."
                     />
-                    <div className={`form-group ${this.getError('location')} `}>
-                        <label htmlFor="venueLocation">Venue Location</label>
-                        <GSearchInput 
-                            placeholder="Somewhere street 54..."
-                            className="form-control"
-                            id="venueLocation"
-                            refrence={node => this.venueLocation = node}
-                            onPlacesChanged={this.onPlacesChanged}
-                        />
-                    </div>
-                    {location && (
-                        <div>
-                            <p>
-                                city: {location.city}
-                                <br/>
-                                country: {location.country}
-                                <br/>
-                                countryShortName: {location.countryShortName}
-                                <br/>
-                                district: {location.district}
-                                <br/>
-                                address: {location.address}
-                                <br/>
-                                intphone: {location.intphone}
-                                <br/>
-                                phone: {location.phone}
-                                <br/>
-                                name: {location.name}
-                                <br/>
-                                lat: {location.lat}
-                                <br/>
-                                lng: {location.lng}
-                                <br/>
-                                website: {location.website}
-                                <br/>
-                                icon: <img src={location.icon} alt=""/>
-                                <br/>
-                                {location.photo && <span>
-                                    photo: <img src={location.photo} alt="" /> <button onClick={this.setLocationImage}>Set as profile picture</button>
-                                    </span>}
-                            </p>
-                            <Map markers={[
-                                {
-                                    position: { lng: location.lng, lat: location.lat }
-                                },
-                            ]}/>
-                        </div>
-                    )}
                     <div className={`form-group ${this.getError('venuePhoto')} `}>
                         <label htmlFor="venuePhoto">Upload venue profile picture</label>
                         <input
@@ -468,7 +506,6 @@ class CreateVenue extends Component {
         )
     }
 }
-
 
 const mapStateToProps = (state) => ({
     trans: state.locale.trans,

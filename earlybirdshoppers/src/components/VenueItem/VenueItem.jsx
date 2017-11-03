@@ -7,15 +7,15 @@ import './VenueItem.css'
 const VenueItem = props => {
     const {
         name,
-        location,
-        id,
+        uid, 
+        locationAddress,
     } = props
     return (
         <div className="col-sm-6 col-xs-12">
-            <Link to={`/venue/${id}`} className="venue-item user-item">
+            <Link to={`/venue/${uid}`} className="venue-item user-item">
                 <div className="venue-item-content user-item-content">
                     <h4>Venue name: {name}</h4>
-                    <p>location: {location}</p>
+                    <p>Address: {locationAddress}</p>
                 </div>
             </Link>
         </div>
@@ -25,7 +25,7 @@ const VenueItem = props => {
 VenueItem.proptypes = {
     name: Proptypes.string.isRequired,
     location: Proptypes.string.isRequired,
-    id: Proptypes.number.isRequired,
+    uid: Proptypes.string.isRequired,
 }
 
 export default VenueItem

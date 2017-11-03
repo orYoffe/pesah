@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { events, artists, venues, fans } from '../helpers/mockData'
+// import { events, artists, venues, fans } from '../helpers/mockData'
 import { pageView } from '../helpers/analytics'
 import { getExplore } from '../helpers/firebase'
 // import ExploreCalendar from '../components/ExploreCalendar'
@@ -82,7 +82,7 @@ class Explore extends Component {
             {realVenues}
             {realFans}
             <hr/>
-            <h4>Trending Events</h4>
+            {/* <h4>Trending Events</h4>
             <div className="row">
               {events.map(event => <EventItem key={`event_item_${event.id}`} {...event} />)}
             </div>
@@ -97,7 +97,7 @@ class Explore extends Component {
             <h4>Trending Fans</h4>
             <div className="row">
               {fans.map(fan => <FanItem key={`fan_item_${fan.id}`} {...fan} />)}
-            </div>
+            </div> */}
             {/* <ExploreCalendar /> */}
           </div>
       )

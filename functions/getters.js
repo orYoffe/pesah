@@ -29,7 +29,7 @@ exports.getVenues = (req, res) => {
         console.log('getVenues was called with country ===== ', req.query.coutry);
     } else {
         let venues = [];
-        return getItems(venues, 'venue').then(() => res.status(200).json(venues));
+        return getItems(venues, 'venue', 999).then(() => res.status(200).json(venues));
     }
 };
 

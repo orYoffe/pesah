@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { events, venues } from '../helpers/mockData'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem/'
 import Loader from '../components/Loader/'
-import { getUser } from '../helpers/firebase'
+import { getVenue } from '../helpers/firebase'
 import { pageView } from '../helpers/analytics'
 import OpenChat from '../components/OpenChat/'
+import Map from '../components/Map'
 import '../components/VenueItem/VenueItem.css'
 
 class Venue extends Component {
@@ -21,7 +23,7 @@ class Venue extends Component {
         let venue = venues.find(venue => parseInt(id,10) === venue.id)
 
         if (!venue) {
-            getUser(id, snapshot => {
+            getVenue(id, snapshot => {
                 venue = snapshot.val()
                 this.setState({ venue: venue || 'not found' })
             })
@@ -65,19 +67,54 @@ class Venue extends Component {
                 </div>
             )
         } else {
-            const { email, displayName, uid, photoURL } = venue
-            const { userId, isLoggedIn } = this.props
+            const {
+                displayName, uid, photoURL, locationLng, locationLat,
+                name, locationAddress, locationCity, locationCountry, locationCountryShortName,
+                venueSize, contactPerson, isLazarya,
+                image, paidEntrance, hasLocalAudience, hasGuarantee, venueEmail,
+                phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
+            } = venue
+            const { userId, isLoggedIn, isAdmin } = this.props
             content = (<div className="page-content">
-                            <h5> email: {email} </h5>
-                            {isLoggedIn && uid !== userId && (
+                {isAdmin && isLazarya && <Link to={`/admin/edit-venue/${uid}`} className="btn btn-default">Edit This Venue</Link>}
+                            {venueEmail && <p> email: {venueEmail} </p>}
+                            {isLoggedIn && uid !== userId && !isLazarya && (
                                 <OpenChat
                                 chatPartner={{
                                     uid: uid,
                                     photo: photoURL || '',
-                                    displayName: displayName
+                                    displayName: displayName || name
                                 }} />
                                 )
                             }
+                            <h4>Venue name: {name}</h4>
+                            <p>Address: {locationAddress}</p>
+                            <p>City: {locationCity}</p>
+                            <p>Country: {locationCountry}</p>
+                            <p>CountryShortName: {locationCountryShortName}</p>
+                            {venueSize && <p> size: {venueSize} </p>}
+                            {contactPerson && <p> contactPerson: {contactPerson} </p>}
+                            {isLazarya && <p> *From Lazarya </p>}
+                            {paidEntrance && <p> *Has paid Entrance </p>}
+                            {hasLocalAudience && <p> *Has local audience </p>}
+                            {hasGuarantee && <p> *Has Guarantee </p>}
+                            {venueType && <p>venueType: {venueType}</p>}
+                            {phoneNumber && <p>phoneNumber: {phoneNumber}</p>}
+                            {genre && <p>genre: {genre}</p>}
+                            {capacity && <p>capacity: {capacity}</p>}
+                            {businessPlan && <p>businessPlan: {businessPlan}</p>}
+                            {description && <p>description: {description}</p>}
+                            {capacity && <p>capacity: {capacity}</p>}
+                            {comments && <p>comments: {comments}</p>}
+                            {date && <p>last edited: {date}</p>}
+                            {fb && <a href={fb} target="_blank" >FB link</a>}
+                            {website && <a href={website} target="_blank" >Website link</a>}
+                            {image && <img src={image} alt="venue"/>}
+                            <Map markers={[
+                                {
+                                    position: { lng: locationLng, lat: locationLat }
+                                },
+                            ]} />
                         </div>)
         }
 
@@ -94,6 +131,7 @@ class Venue extends Component {
 const mapStateToProps = state => ({
     isLoggedIn: state.auth.loggedIn,
     userId: state.auth.user && state.auth.user.uid,
+    isAdmin: state.auth.user && state.auth.user.isAdmin,
 })
 
 export default connect(mapStateToProps)(Venue)
