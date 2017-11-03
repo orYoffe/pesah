@@ -1,4 +1,4 @@
-import { isDev } from './common'
+// import { isDev } from './common'
 export const DB_CONFIG = {
     apiKey: "AIzaSyCmnoJEwqiaq-lavYiVySWdo77uSWIcFK4",
     authDomain: "earlybirdshopers.firebaseapp.com",
@@ -20,4 +20,4 @@ export const CREATE_EVENT = `${API_ENDPOINT}createEvent`
 export const CREATE_USER = `${API_ENDPOINT}createUser`
 export const GET_ROOM = `${API_ENDPOINT}getRoom`
 export const CREATE_NON_USER_VENUE = `${API_ENDPOINT}createNonUserVenue`
-export const EDIT_NON_USER_VENUE = `${API_ENDPOINT}editNonUserVenue`
+export const UPDATE_NON_USER_VENUE = `${API_ENDPOINT}updateNonUserVenue`

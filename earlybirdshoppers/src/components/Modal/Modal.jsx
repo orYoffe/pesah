@@ -5,13 +5,13 @@ import './Modal.css'
 const Modal = (props) => {
     const { question, onConfirm, onClose } = props
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content">
                 <button onClick={onClose}>X</button>
                 <div className="modal-question">{question}</div>
 
                 <div className="form-group">
-                    <button className="btn btn-success" onClick={onConfirm}>Confirm</button>
+                    {onConfirm && <button className="btn btn-success" onClick={onConfirm}>Confirm</button>}
                     <button className="btn btn-danger" onClick={onClose}>Cancel</button>
                 </div>
             </div>

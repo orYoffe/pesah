@@ -14,7 +14,7 @@ import {
     CREATE_USER,
     GET_ROOM,
     CREATE_NON_USER_VENUE,
-    EDIT_NON_USER_VENUE,
+    UPDATE_NON_USER_VENUE,
  } from './config'
 
 firebase.initializeApp(DB_CONFIG)
@@ -84,5 +84,5 @@ export const getExplore = (callback) => get(GET_EXPLORE).then(callback).catch(ca
 export const createEvent = (body, callback) => post(CREATE_EVENT, body, callback).then(callback).catch(callback)
 export const createUser = (body, callback) => post(CREATE_USER, body, callback).then(callback).catch(callback)
 export const createNonUserVenue = (body, callback) => post(CREATE_NON_USER_VENUE, body, callback).then(callback).catch(callback)
-export const editNonUserVenue = (body, callback) => post(EDIT_NON_USER_VENUE, body, callback).then(callback).catch(callback)
+export const updateNonUserVenue = (body, callback) => post(UPDATE_NON_USER_VENUE, body, callback).then(callback).catch(callback)
 export const getRoom = (body, callback) => post(GET_ROOM, body, callback).then(callback).catch(callback)

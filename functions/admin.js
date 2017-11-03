@@ -2,11 +2,14 @@ const admin = require('firebase-admin');
 const common = require('./common');
 
 
-const adminCreateVenue = (req, res) => {
-    console.log('admin was called ===== ', new Date().toJSON());
+const venueValidator = (req, res, isUpdate) => {
+    console.log('venueValidator was called ===== isUpdate=', isUpdate, '==time==', new Date().toJSON());
     // TODO validate user given strings
-    if (req.body && req.user && req.user.iAdmin) {
+    if (req.body && req.user && req.user.isAdmin) {
         const body = req.body;
+        if (isUpdate && !body.uid) {
+            return res.status(400).json({ errorCode: 400, errorMessage: 'missing venue id' });
+        }
         if (body.name && common.isString(body.name) && body.name.length > 3) {
             if (
                 body.locationAddress && common.isString(body.locationAddress) && body.locationAddress.length > 3
@@ -18,7 +21,7 @@ const adminCreateVenue = (req, res) => {
             ) {
                 
                 Object.keys(body).forEach(key => {
-                    if (!body[key]) {
+                    if (!body[key] && body[key] !== false) {
                         delete body[key];
                     }
                 })
@@ -37,11 +40,19 @@ const adminCreateVenue = (req, res) => {
                         return res.status(400).json({ errorCode: 400, errorMessage: 'fb' });
                     }
                 }
-                console.log('--------new venue body=====', body);
-                return admin.database().ref(`venues`).push(body).then(newVenue => {
-                    res.status(200).json({ code: 200, message: 'ok', uid: newVenue.key });
-                    return newVenue.update({ 'uid': newVenue.key })
-                })
+                body.hasUser = false;
+                if (isUpdate) {
+                    console.log('--------update venue body=====', body);
+                    return admin.database().ref(`venues/${body.uid}`).update(body).then(newVenue => {
+                        return res.status(200).json({ code: 200, message: 'ok', uid: body.uid });
+                    })
+                } else {
+                    console.log('--------new venue body=====', body);
+                    return admin.database().ref(`venues`).push(body).then(newVenue => {
+                        res.status(200).json({ code: 200, message: 'ok', uid: newVenue.key });
+                        return newVenue.update({ 'uid': newVenue.key })
+                    })
+                }
             } else {
                 return res.status(400).json({ errorCode: 400, errorMessage: 'address' });
             }
@@ -53,4 +64,8 @@ const adminCreateVenue = (req, res) => {
     }
 };
 
+const adminCreateVenue = (req, res) => venueValidator(req, res);
+const adminUpdateVenue = (req, res) => venueValidator(req, res, true);
+
 exports.adminCreateVenue = adminCreateVenue;
+exports.adminUpdateVenue = adminUpdateVenue;

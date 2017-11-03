@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import store from 'store'
 import { connect } from 'react-redux'
 import { readFile, getLocation, getLocationImage, scrollToTop, capitalize } from '../../helpers/common'
-import { createNonUserVenue, getVenue, editNonUserVenue } from '../../helpers/firebase'
+import { createNonUserVenue, getVenue, updateNonUserVenue } from '../../helpers/firebase'
 import GSearchInput from '../GSearchInput/'
 import Input from '../Input'
 import Checkbox from '../Checkbox'
@@ -80,6 +80,7 @@ class CreateVenue extends Component {
 
     clearValues = () => this.setState(defaultValues)
     onModalClose = () => this.setState({ isModalOpen: false })
+    clearImage = () => this.setState({ image: null })
 
     isValid = ({ name, location }) => {
         const errors = []
@@ -98,7 +99,6 @@ class CreateVenue extends Component {
             !location.city ||
             !location.country ||
             !location.countryShortName ||
-            !location.district ||
             !location.address ||
             !location.lat ||
             !location.lng
@@ -124,7 +124,7 @@ class CreateVenue extends Component {
         const { location, name } = this.state
         
         if (this.isValid({ name, location })) {
-            this.setState({isModalOpen: true})
+            this.setState({isModalOpen: 'submit'})
         }
     }
     onConfirm = () => {
@@ -145,7 +145,8 @@ class CreateVenue extends Component {
             paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
         })
         if (venueUid) {
-            error = editNonUserVenue({
+            error = updateNonUserVenue({
+                uid: venueUid,
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
                 capacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
                 paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, image, ...locationProps,
@@ -159,12 +160,16 @@ class CreateVenue extends Component {
         }
         if (error && error.then) {
             error.then(venue => {
-                // debugger
-                console.log(' new venue ===', venue)
-                // this.props.history.push(`/venue/${venue.uid}`)
+                if (venue.errorCode && venue.errorCode !== 200) {
+                    console.log(' error ===', venue)
+                    this.setState({ isModalOpen: 'error' })
+                } else {
+                    console.log(' new venue ===', venue)
+                    this.props.history.push(`/venue/${venue.uid}`)
+                }
             }).catch(err => {
-                // TODO handle errors
                 console.log('error ===', err)
+                this.setState({ isModalOpen: 'error' })
             })
         } else {
             switch (error) {
@@ -258,8 +263,6 @@ class CreateVenue extends Component {
     onPlacesChanged = () => {
         const place = this.venueLocation.getPlaces()[0]
         const location = getLocation(place)
-        console.log('place======', place)
-        console.log('location object======', location)
         if (place && location) {
             this.setState({
                 location
@@ -480,7 +483,7 @@ class CreateVenue extends Component {
                         onChange={this.onCommentsChange}
                         placeholder="Comments..."
                     />
-                    <div className={`form-group ${this.getError('venuePhoto')} `}>
+                    {/* <div className={`form-group ${this.getError('venuePhoto')} `}>
                         <label htmlFor="venuePhoto">Upload venue profile picture</label>
                         <input
                             className="form-control"
@@ -488,19 +491,21 @@ class CreateVenue extends Component {
                             onChange={this.onFileChange}
                             id="venuePhoto" />
                     </div>
+                    <button className="btn btn-default" onClick={this.clearImage}>Clear picture</button>
                     <br />
                     {image && [
                         <h5 key="venue-cover-image-display-header">Venue Profile picture</h5>,
                         <img src={image} alt="venue cover" title="venue cover" key="venue-cover-image-display-picture" />
-                    ]}
+                    ]} */}
                     <input
                         className="btn btn-primary form-control"
                         onClick={this.onSubmit}
                         type="submit"
-                        value="Create Venue"
+                        value={venueUid ? 'Update Venue' : "Create Venue"}
                     />
                 </form>
-                {isModalOpen && <Modal question={this.getModalquestion()} onConfirm={this.onConfirm} onClose={this.onModalClose} />}
+                {isModalOpen === 'submit' && <Modal question={this.getModalquestion()} onConfirm={this.onConfirm} onClose={this.onModalClose} />}
+                {isModalOpen === 'error' && <Modal question={<div>we got an error the data wasn't uploaded to the database</div>} onClose={this.onModalClose} />}
             </div>
         )
     }

@@ -3,10 +3,11 @@ import React, { Component } from 'react'
 import { pageView } from '../helpers/analytics'
 import { getExplore } from '../helpers/firebase'
 // import ExploreCalendar from '../components/ExploreCalendar'
-import EventItem from '../components/EventItem/'
-import ArtistItem from '../components/ArtistItem/'
-import VenueItem from '../components/VenueItem/'
-import FanItem from '../components/FanItem/'
+import EventItem from '../components/EventItem'
+import ArtistItem from '../components/ArtistItem'
+import VenueItem from '../components/VenueItem'
+import FanItem from '../components/FanItem'
+import Loader from '../components/Loader'
 
 class Explore extends Component {
   state = {
@@ -14,6 +15,7 @@ class Explore extends Component {
     venues: [],
     fans: [],
     events: [],
+    loading: true,
   }
 
   componentDidMount() {
@@ -21,7 +23,7 @@ class Explore extends Component {
       getExplore(res => {
         if (res && (res.artists || res.events || res.fans || res.venues)){
           const { artists, events, venues, fans } = res
-          this.setState({ artists, events, venues, fans })
+          this.setState({ artists, events, venues, fans, loading: false })
         }
       })
   }
@@ -64,10 +66,6 @@ class Explore extends Component {
   )
 
   render() {
-    const realEvents = this.renderEvents()
-    const realArtists = this.renderArtists()
-    const realVenues = this.renderVenues()
-    const realFans = this.renderFans()
       return (
           <div className="Explore container">
             <h3>Explore Events, Artists and Venues</h3>
@@ -77,10 +75,11 @@ class Explore extends Component {
                 <button className="btn btn-default" type="button">Search</button>
               </span>
             </div>
-            {realEvents}
-            {realArtists}
-            {realVenues}
-            {realFans}
+            {this.state.loading && <Loader />}
+            {this.renderEvents()}
+            {this.renderArtists()}
+            {this.renderVenues()}
+            {this.renderFans()}
             <hr/>
             {/* <h4>Trending Events</h4>
             <div className="row">

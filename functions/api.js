@@ -85,6 +85,7 @@ app.post('/getRoom', getRoom.default);
 // Admin api
 app.use(adminAuthenticate);
 app.post('/createNonUserVenue', adminApis.adminCreateVenue);
+app.post('/updateNonUserVenue', adminApis.adminUpdateVenue);
 
 const notFound = (req, res) => {
     res.status(404).send('Not Found');
