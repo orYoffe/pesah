@@ -154,19 +154,19 @@ function copyPublicFolder() {
 
 // current wall of security is moving the html files to the functions dir and serving it from guard
 function renameIndexHTML() {
-  fs.renameSync(paths.appBuild + '/index.html', paths.appBuild + '/realhtml_186231treg.html')
-  fs.renameSync(paths.appBuild + '/indexSecure.html', paths.appBuild + '/index.html')
+  fs.renameSync(paths.appBuild + '/index.html', paths.appBuild + '/realhtml_186231treg.html');
+  fs.renameSync(paths.appBuild + '/indexSecure.html', paths.appBuild + '/index.html');
 
+
+  // fs.moveSync('/tmp/somedir', '/tmp/may/already/existed/somedir', { overwrite: true })
   // remove current real file
-  fs.unlinkSync(paths.appBuild + '/../functions/realhtml_186231treg.html')
+  fs.removeSync(paths.appBuild + '/../functions/realhtml_186231treg.html');
 
   // copy new real file
-  fs.createReadStream(paths.appBuild + '/realhtml_186231treg.html')
-    .pipe(fs.createWriteStream(paths.appBuild + '/../functions/realhtml_186231treg.html'));
-  fs.createReadStream(paths.appBuild + '/index.html')
-    .pipe(fs.createWriteStream(paths.appBuild + '/../functions/index.html'));
+  fs.copySync(paths.appBuild + '/realhtml_186231treg.html', paths.appBuild + '/../functions/realhtml_186231treg.html');
+  fs.copySync(paths.appBuild + '/index.html', paths.appBuild + '/../functions/index.html');
 
-  // remove new real file from public
-  fs.unlinkSync(paths.appBuild + '/firebaseIndex.html')
-  fs.unlinkSync(paths.appBuild + '/realhtml_186231treg.html')
+  // remove new real file from public;
+  fs.removeSync(paths.appBuild + '/firebaseIndex.html');
+  fs.removeSync(paths.appBuild + '/realhtml_186231treg.html');
 }
