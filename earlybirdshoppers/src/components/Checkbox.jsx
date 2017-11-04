@@ -2,14 +2,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const Checkbox = props => (
-    <label className="checkbox">
+    props.label  ? <label className="checkbox">
         <input
             type="checkbox"
             checked={props.checked}
             onChange={props.onChange}
         />
         {props.label}
-    </label>
+    </label> : (
+        <input
+            type="checkbox"
+            checked={props.checked}
+            onChange={props.onChange}
+        />
+    )
 )
 
 Checkbox.proptypes = {

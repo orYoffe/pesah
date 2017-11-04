@@ -8,7 +8,8 @@ import Input from '../Input'
 import Checkbox from '../Checkbox'
 import RadioButtons from '../RadioButtons'
 import Map from '../Map'
-import Modal from '../Modal/'
+import Modal from '../Modal'
+import Dropdown from '../Dropdown'
 
 const LOCALSTORAGE_CREATE_VENUE_KEY = 'create_venue_admin_values'
 
@@ -16,9 +17,14 @@ const defaultValues = {
     isModalOpen: false,
     error: '',
     errors: [],
+    activityDays: [],
     paidEntrance: false,
+    stageSize: '',
     venueSize: '',
     hasLocalAudience: false,
+    hasDrumkit: false,
+    hasPiano: false,
+    hasPA: false,
     hasGuarantee: false,
     guaranteeAmount: 0,
     location: false,
@@ -31,11 +37,12 @@ const defaultValues = {
     venueType: '',
     genre: '',
     capacity: 0,
-    sittingCapacity: 0,
+    seatingCapacity: 0,
     date: '',
     businessPlan: '',
     description: '',
     comments: '',
+    equipment: '',
     name: '',
 }
 
@@ -129,9 +136,10 @@ class CreateVenue extends Component {
     }
     onConfirm = () => {
         const {
-            paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson,
-            venueEmail, phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, date,
-            businessPlan, description, comments, name, location, guaranteeAmount, 
+            paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson,
+            venueEmail, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date,
+            businessPlan, description, comments, name, location, guaranteeAmount, equipment, hasDrumkit,
+            hasPiano, hasPA, activityDays,
         } = this.state
         const { match: { params: { venueUid } } } = this.props
         let error
@@ -141,21 +149,24 @@ class CreateVenue extends Component {
     
         console.log('submit============ ', {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
-            capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
-            paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, 
+            capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
+            paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
+            hasPiano, hasPA, activityDays,
         })
         if (venueUid) {
             error = updateNonUserVenue({
                 uid: venueUid,
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
-                capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
-                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount,
+                capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
+                paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
+                hasPiano, hasPA, activityDays,
             })
         } else {
             error = createNonUserVenue({
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
-                capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya,
-                paidEntrance, name, venueSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount,
+                capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
+                paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
+                hasPiano, hasPA, activityDays,
             })
         }
         if (error && error.then) {
@@ -189,15 +200,18 @@ class CreateVenue extends Component {
     getModalquestion = () => {
         const { match: { params: { venueUid } } } = this.props
         const {
-            paidEntrance, venueSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail,
-            phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, date, businessPlan, description, comments,
-            location, name, guaranteeAmount
+            paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail, equipment,
+            phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date, businessPlan, description, comments,
+            location, name, guaranteeAmount, hasDrumkit,
+            hasPiano, hasPA, activityDays,
         } = this.state
         const locationProps = {}
         Object.keys(location).forEach(itemKey => locationProps[`location${capitalize(itemKey)}`] = location[itemKey])
         const values = {
-            contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, date: new Date(date).toJSON(), businessPlan,
-            description, comments, isLazarya, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, name, ...locationProps, guaranteeAmount,
+            contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan,
+            description, comments, equipment, isLazarya, paidEntrance, venueSize, stageSize,
+            hasLocalAudience, hasGuarantee, name, ...locationProps, guaranteeAmount, hasDrumkit,
+            hasPiano, hasPA, activityDays,
         }
         return (
             <div>
@@ -225,6 +239,7 @@ class CreateVenue extends Component {
     }
 
     checkSize = e => this.setState({venueSize: e.target.value})
+    onStageSizeSelect = e => this.setState({stageSize: e.target.value})
     onLazaryaChange = e => {this.setState({ isLazarya: !this.state.isLazarya })}
     onLocalAudienceChange = e => this.setState({ hasLocalAudience: !this.state.hasLocalAudience })
     onPaidEntranceChange = e => this.setState({ paidEntrance: !this.state.paidEntrance })
@@ -236,7 +251,7 @@ class CreateVenue extends Component {
     onVenueTypeChange = e => this.setState({ venueType: e.target.value })
     onGenreChange = e => this.setState({ genre: e.target.value })
     onCapacityChange = e => this.setState({ capacity: e.target.value })
-    onSittingCapacityChange = e => this.setState({ sittingCapacity: e.target.value })
+    onseatingCapacityChange = e => this.setState({ seatingCapacity: e.target.value })
     onGuaranteeChange = e => {
         if (this.state.hasGuarantee) {
             this.setState({ hasGuarantee: !this.state.hasGuarantee, guaranteeAmount: 0 })
@@ -244,11 +259,31 @@ class CreateVenue extends Component {
             this.setState({ hasGuarantee: !this.state.hasGuarantee })
         }
     }
+    onActivityDaysChange = field => e => {
+        const activityDays = this.state.activityDays.slice()
+        if (activityDays.includes(field)) {
+            activityDays.splice(activityDays.indexOf(field), 1)
+        } else {
+            activityDays.push(field)
+        }
+        this.setState({ activityDays })
+    }
+    weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    toggleActivityDays = e => {
+        e && e.preventDefault()
+        this.setState({
+            activityDays: this.state.activityDays.length ? [] : this.weekDays
+        })
+    }
     onGuaranteeAmountChange = e => this.setState({ guaranteeAmount: e.target.value })
+    onDrumkitChange = e => this.setState({ hasDrumkit: e.target.value })
+    onPianoChange = e => this.setState({ hasPiano: e.target.value })
+    onPAChange = e => this.setState({ hasPA: e.target.value })
     onDateChange = e => this.setState({ date: e.target.value })
     onBusinessPlanChange = e => this.setState({ businessPlan: e.target.value })
     onDescriptionChange = e => this.setState({ description: e.target.value })
     onCommentsChange = e => this.setState({ comments: e.target.value })
+    onEquipmentChange = e => this.setState({ equipment: e.target.value })
     onNameChange = e => this.setState({ name: e.target.value })
 
     onPlacesChanged = () => {
@@ -267,9 +302,10 @@ class CreateVenue extends Component {
     render() {
         const { match: { params: { venueUid } } } = this.props
         const {
-            error, paidEntrance, venueSize, hasLocalAudience, hasGuarantee, location, isLazarya,
-            contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity, sittingCapacity, guaranteeAmount,
-            date, businessPlan, description, comments, isModalOpen,
+            error, paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, location, isLazarya, hasDrumkit,
+            contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, guaranteeAmount,
+            date, businessPlan, description, comments, isModalOpen, equipment,
+            hasPiano, hasPA, activityDays,
         } = this.state
         return (
             <div className="container">
@@ -367,12 +403,12 @@ class CreateVenue extends Component {
                         placeholder="200"
                     />
                     <Input
-                        className={this.getError('sittingCapacity') + ' col-md-6'}
-                        id="sittingCapacity"
+                        className={this.getError('seatingCapacity') + ' col-md-6'}
+                        id="seatingCapacity"
                         label="Sitting Capacity"
-                        value={sittingCapacity}
+                        value={seatingCapacity}
                         type="number"
-                        onChange={this.onSittingCapacityChange}
+                        onChange={this.onseatingCapacityChange}
                         placeholder="100"
                     />
                     <Input
@@ -411,6 +447,20 @@ class CreateVenue extends Component {
                         onChange={this.onCommentsChange}
                         placeholder="Comments..."
                     />
+
+                    <Dropdown
+                        className="col-md-6"
+                        defaultValue={stageSize}
+                        onSelect={this.onStageSizeSelect}
+                        options={[
+                            {value: 'S'},
+                            {value: 'M'},
+                            {value: 'L'},
+                            {value: 'XL'},
+                        ]}
+                        label="Stage size"
+                        id="venue_stage_size"
+                    />
                     <RadioButtons
                         className="col-md-6"
                         label="Venue size"
@@ -447,6 +497,71 @@ class CreateVenue extends Component {
                         onChange={this.onGuaranteeAmountChange}
                         placeholder="3500"
                     />}
+                    <Input
+                        className={this.getError('equipment') + ' col-md-6'}
+                        id="equipment"
+                        label="Equipment list"
+                        type="text"
+                        value={equipment}
+                        onChange={this.onEquipmentChange}
+                        placeholder="7 guitars and 3 AKG microphones..."
+                    />
+                    <div className="form-group col-md-6">
+                        <Checkbox
+                            checked={hasDrumkit}
+                            onChange={this.onDrumkitChange}
+                            label="Has drum kit?"
+                        />
+                        <Checkbox
+                            checked={hasPiano}
+                            onChange={this.onPianoChange}
+                            label="Has Piano on location?"
+                        />
+                        <Checkbox
+                            checked={hasPA}
+                            onChange={this.onPAChange}
+                            label="Has a PA system on location?"
+                        />
+                    </div>
+                    <div className="form-group col-md-6">
+                        Activity days <button onClick={this.toggleActivityDays} className="btn btn-default">toggle all days</button>
+                        <Checkbox
+                            checked={activityDays.includes('Monday')}
+                            onChange={this.onActivityDaysChange('Monday')}
+                            label="Monday"
+                        />
+                        <Checkbox
+                            checked={activityDays.includes('Tuesday')}
+                            onChange={this.onActivityDaysChange('Tuesday')}
+                            label="Tuesday"
+                        />
+                        <Checkbox
+                            checked={activityDays.includes('Wednesday')}
+                            onChange={this.onActivityDaysChange('Wednesday')}
+                            label="Wednesday"
+                        />
+                        <Checkbox
+                            checked={activityDays.includes('Thursday')}
+                            onChange={this.onActivityDaysChange('Thursday')}
+                            label="Thursday"
+                        />
+                        <Checkbox
+                            checked={activityDays.includes('Friday')}
+                            onChange={this.onActivityDaysChange('Friday')}
+                            label="Friday"
+                        />
+                        <Checkbox
+                            checked={activityDays.includes('Saturday')}
+                            onChange={this.onActivityDaysChange('Saturday')}
+                            label="Saturday"
+                        />
+                        <Checkbox
+                            checked={activityDays.includes('Sunday')}
+                            onChange={this.onActivityDaysChange('Sunday')}
+                            label="Sunday"
+                        />
+                    </div>
+                    <br/>
                     <div className={`form-group ${this.getError('location')} `}>
                         <label htmlFor="venueLocation">Venue Location</label>
                         <GSearchInput

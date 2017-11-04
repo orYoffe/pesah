@@ -70,7 +70,7 @@ class Venue extends Component {
             const {
                 displayName, uid, photoURL, locationLng, locationLat,
                 name, locationAddress, locationCity, locationCountry, locationCountryShortName,
-                venueSize, contactPerson, isLazarya, email, sittingCapacity,
+                venueSize, contactPerson, isLazarya, email, seatingCapacity, stageSize,
                 image, paidEntrance, hasLocalAudience, hasGuarantee, venueEmail, guaranteeAmount,
                 phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
             } = venue
@@ -93,6 +93,7 @@ class Venue extends Component {
                             {locationCountry && <p>Country: {locationCountry}</p>}
                             {locationCountryShortName && <p>CountryShortName: {locationCountryShortName}</p>}
                             {venueSize && <p> size: {venueSize} </p>}
+                            {stageSize && <p> size: {stageSize} </p>}
                             {contactPerson && <p> contactPerson: {contactPerson} </p>}
                             {isLazarya && <p> *From Lazarya </p>}
                             {paidEntrance && <p> *Has paid Entrance </p>}
@@ -103,7 +104,7 @@ class Venue extends Component {
                             {phoneNumber && <p>phoneNumber: {phoneNumber}</p>}
                             {genre && <p>genre: {genre}</p>}
                             {capacity && <p>capacity: {capacity}</p>}
-                            {sittingCapacity && <p>sittingCapacity: {sittingCapacity}</p>}
+                            {seatingCapacity && <p>seatingCapacity: {seatingCapacity}</p>}
                             {businessPlan && <p>businessPlan: {businessPlan}</p>}
                             {description && <p>description: {description}</p>}
                             {comments && <p>comments: {comments}</p>}

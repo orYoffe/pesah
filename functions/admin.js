@@ -40,13 +40,13 @@ const venueValidator = (req, res, isUpdate) => {
                         return res.status(400).json({ errorCode: 400, errorMessage: 'fb' });
                     }
                 }
-                body.hasUser = false;
                 if (isUpdate) {
                     console.log('--------update venue body=====', body);
                     return admin.database().ref(`venues/${body.uid}`).update(body).then(newVenue => {
                         return res.status(200).json({ code: 200, message: 'ok', uid: body.uid });
                     })
                 } else {
+                    body.hasUser = false;
                     console.log('--------new venue body=====', body);
                     return admin.database().ref(`venues`).push(body).then(newVenue => {
                         res.status(200).json({ code: 200, message: 'ok', uid: newVenue.key });
