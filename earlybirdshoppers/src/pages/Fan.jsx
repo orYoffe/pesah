@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { events, fans } from '../helpers/mockData'
 import { getUser } from '../helpers/firebase'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem/'
@@ -18,66 +17,38 @@ class Fan extends Component {
         pageView();
 
         const { id } = this.props.match.params
-        let fan = fans.find(fan => parseInt(id,10) === fan.id)
-
-        if (!fan) {
-            getUser(id, snapshot => {
-                fan = snapshot.val()
-                this.setState({ fan: fan || 'not found' })
-            })
-            .catch(snapshot => {
-                this.setState({ fan: 'not found' })
-            })
-        } else {
-            this.setState({ fan })
-        }
+        getUser(id, snapshot => {
+            const fan = snapshot && snapshot.val()
+            this.setState({ fan: fan || 'not found' })
+        })
+        .catch(snapshot => {
+            this.setState({ fan: 'not found' })
+        })
     }
 
     render() {     
         // TODO if the fan belongs to the user show edit options
         const { fan } = this.state
-        let content
         
         if(fan === 'not found') {
             return <NotFound />
         } else if(!fan) {
             return <Loader />
         }
-        if(fan.location) {
-            // fake data
-            const {
-                events: fanEvents,
-                location,
-                name,
-            } = fan
-            const currentEvents = events.filter(event => fanEvents.indexOf(event.id) !== -1)
-
-            content = (
-                        <div className="page-content">
-                            <h3>Fan name: {name}</h3>
-                            <h4>Based in: {location}</h4>
-                            <h4>Events:</h4>
-                            <div className="row">
-                                {currentEvents && currentEvents.map(event => <EventItem key={`event_item_${event.id}`} {...event} /> )}
-                            </div>
-                        </div>
-                    )
-        } else {
-            const { email, displayName, uid, photoURL } = fan
-            const { userId, isLoggedIn } = this.props
-            content = (<div className="page-content">
-                            <h5> email: {email} </h5>
-                            {isLoggedIn && uid !== userId && (
-                                <OpenChat
-                                chatPartner={{
-                                    uid: uid,
-                                    photo: photoURL || '',
-                                    displayName: displayName
-                                }} />
-                                )
-                            }
-                        </div>)
-        }
+        const { email, displayName, uid, photoURL } = fan
+        const { userId, isLoggedIn } = this.props
+        const content = (<div className="page-content">
+                        <h5> email: {email} </h5>
+                        {isLoggedIn && uid !== userId && (
+                            <OpenChat
+                            chatPartner={{
+                                uid: uid,
+                                photo: photoURL || '',
+                                displayName: displayName
+                            }} />
+                            )
+                        }
+                    </div>)
 
         console.log('fan', fan)
         return (

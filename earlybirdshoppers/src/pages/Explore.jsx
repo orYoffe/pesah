@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-// import { events, artists, venues, fans } from '../helpers/mockData'
 import { pageView } from '../helpers/analytics'
 import { getExplore } from '../helpers/firebase'
-// import ExploreCalendar from '../components/ExploreCalendar'
 import EventItem from '../components/EventItem'
 import ArtistItem from '../components/ArtistItem'
 import VenueItem from '../components/VenueItem'
@@ -80,24 +78,6 @@ class Explore extends Component {
             {this.renderArtists()}
             {this.renderVenues()}
             {this.renderFans()}
-            <hr/>
-            {/* <h4>Trending Events</h4>
-            <div className="row">
-              {events.map(event => <EventItem key={`event_item_${event.id}`} {...event} />)}
-            </div>
-            <h4>Trending Artists</h4>
-            <div className="row">
-              {artists.map(artist => <ArtistItem key={`artist_item_${artist.id}`} {...artist} />)}
-            </div>
-            <h4>Trending Venues</h4>
-            <div className="row">
-              {venues.map(venue => <VenueItem key={`venue_item_${venue.id}`} {...venue} />)}
-            </div>
-            <h4>Trending Fans</h4>
-            <div className="row">
-              {fans.map(fan => <FanItem key={`fan_item_${fan.id}`} {...fan} />)}
-            </div> */}
-            {/* <ExploreCalendar /> */}
           </div>
       )
   }
