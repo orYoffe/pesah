@@ -32,6 +32,7 @@ const defaultValues = {
     contactPerson: '',
     venueEmail: '',
     phoneNumber: '',
+    contactPersonPhoneNumber: '',
     website: '',
     fb: '',
     venueType: '',
@@ -139,7 +140,7 @@ class CreateVenue extends Component {
             paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson,
             venueEmail, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date,
             businessPlan, description, comments, name, location, guaranteeAmount, equipment, hasDrumkit,
-            hasPiano, hasPA, activityDays,
+            hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
         } = this.state
         const { match: { params: { venueUid } } } = this.props
         let error
@@ -151,7 +152,7 @@ class CreateVenue extends Component {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
             capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
             paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
-            hasPiano, hasPA, activityDays,
+            hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
         })
         if (venueUid) {
             error = updateNonUserVenue({
@@ -159,14 +160,14 @@ class CreateVenue extends Component {
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
                 capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
                 paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
-                hasPiano, hasPA, activityDays,
+                hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
             })
         } else {
             error = createNonUserVenue({
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
                 capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
                 paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
-                hasPiano, hasPA, activityDays,
+                hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
             })
         }
         if (error && error.then) {
@@ -203,7 +204,7 @@ class CreateVenue extends Component {
             paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail, equipment,
             phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date, businessPlan, description, comments,
             location, name, guaranteeAmount, hasDrumkit,
-            hasPiano, hasPA, activityDays,
+            hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
         } = this.state
         const locationProps = {}
         Object.keys(location).forEach(itemKey => locationProps[`location${capitalize(itemKey)}`] = location[itemKey])
@@ -211,7 +212,7 @@ class CreateVenue extends Component {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan,
             description, comments, equipment, isLazarya, paidEntrance, venueSize, stageSize,
             hasLocalAudience, hasGuarantee, name, ...locationProps, guaranteeAmount, hasDrumkit,
-            hasPiano, hasPA, activityDays,
+            hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
         }
         return (
             <div>
@@ -246,6 +247,7 @@ class CreateVenue extends Component {
     onContactChange = e => this.setState({ contactPerson: e.target.value })
     onEmailChange = e => this.setState({ venueEmail: e.target.value })
     onPhoneChange = e => this.setState({ phoneNumber: e.target.value })
+    onContactPersonPhoneNumberChange = e => this.setState({ contactPersonPhoneNumber: e.target.value })
     onSiteChange = e => this.setState({ website: e.target.value })
     onFBChange = e => this.setState({ fb: e.target.value })
     onVenueTypeChange = e => this.setState({ venueType: e.target.value })
@@ -304,7 +306,7 @@ class CreateVenue extends Component {
         const {
             error, paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, location, isLazarya, hasDrumkit,
             contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, guaranteeAmount,
-            date, businessPlan, description, comments, isModalOpen, equipment,
+            date, businessPlan, description, comments, isModalOpen, equipment, contactPersonPhoneNumber,
             hasPiano, hasPA, activityDays,
         } = this.state
         return (
@@ -331,6 +333,15 @@ class CreateVenue extends Component {
                         placeholder="Venue Name*"
                         />
                     <Input
+                        className={this.getError('phone') + ' col-md-6'}
+                        id="phoneNumber"
+                        label="Venue Phone number"
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={this.onPhoneChange}
+                        placeholder="XXX-XXXXXXX"
+                        />
+                    <Input
                         className={this.getError('contactPerson') + ' col-md-6'}
                         value={contactPerson}
                         id="contactPerson"
@@ -340,6 +351,15 @@ class CreateVenue extends Component {
                         placeholder="Venue Contact Person"
                         />
                     <Input
+                        className={this.getError('contactPersonPhoneNumber') + ' col-md-6'}
+                        id="contactPersonPhoneNumber"
+                        label="Contact person Phone number"
+                        type="tel"
+                        value={contactPersonPhoneNumber}
+                        onChange={this.onContactPersonPhoneNumberChange}
+                        placeholder="XXX-XXXXXXX"
+                        />
+                    <Input
                         className={this.getError('venueEmail') + ' col-md-6'}
                         value={venueEmail}
                         id="email"
@@ -347,15 +367,6 @@ class CreateVenue extends Component {
                         type="email"
                         onChange={this.onEmailChange}
                         placeholder="example@example.com"
-                        />
-                    <Input
-                        className={this.getError('phone') + ' col-md-6'}
-                        id="phoneNumber"
-                        label="Phone number"
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={this.onPhoneChange}
-                        placeholder="XXX-XXXXXXX"
                         />
                     <Input
                         className={this.getError('website') + ' col-md-6'}
