@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import store from 'store'
 import { connect } from 'react-redux'
-import { getLocation, scrollToTop, capitalize } from '../../helpers/common'
+import { getLocation, scrollToTop, capitalize, isEmailValid } from '../../helpers/common'
 import { createNonUserVenue, getVenue, updateNonUserVenue } from '../../helpers/firebase'
 import GSearchInput from '../GSearchInput/'
 import Input from '../Input'
@@ -26,11 +26,15 @@ const defaultValues = {
     hasPiano: false,
     hasPA: false,
     hasGuarantee: false,
+    openingTimeStart: false,
+    openingTimeEnd: false,
     guaranteeAmount: 0,
+    guaranteeMaxAmount: 0,
     location: false,
     isLazarya: true,
     contactPerson: '',
     venueEmail: '',
+    contactPersonEmail: '',
     phoneNumber: '',
     contactPersonPhoneNumber: '',
     website: '',
@@ -90,7 +94,7 @@ class CreateVenue extends Component {
     clearValues = () => this.setState(defaultValues)
     onModalClose = () => this.setState({ isModalOpen: false })
 
-    isValid = ({ name, location }) => {
+    isValid = ({ name, location, contactPersonEmail, venueEmail }) => {
         const errors = []
         let error = ''
         
@@ -99,6 +103,22 @@ class CreateVenue extends Component {
             error = `
 
             Name must be longer than 3 chars
+            `
+        }
+        
+        if (venueEmail.length > 0 && !isEmailValid(venueEmail)) {
+            errors.push('venueEmail')
+            error = `
+
+            Venue email must be a valid email
+            `
+        }
+        
+        if (contactPersonEmail.length > 0 && !isEmailValid(contactPersonEmail)) {
+            errors.push('contactPersonEmail')
+            error = `
+
+            Contact person email must be a valid email
             `
         }
         
@@ -129,18 +149,18 @@ class CreateVenue extends Component {
     
     onSubmit = e => {
         e && e.preventDefault()
-        const { location, name } = this.state
+        const { location, name, contactPersonEmail, venueEmail } = this.state
         
-        if (this.isValid({ name, location })) {
+        if (this.isValid({ name, location, contactPersonEmail, venueEmail })) {
             this.setState({isModalOpen: 'submit'})
         }
     }
     onConfirm = () => {
         const {
             paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson,
-            venueEmail, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date,
+            venueEmail, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date, openingTimeEnd,
             businessPlan, description, comments, name, location, guaranteeAmount, equipment, hasDrumkit,
-            hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
+            hasPiano, hasPA, activityDays, contactPersonPhoneNumber, contactPersonEmail, guaranteeMaxAmount, openingTimeStart,
         } = this.state
         const { match: { params: { venueUid } } } = this.props
         let error
@@ -152,7 +172,7 @@ class CreateVenue extends Component {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
             capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
             paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
-            hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
+            hasPiano, hasPA, activityDays, contactPersonPhoneNumber, contactPersonEmail, guaranteeMaxAmount, openingTimeStart, openingTimeEnd,
         })
         if (venueUid) {
             error = updateNonUserVenue({
@@ -160,14 +180,14 @@ class CreateVenue extends Component {
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
                 capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
                 paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
-                hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
+                hasPiano, hasPA, activityDays, contactPersonPhoneNumber, contactPersonEmail, guaranteeMaxAmount, openingTimeStart, openingTimeEnd,
             })
         } else {
             error = createNonUserVenue({
                 contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
                 capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
                 paidEntrance, name, venueSize, stageSize, hasLocalAudience, hasGuarantee, ...locationProps, guaranteeAmount, hasDrumkit,
-                hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
+                hasPiano, hasPA, activityDays, contactPersonPhoneNumber, contactPersonEmail, guaranteeMaxAmount, openingTimeStart, openingTimeEnd,
             })
         }
         if (error && error.then) {
@@ -198,21 +218,21 @@ class CreateVenue extends Component {
 
         this.onModalClose()
     }
-    getModalquestion = () => {
+    getModalQuestion = () => {
         const { match: { params: { venueUid } } } = this.props
         const {
             paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, isLazarya, contactPerson, venueEmail, equipment,
             phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date, businessPlan, description, comments,
-            location, name, guaranteeAmount, hasDrumkit,
+            location, name, guaranteeAmount, hasDrumkit, contactPersonEmail, guaranteeMaxAmount, openingTimeStart, openingTimeEnd,
             hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
         } = this.state
         const locationProps = {}
         Object.keys(location).forEach(itemKey => locationProps[`location${capitalize(itemKey)}`] = location[itemKey])
         const values = {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan,
-            description, comments, equipment, isLazarya, paidEntrance, venueSize, stageSize,
-            hasLocalAudience, hasGuarantee, name, ...locationProps, guaranteeAmount, hasDrumkit,
-            hasPiano, hasPA, activityDays, contactPersonPhoneNumber,
+            description, comments, equipment, isLazarya, paidEntrance, venueSize, stageSize, openingTimeStart,
+            hasLocalAudience, hasGuarantee, name, ...locationProps, guaranteeAmount, hasDrumkit, openingTimeEnd,
+            hasPiano, hasPA, activityDays, contactPersonPhoneNumber, contactPersonEmail, guaranteeMaxAmount,
         }
         return (
             <div>
@@ -256,7 +276,7 @@ class CreateVenue extends Component {
     onseatingCapacityChange = e => this.setState({ seatingCapacity: e.target.value })
     onGuaranteeChange = e => {
         if (this.state.hasGuarantee) {
-            this.setState({ hasGuarantee: !this.state.hasGuarantee, guaranteeAmount: 0 })
+            this.setState({ hasGuarantee: !this.state.hasGuarantee, guaranteeAmount: 0, guaranteeMaxAmount: 0 })
         } else {
             this.setState({ hasGuarantee: !this.state.hasGuarantee })
         }
@@ -278,6 +298,7 @@ class CreateVenue extends Component {
         })
     }
     onGuaranteeAmountChange = e => this.setState({ guaranteeAmount: e.target.value })
+    onGuaranteeMaxAmountChange = e => this.setState({ guaranteeMaxAmount: e.target.value })
     onDrumkitChange = e => this.setState({ hasDrumkit: e.target.value })
     onPianoChange = e => this.setState({ hasPiano: e.target.value })
     onPAChange = e => this.setState({ hasPA: e.target.value })
@@ -287,6 +308,9 @@ class CreateVenue extends Component {
     onCommentsChange = e => this.setState({ comments: e.target.value })
     onEquipmentChange = e => this.setState({ equipment: e.target.value })
     onNameChange = e => this.setState({ name: e.target.value })
+    onContactPersonEmailChange = e => this.setState({ contactPersonEmail: e.target.value })
+    onOpeningTimeStartChange = e => this.setState({ openingTimeStart: e.target.value })
+    onOpeningTimeEndChange = e => this.setState({ openingTimeEnd: e.target.value })
 
     onPlacesChanged = () => {
         const place = this.venueLocation.getPlaces()[0]
@@ -307,7 +331,7 @@ class CreateVenue extends Component {
             error, paidEntrance, venueSize, stageSize, hasLocalAudience, hasGuarantee, location, isLazarya, hasDrumkit,
             contactPerson, venueEmail, name, phoneNumber, website, fb, venueType, genre, capacity, seatingCapacity, guaranteeAmount,
             date, businessPlan, description, comments, isModalOpen, equipment, contactPersonPhoneNumber,
-            hasPiano, hasPA, activityDays,
+            hasPiano, hasPA, activityDays, contactPersonEmail, guaranteeMaxAmount, openingTimeStart, openingTimeEnd,
         } = this.state
         return (
             <div className="container">
@@ -342,6 +366,15 @@ class CreateVenue extends Component {
                         placeholder="XXX-XXXXXXX"
                         />
                     <Input
+                        className={this.getError('venueEmail') + ' col-md-6'}
+                        value={venueEmail}
+                        id="email"
+                        label="Venue Email"
+                        type="email"
+                        onChange={this.onEmailChange}
+                        placeholder="example@example.com"
+                        />
+                    <Input
                         className={this.getError('contactPerson') + ' col-md-6'}
                         value={contactPerson}
                         id="contactPerson"
@@ -360,12 +393,12 @@ class CreateVenue extends Component {
                         placeholder="XXX-XXXXXXX"
                         />
                     <Input
-                        className={this.getError('venueEmail') + ' col-md-6'}
-                        value={venueEmail}
-                        id="email"
-                        label="Email"
+                        className={this.getError('contactPersonEmail') + ' col-md-6'}
+                        value={contactPersonEmail}
+                        id="contactPersonEmail"
+                        label="Contact person Email"
                         type="email"
-                        onChange={this.onEmailChange}
+                        onChange={this.onContactPersonEmailChange}
                         placeholder="example@example.com"
                         />
                     <Input
@@ -461,7 +494,7 @@ class CreateVenue extends Component {
 
                     <Dropdown
                         className="col-md-6"
-                        defaultValue={stageSize}
+                        value={stageSize}
                         onSelect={this.onStageSizeSelect}
                         options={[
                             {value: 'S'},
@@ -506,6 +539,15 @@ class CreateVenue extends Component {
                         value={guaranteeAmount}
                         type="number"
                         onChange={this.onGuaranteeAmountChange}
+                        placeholder="3500"
+                    />}
+                    {hasGuarantee && <Input
+                        className={this.getError('guaranteeMaxAmount') + ' col-md-6'}
+                        id="guaranteeMaxAmount"
+                        label="Guarantee Max Amount"
+                        value={guaranteeMaxAmount}
+                        type="number"
+                        onChange={this.onGuaranteeMaxAmountChange}
                         placeholder="3500"
                     />}
                     <Input
@@ -572,6 +614,22 @@ class CreateVenue extends Component {
                             label="Sunday"
                         />
                     </div>
+                    <Input
+                        className={this.getError('openingTimeStart') + ' col-md-6'}
+                        id="openingTimeStart"
+                        label="Opening time"
+                        type="time"
+                        value={openingTimeStart}
+                        onChange={this.onOpeningTimeStartChange}
+                    />
+                    <Input
+                        className={this.getError('openingTimeEnd') + ' col-md-6'}
+                        id="openingTimeEnd"
+                        label="Closing time"
+                        type="time"
+                        value={openingTimeEnd}
+                        onChange={this.onOpeningTimeEndChange}
+                    />
                     <br/>
                     <div className={`form-group ${this.getError('location')} `}>
                         <label htmlFor="venueLocation">Venue Location</label>
@@ -624,7 +682,7 @@ class CreateVenue extends Component {
                     />
 
                 </form>
-                {isModalOpen === 'submit' && <Modal question={this.getModalquestion()} onConfirm={this.onConfirm} onClose={this.onModalClose} />}
+                {isModalOpen === 'submit' && <Modal question={this.getModalQuestion()} onConfirm={this.onConfirm} onClose={this.onModalClose} />}
                 {isModalOpen === 'error' && <Modal question={<div>we got an error the data wasn't uploaded to the database</div>} onClose={this.onModalClose} />}
             </div>
         )

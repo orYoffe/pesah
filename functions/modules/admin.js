@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const common = require('./common');
+const common = require('../common');
 
 
 const venueValidator = (req, res, isUpdate) => {

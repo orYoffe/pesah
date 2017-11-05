@@ -12,7 +12,6 @@ class Admin extends Component {
 
     render() {
         const { isAdmin, match } = this.props
-        console.log('admin--- match ====', match)
         if (isAdmin) {
             return  (
                 <div>

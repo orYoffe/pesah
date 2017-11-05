@@ -15,6 +15,9 @@ import {
     GET_ROOM,
     CREATE_NON_USER_VENUE,
     UPDATE_NON_USER_VENUE,
+    SEND_BOOKING_REQUEST,
+    APPROVE_BOOKING_REQUEST,
+    DECLINE_BOOKING_REQUEST,
  } from './config'
 
 firebase.initializeApp(DB_CONFIG)
@@ -86,3 +89,6 @@ export const createUser = (body, callback) => post(CREATE_USER, body, callback).
 export const createNonUserVenue = (body, callback) => post(CREATE_NON_USER_VENUE, body, callback).then(callback).catch(callback)
 export const updateNonUserVenue = (body, callback) => post(UPDATE_NON_USER_VENUE, body, callback).then(callback).catch(callback)
 export const getRoom = (body, callback) => post(GET_ROOM, body, callback).then(callback).catch(callback)
+export const requestBooking = (body, callback) => post(SEND_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
+export const approveBooking = (body, callback) => post(APPROVE_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
+export const declineBooking = (body, callback) => post(DECLINE_BOOKING_REQUEST, body, callback).then(callback).catch(callback)

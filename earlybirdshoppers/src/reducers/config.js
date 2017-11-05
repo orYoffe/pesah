@@ -2,7 +2,7 @@ const CONFIG_INIT = 'CONFIG_INIT'
 
 export const configInit = (firebase) => ({
   type: CONFIG_INIT,
-  firebase
+  app: firebase,
 })
 
 export default (state = {

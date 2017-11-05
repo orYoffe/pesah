@@ -3,9 +3,9 @@ import firebase, { getUser } from './helpers/firebase'
 import { connect } from 'react-redux'
 import { login, logout } from './reducers/auth'
 import { configInit } from './reducers/config'
+import { setMapsIsReady } from './reducers/locale'
 import Routes from './Routes'
 import Loader from './components/Loader/'
-
 
 class App extends Component {
   state = {
@@ -14,6 +14,10 @@ class App extends Component {
   constructor(props){
     super(props);
     props.dispatch(configInit(firebase))
+
+    window.mapsInit = () => {
+      props.dispatch(setMapsIsReady(true))
+    }
   }
 
   componentDidMount () {

@@ -14,12 +14,18 @@
     display: block;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transition: transform 0.25s;
+    transform: translate(-50%, -50%) scale(0.95);
+    color: #000;
     max-height: 90%;
     max-width: 90%;
     padding: 10px;
     background: #fff;
     z-index: 100;
+    box-shadow: 0 7px 16px 2px #222;
+}
+.modal-content.open {
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .modal-question {
@@ -27,4 +33,13 @@
     max-height: 380px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+@media screen and (max-width: 750px) {
+    
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: 94%;
+    }
 }

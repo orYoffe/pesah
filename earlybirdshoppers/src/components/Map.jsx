@@ -1,6 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import noop from 'lodash/noop'
-import { GoogleMap, Marker, withGoogleMap } from "react-google-maps"
+import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps'
 
 const Gmap = withGoogleMap(({
   markers,
@@ -28,8 +29,9 @@ const Map = ({
   onMapLoad,
   onMapClick,
   onMarkerRightClick,
+  isMapsReady,
 }) => (
-  <Gmap
+    isMapsReady && <Gmap
     containerElement={
       <div style={{ height: `100%`, minHeight: '200px' }} />
     }
@@ -42,4 +44,7 @@ const Map = ({
     onMarkerRightClick={noop}
   />)
 
-export default Map
+const mapStateToProps = state => ({
+  isMapsReady: state.locale.isMapsReady,
+})
+export default connect(mapStateToProps)(Map)

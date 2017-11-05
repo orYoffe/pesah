@@ -5,11 +5,12 @@ const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
 const express = require('express');
 const cookieParser = require('cookie-parser')();
-const createEvent = require('./createEvent');
-const createUser = require('./createUser');
-const getRoom = require('./getRoom');
-const getters = require('./getters');
-const adminApis = require('./admin');
+const createEvent = require('./modules/createEvent');
+const createUser = require('./modules/createUser');
+const getRoom = require('./modules/getRoom');
+const getters = require('./modules/getters');
+const adminApis = require('./modules/admin');
+const booking = require('./modules/booking');
 
 const app = express();
 
@@ -81,6 +82,9 @@ app.use(authenticate);
 app.post('/createEvent', createEvent.default);
 app.post('/createUser', createUser.default);
 app.post('/getRoom', getRoom.default);
+app.post('/sendBookingRequest', booking.createBookingRequest);
+app.post('/approveBookingRequest', booking.approveBookingRequest);
+app.post('/declineBookingRequest', booking.declineBookingRequest);
 
 // Admin api
 app.use(adminAuthenticate);

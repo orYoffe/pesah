@@ -1,7 +1,7 @@
 const path = require('path');
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const events = require('./events');
+const events = require('./modules/events');
 const api = require('./api');
 
 admin.initializeApp(functions.config().firebase);

@@ -3,9 +3,14 @@ export const isDev = process.env.NODE_ENV !== 'production'
 export const ifLessThanTen = num => num < 10 ? `0${num}` : num
 
 export const stopPropogation = e => {
-    if (e.keyCode === 13 || e.target.key === 'Enter') {
+    if (e && (e.keyCode === 13 || e.target.key === 'Enter')) {
         e.stopPropagation()
         e.preventDefault()
+    }
+}
+export const onlyStopPropogation = e => {
+  if (e && e.stopPropagation) {
+        e.stopPropagation()
     }
 }
 
@@ -81,3 +86,5 @@ const capitalRegex = /\b\w/g
 
 export const scrollToTop = () => window.scrollTo(0, 0)
 export const capitalize = str => str.replace(capitalRegex, l => l.toUpperCase())
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+export const isEmailValid = (email) => emailRegex.test(email);
