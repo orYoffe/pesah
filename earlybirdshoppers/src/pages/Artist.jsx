@@ -6,6 +6,7 @@ import NotFound from './NotFound'
 import EventItem from '../components/EventItem/'
 import Loader from '../components/Loader/'
 import OpenChat from '../components/OpenChat/'
+import BookingArtistPanel from '../components/Booking/BookingArtistPanel'
 
 class Artist extends Component {
     state = {
@@ -17,7 +18,14 @@ class Artist extends Component {
         
         this.getArtistData()
     }
-    
+    renderVenueEdit = () => {
+        const { userId } = this.props
+        const { id } = this.props.match.params
+
+        if (userId === id) {
+            return <BookingArtistPanel uid={id} />
+        }
+    }
     getArtistData = () => {
         const { id } = this.props.match.params
 
@@ -65,6 +73,7 @@ class Artist extends Component {
         const { displayName, email, uid, photoURL } = this.state.artist
         const content = (
             <div className="page-content">
+                {this.renderVenueEdit()}
                 {email && <h5> email: {email} </h5>}
                 {displayName && <h5> displayName: {displayName} </h5>}
                 {this.renderEvents()}

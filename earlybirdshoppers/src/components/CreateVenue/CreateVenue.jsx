@@ -631,7 +631,7 @@ class CreateVenue extends Component {
                         onChange={this.onOpeningTimeEndChange}
                     />
                     <br/>
-                    <div className={`form-group ${this.getError('location')} `}>
+                    <div className={`form-group ${this.getError('location')}  col-md-12`}>
                         <label htmlFor="venueLocation">Venue Location</label>
                         <GSearchInput
                             placeholder="Somewhere street 54..."

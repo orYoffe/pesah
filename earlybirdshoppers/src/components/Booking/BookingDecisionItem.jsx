@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import Proptypes from 'prop-types'
 import { approveBooking, declineBooking } from '../../helpers/firebase'
 import Modal from '../Modal'
+import Loader from '../Loader'
 
 const init = 'init'
 const approved = 'approved'
 const declined = 'declined'
+const loading = 'loading'
 
 class BookingDecisionItem extends Component {
     state = {
@@ -20,31 +22,22 @@ class BookingDecisionItem extends Component {
         declineBooking: Proptypes.func.isRequired,
     }
 
-    declineBooking = uid => {
+    updateBooking = (uid, status, request) => {
         // TODO add message functionality
-        declineBooking({ artistId: uid }, res => {
+        request({ artistId: uid }, res => {
             if (res.message === 'ok') {
-                this.setState({ isModalOpen: 'ConfirmBookingRequest', status: declined })
+                this.setState({ isModalOpen: false, status })
             } else if (res.errorMessage === 'doesn\'t exists') {
                 this.setState({ isModalOpen: 'doesNotExists' })
             } else {
                 this.setState({ isModalOpen: 'error' })
             }
         }).catch(err => this.setState({ isModalOpen: 'error' }))
+        this.setState({ status: 'error' })
     }
+    declineBooking = uid => this.updateBooking(uid, declined, declineBooking)
     
-    approveBooking = uid => {
-        // TODO add message functionality
-        approveBooking({ artistId: uid }, res => {
-            if (res.message === 'ok') {
-                this.setState({ isModalOpen: 'ConfirmBookingRequest', status: approved })
-            } else if (res.errorMessage === 'doesn\'t exists') {
-                this.setState({ isModalOpen: 'doesNotExists' })
-            } else {
-                this.setState({ isModalOpen: 'error' })
-            }
-        }).catch(err => this.setState({ isModalOpen: 'error' }))
-    }
+    approveBooking = uid => this.updateBooking(uid, approved, approveBooking)
     onModalClose = (e) => this.setState({ isModalOpen: false })
     
 
@@ -54,6 +47,9 @@ class BookingDecisionItem extends Component {
         let content
         
         switch(status) {
+            case loading:
+                content = <Loader />
+                break
             case approved:
                 content = <div><hr />You approved {displayName}s' booking request</div>
                 break

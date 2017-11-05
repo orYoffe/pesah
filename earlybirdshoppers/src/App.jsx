@@ -24,7 +24,6 @@ class App extends Component {
     const { dispatch } = this.props
     this.removeListener = firebase.auth().onAuthStateChanged((user) => {
       if (user && user.uid) {
-        console.log('user ======== ', user)
         dispatch(login({
           uid: user.uid,
           email: user.email,
@@ -36,11 +35,14 @@ class App extends Component {
           accountType: user.accountType,
         }))
 
-        getUser(user.uid, snapshot => dispatch(login(snapshot.val())))
+        getUser(user.uid, snapshot => {
+          dispatch(login(snapshot.val()))
+          this.setState({ loading: false })
+        })
       } else {
         dispatch(logout())
+        this.setState({ loading: false })
       }
-      this.setState({ loading: false })
     })
   }
   componentWillUnmount() {

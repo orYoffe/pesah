@@ -2,9 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const Dropdown = props => {
-    const { options, value, onSelect, className, label, id } = props
+    const { options, value, defaultValue, onSelect, className, label, id } = props
     const select = (
-        <select onChange={onSelect} value={value || ''} className={`form-control ${className}`} id={id}>
+        <select onChange={onSelect}
+        value={value}
+        defaultValue={defaultValue}
+        className={`form-control ${className}`} id={id}>
             <option
                 value=""
                 key="empty_option_01" disabled>{!!label && label}</option>
