@@ -7,29 +7,24 @@ class ChatForm extends Component {
   }
 
   submit = (e) => {
-    e.preventDefault()
-    const { user: { displayName, uid }, roomId } = this.props
+    e && e.preventDefault()
+    if (this.text.value.trim().length < 1) {
+      return
+    }
+    const { user: { displayName, userUid }, roomId } = this.props
     const messages = database().ref(`messages/${roomId}`).push()
     const message = {
-      text: this.text.value,
+      text: this.text.value.trim(),
       timeCreated: new Date().toJSON(),
       from: displayName,
-      userUid: uid,
-      seenBy: { [uid]: { uid, name: displayName, seenAt: new Date().toJSON() } },
+      userUid: userUid,
+      seenBy: { [userUid]: { uid: userUid, name: displayName, seenAt: new Date().toJSON() } },
       room: roomId,
       uid: messages.key
     }
-    window.message = message
-    window.database = database
-    // const updates = {}
-    // updates[messageUid] = message
-    // return ref.child(`rooms/${roomId}/messages`).once('value')
     
-    debugger
     messages.set(message)
     .then(newMessage => {
-      debugger
-      // newMessage.update({ uid: newMessage.key })
       this.text.value = ''
       if (this.state.error) {
         this.setState({ error: null })
@@ -38,17 +33,16 @@ class ChatForm extends Component {
       if (x.code === 'PERMISSION_DENIED') {
         this.setState({error: 'An error accurd and your message wasn\'t sent'})
       }
-      debugger
     })
   }
 
   render() {
     const { error } = this.state
     return (
-      <form className="form" onSubmit={this.submit}>
+      <form className="chat-form" onSubmit={this.submit}>
         {error && <div className="error">{error}</div>}
-        <input className="form-input" placeholder="Write something…" ref={ref => this.text = ref}/>
-        <button className="form-button">Send</button>
+        <input className="form-control pull-left" placeholder="Write something…" ref={ref => this.text = ref}/>
+        <button className="btn btn-primary pull-right">Send</button>
       </form>
     )
   }

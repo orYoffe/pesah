@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { logout } from '../../helpers/auth'
 import { logout as logoutAction } from '../../reducers/auth'
+import ChatRooms from '../ChatRooms'
 import LocalePicker from './LocalePicker'
 import './Menu.css'
 
@@ -45,6 +46,9 @@ class Menu extends Component {
                 <li key={`menu_item_${id}_logout`}>
                     <NavLink to={"/"} onClick={this.logout}>{trans.Logout}</NavLink>
                 </li>
+            )
+            links.push(
+                <ChatRooms key={`menu_item_03_${id}_ChatRooms`}/>
             )
         } else {
             links.push(

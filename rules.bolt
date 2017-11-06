@@ -175,13 +175,8 @@ type Ticket {
   payment: Object,
 }
 
-// ================= messages from git WIP ======================================
 
 type Member {
-  photo: String,
-  uid: String,
-  displayName: String,
-  isBanned: Boolean,
 }
 
 type Room {
@@ -198,9 +193,10 @@ type Message {
   // read() { isMember(this) && isNotBanned(this) }
   from: String,
   userUid: String,
-  // uid: String,
+  uid: String,
   text: String,
-  timeCreated: ISODate,
+  // timeCreated: ISODate,
+  timeCreated: String,
   seenBy: Object,
   room: String
 }

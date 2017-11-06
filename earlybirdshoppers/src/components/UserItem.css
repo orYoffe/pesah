@@ -11,9 +11,9 @@
     background-size: cover;
     background-position: 50%;
 }
-.user-item:hover {
+/* .user-item:hover {
   transform: scale(1.005);
-}
+} */
 
 .user-item::after,
 .user-item::before {

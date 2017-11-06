@@ -592,28 +592,6 @@
     },
     "messages": {
       "$uid": {
-        ".validate": "newData.hasChildren(['from', 'userUid', 'text', 'timeCreated', 'seenBy', 'room'])",
-        "from": {
-          ".validate": "newData.isString()"
-        },
-        "userUid": {
-          ".validate": "newData.isString()"
-        },
-        "text": {
-          ".validate": "newData.isString()"
-        },
-        "timeCreated": {
-          ".validate": "newData.isString() && newData.val().matches(/\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d+([+-][0-2]\\d:[0-5]\\d|Z)/)"
-        },
-        "seenBy": {
-          ".validate": "newData.hasChildren()"
-        },
-        "room": {
-          ".validate": "newData.isString()"
-        },
-        "$other": {
-          ".validate": "false"
-        },
         ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && (!root.child('members').child($uid).child(auth.uid).hasChildren(['isBanned']) || root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true)",
         ".write": "true",
         ".indexOn": [
@@ -623,22 +601,6 @@
     },
     "members": {
       "$uid": {
-        ".validate": "newData.hasChildren(['photo', 'uid', 'displayName', 'isBanned'])",
-        "photo": {
-          ".validate": "newData.isString()"
-        },
-        "uid": {
-          ".validate": "newData.isString()"
-        },
-        "displayName": {
-          ".validate": "newData.isString()"
-        },
-        "isBanned": {
-          ".validate": "newData.isBoolean()"
-        },
-        "$other": {
-          ".validate": "false"
-        },
         ".write": "data.val() != null && newData.val() != null && root.child('members').child($uid).hasChildren([auth.uid]) && (!root.child('members').child($uid).child(auth.uid).hasChildren(['isBanned']) || root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true)",
         ".read": "root.child('members').child($uid).hasChildren([auth.uid]) && (!root.child('members').child($uid).child(auth.uid).hasChildren(['isBanned']) || root.child('members').child($uid).child(auth.uid).child('isBanned').val() != true)"
       }
