@@ -75,7 +75,7 @@ class Chat extends Component {
     render() {
         const { roomId, isLoggedIn, userUid, photoURL, displayName, rooms } = this.props
 
-        if (!roomId || !isLoggedIn) {
+        if (!roomId || !isLoggedIn || !rooms) {
             return null
         }
         const { messages } = this.state
