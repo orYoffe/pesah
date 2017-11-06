@@ -191,14 +191,14 @@ type Room {
 
 type Message {
   // read() { isMember(this) && isNotBanned(this) }
-  from: String,
-  userUid: String,
-  uid: String,
-  text: String,
-  // timeCreated: ISODate,
-  timeCreated: String,
-  seenBy: Object,
-  room: String
+  // from: String,
+  // userUid: String,
+  // uid: String,
+  // text: String,
+  // // timeCreated: ISODate,
+  // timeCreated: String,
+  // seenBy: Object,
+  // room: String
 }
 
   // Make sure that the only value allowed to be written is now.
