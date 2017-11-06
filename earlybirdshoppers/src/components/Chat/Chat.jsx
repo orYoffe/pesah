@@ -86,7 +86,7 @@ class Chat extends Component {
                 <h5 className="chat-box-title">RTB Chat with {Object.keys(rooms[roomId].members)
                     .map(member =>
                         rooms[roomId].members[member].uid !== userUid ? rooms[roomId].members[member].displayName : null
-                ).join(', ').slice(0, -2)}</h5>
+                ).join(', ')}</h5>
                 <div className="chat-messages" ref={ref => this.messagesView = ref}>
                     {
                         messages.length ? (

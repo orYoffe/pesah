@@ -37,7 +37,7 @@ class ChatRooms extends Component {
                 {Object.keys(rooms[roomKey].members)
                     .map(member =>
                         rooms[roomKey].members[member].uid !== userUid ? rooms[roomKey].members[member].displayName : null
-                ).join(', ').slice(0, -2)}
+                ).join(', ')}
             </button>
         ))
         return (
