@@ -14,9 +14,10 @@ class Chat extends Component {
     state = {
         messages: [],
     }
+    
     componentDidMount() {
         const chatProperties = store.get(LOCALSTORAGE_CHAT_KEY)
-        if (chatProperties && chatProperties.isOpen && chatProperties.roomId) {
+        if (chatProperties && chatProperties.isOpen && chatProperties.roomId && this.props.rooms[chatProperties.roomId]) {
             this.props.setRoom(chatProperties.roomId)
         }
     }
