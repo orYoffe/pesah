@@ -3,6 +3,7 @@ const LOGOUT = 'LOGOUT'
 const SIGNUP = 'SIGNUP'
 const RESET_PASS = 'RESET_PASS'
 const VERIFY_EMAIL = 'VERIFY_EMAIL'
+const SET_PROFILE_PICTURE = 'SET_PROFILE_PICTURE'
 
 export const verifyEmail = () => ({
   type: VERIFY_EMAIL
@@ -17,6 +18,10 @@ export const signup = (user) => ({
 export const login = (user) => ({
   type: LOGIN,
   user
+})
+export const setProfilePicture = (profilePicture) => ({
+  type: SET_PROFILE_PICTURE,
+  profilePicture
 })
 export const logout = () => ({
   type: LOGOUT
@@ -54,6 +59,11 @@ export default (state = initialState, action) => {
         ...state,
         loggedIn: false,
         user: false,
+      }
+    case 'SET_PROFILE_PICTURE':
+      return {
+        ...state,
+        user: { ...state.user, profilePicture: action.profilePicture },
       }
     default:
       return state

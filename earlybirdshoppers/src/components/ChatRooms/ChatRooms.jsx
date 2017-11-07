@@ -21,34 +21,39 @@ class ChatRooms extends Component {
         if (!roomsKeys.length) {
             return null
         }
-        if (!isOpen) {
-            return (
-                <button className="btn btn-primary" onClick={this.open}>
-                    <span className="glyphicon glyphicon-envelope" aria-hidden="true"></span>
-                </button>
-            )
-        }
-        const roomsItems = roomsKeys.map(roomKey => (
-            <button
-                className="btn btn-default form-control"
-                key={`${roomKey}_room_item`}
-                onClick={() => setRoom(roomKey)}
-            >
-                {Object.keys(rooms[roomKey].members)
+        let roomsItems
+        if (isOpen) {
+            roomsItems = roomsKeys.map(roomKey => {
+                const members = Object.keys(rooms[roomKey].members)
+                const membersNames = members.filter(member => rooms[roomKey].members[member].uid !== userUid)
                     .map(member =>
                         rooms[roomKey].members[member].uid !== userUid ? rooms[roomKey].members[member].displayName : null
-                ).join(', ')}
-            </button>
-        ))
+                    ).join(', ')
+                return (
+                    <button
+                        className="btn btn-default form-control"
+                        key={`${roomKey}_room_item`}
+                        onClick={() => setRoom(roomKey)}
+                    >
+                        {membersNames}
+                    </button>
+                
+                )
+            })
+        }
         return (
-            <div className="chat-rooms">
+        <span>
+            <button className="btn btn-primary" onClick={this.open}>
+                <span className="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+            </button>
+            {isOpen && <div className="chat-rooms">
                 <button onClick={this.close} className="btn btn-danger pull-right">X</button>
-                <h5 className="pull-left">RTB messages</h5>
+                <h5 className="rooms-title">RTB messages</h5>
                 <div className="chat-room-display" ref={ref => this.messagesView = ref}>
                     {roomsItems}
-                        
                 </div>
-            </div>
+            </div>}
+            </span>
         )
     }
 }

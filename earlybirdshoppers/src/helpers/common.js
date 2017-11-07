@@ -1,3 +1,4 @@
+/*  eslint-disable no-useless-escape */
 export const isDev = process.env.NODE_ENV !== 'production'
 
 export const ifLessThanTen = num => num < 10 ? `0${num}` : num

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import Proptypes from 'prop-types'
-import { approveBooking, declineBooking } from '../../helpers/firebase'
 import Loader from '../Loader'
 
 const init = 'init'

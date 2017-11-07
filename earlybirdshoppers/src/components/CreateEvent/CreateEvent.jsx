@@ -4,7 +4,11 @@ import store from 'store'
 import { connect } from 'react-redux'
 // import '../UserItem.css'
 // import './CreateEvent.css'
-import { ifLessThanTen, readFile, howManyTickets } from '../../helpers/common'
+import {
+    ifLessThanTen,
+    // readFile,
+    howManyTickets
+} from '../../helpers/common'
 import { createEvent } from '../../helpers/db/event'
 import GSearchInput from '../GSearchInput/'
 
@@ -178,9 +182,30 @@ class CreateEvent extends Component {
     }
 
     onFileChange = e => {
-        readFile(e.target.files, event => {
-            this.setState({image: event.target.result})
-        })
+        e.stopPropagation();
+        e.preventDefault();
+        // const file = e.target.files[0];
+        // const metadata = {
+        //     'contentType': file.type
+        // };
+        // // Push to child path.
+        // // [START oncomplete]
+        // storageRef.child('images/' + file.name).put(file, metadata).then(function (snapshot) {
+        //     console.log('Uploaded', snapshot.totalBytes, 'bytes.');
+        //     console.log(snapshot.metadata);
+        //     const url = snapshot.downloadURL;
+        //     console.log('File available at', url);
+        //     // [START_EXCLUDE]
+        //     document.getElementById('linkbox').innerHTML = '<a href="' + url + '">Click For File</a>';
+        //     // [END_EXCLUDE]
+        // }).catch(function (error) {
+        //     // [START onfailure]
+        //     console.error('Upload failed:', error);
+        //     // [END onfailure]
+        // });
+        // readFile(e.target.files, event => {
+        //     this.setState({image: event.target.result})
+        // })
     }
 
     renderHowMany = numberOfTickets => numberOfTickets && <p>Number of tickets required to reach Bar goal is {numberOfTickets} tickets</p>

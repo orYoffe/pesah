@@ -6,10 +6,11 @@ import NotFound from './NotFound'
 import Loader from '../components/Loader/'
 import { getVenue, getArtist, requestBooking } from '../helpers/firebase'
 import { pageView } from '../helpers/analytics'
-import OpenChat from '../components/OpenChat/'
+import OpenChat from '../components/OpenChat'
 import Map from '../components/Map'
 import Modal from '../components/Modal'
 import Textarea from '../components/Textarea'
+import FileInput from '../components/FileInput'
 import BookingVenuePanel from '../components/Booking/BookingVenuePanel'
 import '../components/VenueItem/VenueItem.css'
 
@@ -100,7 +101,13 @@ class Venue extends Component {
         const { id } = this.props.match.params
 
         if (userId === id) {
-            return <BookingVenuePanel uid={id} />
+            return [<BookingVenuePanel uid={id} />,
+            userId && <FileInput
+                userUid={userId}
+                filePurpose="profilePicture"
+                label="Upload a profile picture"
+                id="artist_profilePicture_upload_input"
+            />]
         }
     }
 

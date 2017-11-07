@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { ref, getRoom } from '../../helpers/firebase'
+import { getRoom } from '../../helpers/firebase'
 import { setRoom } from '../../reducers/chat'
 
 class OpenChat extends Component {

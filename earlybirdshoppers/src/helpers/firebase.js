@@ -1,3 +1,4 @@
+import { isDev } from './common'
 import firebase from 'firebase'
 import 'firebase/database'
 import 'firebase/auth'
@@ -25,6 +26,7 @@ firebase.initializeApp(DB_CONFIG)
 export default firebase
 export const database = firebase.database
 export const ref = firebase.database().ref()
+export const storageRef = firebase.storage().ref()
 export const auth = firebase.auth
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
 export const fbProvider = new firebase.auth.FacebookAuthProvider();
@@ -52,6 +54,10 @@ export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('valu
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
 export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback).catch(callback)
+
+
+// ======== Firebase storage
+export const getPhotoUrl = (userUid, type, callback) => storageRef.child(`images/${userUid}/${type}.png`).getDownloadURL().then(callback).catch(callback)
 
 // ======== API functions
 export const get = (url) => fetch(url).then(res => res.json())
@@ -92,3 +98,8 @@ export const getRoom = (body, callback) => post(GET_ROOM, body, callback).then(c
 export const requestBooking = (body, callback) => post(SEND_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
 export const approveBooking = (body, callback) => post(APPROVE_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
 export const declineBooking = (body, callback) => post(DECLINE_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
+
+if (isDev) {
+    window.storageRef = storageRef
+    window.firebase = firebase
+}

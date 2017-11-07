@@ -19,36 +19,33 @@ class Menu extends Component {
         logout().then(() => logoutAction())
     }
     renderDynamicLinks = () => {
-        const { isLoggedIn, id, accountType, trans, isAdmin } = this.props
+        const { isLoggedIn, userUid, accountType, trans, isAdmin } = this.props
         const isFan = accountType === 'fan'
         const links = []
-        if (isLoggedIn && id) {
+        if (isLoggedIn && userUid) {
             if (!isFan) {
                 links.push(
-                    <li key={`menu_item_${id}_page`}>
-                        <NavLink  onClick={this.closeMenu}  to={`/${accountType}/${id}`}>{trans.My_Page}</NavLink>
+                    <li key={`menu_item_${userUid}_page`}>
+                        <NavLink  onClick={this.closeMenu}  to={`/${accountType}/${userUid}`}>{trans.My_Page}</NavLink>
                     </li>
                 )
                 links.push(
-                    <li key={`menu_item_${id}_create_event`}>
+                    <li key={`menu_item_${userUid}_create_event`}>
                         <NavLink  onClick={this.closeMenu}  to="/create-event">{trans.Create_Event} +</NavLink>
                     </li>
                 )
             }
             if (isAdmin) {
                 links.push(
-                    <li key={`menu_item_${id}_admin_pannel`}>
+                    <li key={`menu_item_${userUid}_admin_pannel`}>
                         <NavLink  onClick={this.closeMenu}to="/admin">{trans.Admin_pannel}</NavLink>
                     </li>
                 )
             }
             links.push(
-                <li key={`menu_item_${id}_logout`}>
+                <li key={`menu_item_${userUid}_logout`}>
                     <NavLink to={"/"} onClick={this.logout}>{trans.Logout}</NavLink>
                 </li>
-            )
-            links.push(
-                <ChatRooms key={`menu_item_03_${id}_ChatRooms`}/>
             )
         } else {
             links.push(
@@ -68,7 +65,7 @@ class Menu extends Component {
 
     render() {
         
-        const { trans } = this.props
+        const { trans, isLoggedIn } = this.props
         const { isOpen } = this.state
 
         return (
@@ -81,7 +78,8 @@ class Menu extends Component {
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
                         </button>
-                        <NavLink  onClick={this.closeMenu}className="navbar-brand"  to={"/"}>Raise The Bar</NavLink>
+                        <NavLink  onClick={this.closeMenu} className="navbar-brand"  to={"/"}>Raise The Bar</NavLink>
+                        {isLoggedIn && <ChatRooms />}
                     </div>
                     <div className={`collapse ${isOpen ? 'in' : ''} navbar-collapse`}>
                         <ul className="nav navbar-nav">
@@ -110,7 +108,7 @@ const mapStateToProps = (state) => {
         return {
             isLoggedIn: state.auth.loggedIn,
             accountType: state.auth.user.accountType,
-            id: state.auth.user.uid,
+            userUid: state.auth.user.uid,
             trans: state.locale.trans,
             isAdmin: state.auth.user.isAdmin,
         }
@@ -119,7 +117,7 @@ const mapStateToProps = (state) => {
     return {
         isLoggedIn: state.auth.loggedIn,
         accountType: false,
-        id: false,
+        userUid: false,
         isAdmin: false,
         trans: state.locale.trans,
     }

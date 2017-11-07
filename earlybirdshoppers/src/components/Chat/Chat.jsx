@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import store from 'store'
 import { connect } from 'react-redux'
-import { ref } from '../../helpers/firebase'
+import { ref, getPhotoUrl } from '../../helpers/firebase'
 import ChatForm from '../ChatForm/'
 import Message from '../Message/'
 import { setRoom } from '../../reducers/chat'
@@ -13,6 +13,8 @@ class Chat extends Component {
     messagesRef = ''
     state = {
         messages: [],
+        otherPic: null,
+        pic: null,
     }
     
     componentDidMount() {
@@ -25,6 +27,7 @@ class Chat extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.roomId !== prevProps.roomId) {
             this.revokeMessagesListener(prevProps.roomId)
+            this.setState({ otherPic: null, pic: null })
             this.getMessages()
         }
     }
@@ -37,12 +40,26 @@ class Chat extends Component {
     revokeMessagesListener = (roomId) => ref.child(`messages/${roomId}`).off('child_added')
 
     getMessages = () => {
-        const { roomId, userUid, displayName, isLoggedIn } = this.props
+        const { roomId, userUid, displayName, isLoggedIn, rooms } = this.props
 
-        if (!roomId || !isLoggedIn) {
+        if (!roomId || !isLoggedIn || !rooms || !rooms[roomId]) {
             return
         }
         store.set(LOCALSTORAGE_CHAT_KEY, { isOpen: true, roomId})
+        getPhotoUrl(userUid, 'profilePicture', (url) => {
+            console.log('profilePicture url ===', url)
+            if (url.code !== 'storage/object-not-found') {
+                this.setState({ pic: url })
+            }
+        })
+        // TODO fix photos for many user
+        const otherMemberUid = Object.keys(rooms[roomId].members).find(memberUid => memberUid && memberUid !== userUid)
+        getPhotoUrl(otherMemberUid, 'profilePicture', (url) => {
+            console.log('profilePicture url ===', url)
+            if (url.code !== 'storage/object-not-found') {
+                this.setState({ otherPic: url })
+            }
+        })
         const messages = []
         ref.child(`messages/${roomId}`).orderByChild('timeCreated')
             .limitToLast(10).on('child_added', (snapshot) => {
@@ -74,19 +91,20 @@ class Chat extends Component {
 
     render() {
         const { roomId, isLoggedIn, userUid, photoURL, displayName, rooms } = this.props
+        const { otherPic, pic } = this.state
 
         if (!roomId || !isLoggedIn || !rooms) {
             return null
         }
         const { messages } = this.state
+        const members = Object.keys(rooms[roomId].members)
+        const membersNames = members.filter(member => rooms[roomId].members[member].uid !== userUid)
+            .map(member => rooms[roomId].members[member].displayName).join(', ')
         
         return (
             <div className="chat-box">
                 <button onClick={this.closeChat} className="btn btn-danger pull-right">X</button>
-                <h5 className="chat-box-title">RTB Chat with {Object.keys(rooms[roomId].members)
-                    .map(member =>
-                        rooms[roomId].members[member].uid !== userUid ? rooms[roomId].members[member].displayName : null
-                ).join(', ')}</h5>
+                <h5 className="chat-box-title">RTB Chat with {membersNames}</h5>
                 <div className="chat-messages" ref={ref => this.messagesView = ref}>
                     {
                         messages.length ? (
@@ -95,6 +113,7 @@ class Chat extends Component {
                                     <Message {...{
                                         isNew: message.isNew,
                                         isOtherPeople: message.isOtherPeople,
+                                        pic: message.isOtherPeople ? otherPic : pic,
                                         text: message.text,
                                         from: message.from,
                                         timeCreated: message.timeCreated,

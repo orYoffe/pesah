@@ -1,0 +1,55 @@
+import React, { Component } from 'react'
+import Proptypes from 'prop-types'
+import { storageRef } from '../helpers/firebase'
+
+class FileInput extends Component {
+    proptypes = {
+        id: Proptypes.string,
+        label: Proptypes.string,
+        className: Proptypes.string,
+        filePurpose: Proptypes.string.isRequired,
+        userUid: Proptypes.string.isRequired,
+    }
+
+    onFileChange = e => {
+        e.stopPropagation()
+        e.preventDefault()
+        this.upload(e)
+    }
+    upload = (e) => {
+        const { userUid, filePurpose } = this.props
+        if (!userUid || !filePurpose) {
+            return
+        }
+        const file = e.target.files[0]
+        const metadata = {
+            'contentType': file.type
+        }
+        storageRef.child(`images/${userUid}/${filePurpose}.png`).put(file, metadata).then(snapshot => {
+            console.log('Uploaded', snapshot.totalBytes, 'bytes.')
+            console.log(snapshot.metadata)
+            const url = snapshot.downloadURL
+            console.log('File available at', url)
+            // TODO remove reload nad get the picture
+            window.location.reload()
+        }).catch((error) => {
+            console.error('Upload failed:', error)
+        })
+    }
+
+    render() {
+        const { className, label, id } = this.props
+        return (
+            <div className={`form-group ${className} `}>
+                <label htmlFor={id}>{label}</label>
+                <input
+                    className="form-control"
+                    type="file"
+                    onChange={this.onFileChange}
+                    id={id} />
+            </div>
+        )
+    }
+}
+
+export default FileInput

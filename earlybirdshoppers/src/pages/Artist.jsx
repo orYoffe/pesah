@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { pageView } from '../helpers/analytics'
-import { getArtist } from '../helpers/firebase'
+import { getArtist, getPhotoUrl } from '../helpers/firebase'
+import { setProfilePicture } from '../reducers/auth'
 import NotFound from './NotFound'
-import EventItem from '../components/EventItem/'
-import Loader from '../components/Loader/'
-import OpenChat from '../components/OpenChat/'
+import EventItem from '../components/EventItem'
+import Loader from '../components/Loader'
+import OpenChat from '../components/OpenChat'
+import FileInput from '../components/FileInput'
 import BookingArtistPanel from '../components/Booking/BookingArtistPanel'
 
 class Artist extends Component {
     state = {
-        artist: null
+        artist: null,
+        image: null,
     }
 
     componentDidMount() {
@@ -18,12 +21,21 @@ class Artist extends Component {
         
         this.getArtistData()
     }
-    renderVenueEdit = () => {
+    renderArtistEdit = () => {
         const { userId } = this.props
         const { id } = this.props.match.params
 
         if (userId === id) {
-            return <BookingArtistPanel uid={id} />
+            return [
+                <BookingArtistPanel key={`BookingArtistPanel_${id}`} uid={id} />,
+                userId && <FileInput
+                    key={`FileInput_${id}`}
+                    userUid={userId}
+                    filePurpose="profilePicture"
+                    label="Upload a profile picture"
+                    id="artist_profilePicture_upload_input"
+                />
+            ]
         }
     }
     getArtistData = () => {
@@ -32,6 +44,12 @@ class Artist extends Component {
         getArtist(id, snapshot => {
             const artist = snapshot && snapshot.val()
             this.setState({ artist: artist || 'not found' })
+            getPhotoUrl(id, 'profilePicture', (url) => {
+                console.log('profilePicture url ===', url)
+                if (url.code !== 'storage/object-not-found') {
+                    this.setState({ artist: { ...artist, profilePicture: url} })
+                }
+            })
         })
         .catch(snapshot => {
             this.setState({ artist: 'not found' })
@@ -70,11 +88,12 @@ class Artist extends Component {
             return <Loader />
         }
         const { userId, isLoggedIn } = this.props
-        const { displayName, email, uid, photoURL } = this.state.artist
+        const { displayName, email, uid, photoURL, profilePicture } = this.state.artist
         const content = (
             <div className="page-content">
-                {this.renderVenueEdit()}
+                {this.renderArtistEdit()}
                 {email && <h5> email: {email} </h5>}
+                {profilePicture && <img src={profilePicture} alt="profile" height="100" width="100"/>}
                 {displayName && <h5> displayName: {displayName} </h5>}
                 {this.renderEvents()}
                 {isLoggedIn && uid !== userId && (
@@ -98,9 +117,12 @@ class Artist extends Component {
     }
 }
 
+const mapDispatchToProps = dispatch => ({
+    setProfilePicture: image => dispatch(setProfilePicture(image)),
+})
 const mapStateToProps = state => ({
     isLoggedIn: state.auth.loggedIn,
     userId: state.auth.user && state.auth.user.uid,
 })
 
-export default connect(mapStateToProps)(Artist)
+export default connect(mapStateToProps, mapDispatchToProps)(Artist)
