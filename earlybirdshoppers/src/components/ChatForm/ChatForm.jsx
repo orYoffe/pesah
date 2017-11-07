@@ -40,9 +40,11 @@ class ChatForm extends Component {
     const { error } = this.state
     return (
       <form className="chat-form" onSubmit={this.submit}>
+      <div className="input-group">
         {error && <div className="error">{error}</div>}
         <input className="form-control pull-left" placeholder="Write something…" ref={ref => this.text = ref}/>
-        <button className="btn btn-primary pull-right">Send</button>
+        <span className="input-group-btn"><button className="btn btn-primary pull-right">Send</button></span>
+        </div>
       </form>
     )
   }

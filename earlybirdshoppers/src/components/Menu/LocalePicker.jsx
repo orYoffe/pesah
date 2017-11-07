@@ -12,6 +12,7 @@ class LocalePicker extends PureComponent {
         const { currentLocale } = this.props
         return (
             <Dropdown 
+                className="locale-picker"
                 defaultValue={currentLocale}
                 onSelect={this.onSelect}
                 options={options}

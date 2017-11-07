@@ -3,11 +3,16 @@
     background: #fff;
     position: fixed;
     right: 10px;
-    bottom: 0;
     padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 1px 3px 2px #ccc;
+    box-shadow: 0 1px 10px -2px #444;
+    transition: bottom 0.25s;
+    bottom: -100%;
 }
+.chat-box-open {
+    transition: bottom 0.25s;
+    bottom: 0;
+} 
 
 .chat-box-title {
     margin: 10px 0;
@@ -39,6 +44,7 @@
 
 .chat-form {
     padding-bottom: 0;
+    width: 270px;
 }
 
 .chat-message {
@@ -84,6 +90,9 @@
         height: 100%;
         right: 0;
     }
+    .chat-form {
+        width: 100%;
+    }
 
     .chat-messages {
         height: calc(100% - 126px);
@@ -94,6 +103,7 @@
     } */
 
     .chat-form {
+        width: auto;
         position: absolute;
         left: 10px;
         bottom: 10px;

@@ -35,8 +35,6 @@ class Chat extends Component {
         this.revokeMessagesListener(this.props.roomId)
     }
     
-    
-    
     revokeMessagesListener = (roomId) => ref.child(`messages/${roomId}`).off('child_added')
 
     getMessages = () => {
@@ -47,7 +45,6 @@ class Chat extends Component {
         }
         store.set(LOCALSTORAGE_CHAT_KEY, { isOpen: true, roomId})
         getPhotoUrl(userUid, 'profilePicture', (url) => {
-            console.log('profilePicture url ===', url)
             if (url.code !== 'storage/object-not-found') {
                 this.setState({ pic: url })
             }
@@ -55,7 +52,6 @@ class Chat extends Component {
         // TODO fix photos for many user
         const otherMemberUid = Object.keys(rooms[roomId].members).find(memberUid => memberUid && memberUid !== userUid)
         getPhotoUrl(otherMemberUid, 'profilePicture', (url) => {
-            console.log('profilePicture url ===', url)
             if (url.code !== 'storage/object-not-found') {
                 this.setState({ otherPic: url })
             }
@@ -94,7 +90,7 @@ class Chat extends Component {
         const { otherPic, pic } = this.state
 
         if (!roomId || !isLoggedIn || !rooms) {
-            return null
+            return <span className="chat-box"></span>
         }
         const { messages } = this.state
         const members = Object.keys(rooms[roomId].members)
@@ -102,7 +98,7 @@ class Chat extends Component {
             .map(member => rooms[roomId].members[member].displayName).join(', ')
         
         return (
-            <div className="chat-box">
+            <span className="chat-box chat-box-open">
                 <button onClick={this.closeChat} className="btn btn-danger pull-right">X</button>
                 <h5 className="chat-box-title">RTB Chat with {membersNames}</h5>
                 <div className="chat-messages" ref={ref => this.messagesView = ref}>
@@ -125,7 +121,7 @@ class Chat extends Component {
                     }
                 </div>
                 <ChatForm roomId={roomId} user={{ displayName, photoURL, userUid}}/>
-            </div>
+            </span>
         )
     }
 }

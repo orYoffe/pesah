@@ -45,7 +45,6 @@ class Artist extends Component {
             const artist = snapshot && snapshot.val()
             this.setState({ artist: artist || 'not found' })
             getPhotoUrl(id, 'profilePicture', (url) => {
-                console.log('profilePicture url ===', url)
                 if (url.code !== 'storage/object-not-found') {
                     this.setState({ artist: { ...artist, profilePicture: url} })
                 }

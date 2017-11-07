@@ -8,8 +8,7 @@ class ChatRooms extends Component {
         isOpen: false
     }
         
-    open = () => this.setState({ isOpen: true })
-    close = () => this.setState({ isOpen: false })
+    toggleOpen = () => this.setState({ isOpen: !this.state.isOpen })
     
     render() {
         const { rooms, setRoom, userUid } = this.props
@@ -43,11 +42,11 @@ class ChatRooms extends Component {
         }
         return (
         <span>
-            <button className="btn btn-primary" onClick={this.open}>
+            <button className={`btn btn-${isOpen ? 'primary' : 'default'} rooms-button`} onClick={this.toggleOpen}>
                 <span className="glyphicon glyphicon-envelope" aria-hidden="true"></span>
             </button>
             {isOpen && <div className="chat-rooms">
-                <button onClick={this.close} className="btn btn-danger pull-right">X</button>
+                <button onClick={this.toggleOpen} className="btn btn-danger pull-right">X</button>
                 <h5 className="rooms-title">RTB messages</h5>
                 <div className="chat-room-display" ref={ref => this.messagesView = ref}>
                     {roomsItems}

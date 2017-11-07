@@ -62,8 +62,7 @@ export const saveUser = (user, accountType, displayName) => {
     // }
     
     return user.updateProfile({
-        displayName,
-        accountType
+        displayName
     }).then(() => createUser({
         displayName,
         accountType,

@@ -16,7 +16,6 @@ class ArtistItem extends Component {
     }
     componentDidMount() {
         getPhotoUrl(this.props.uid, 'profilePicture', (url) => {
-            console.log('profilePicture url ===', url)
             if (url.code !== 'storage/object-not-found') {
                 this.setState({ pic: url })
             }

@@ -24,19 +24,10 @@ class App extends Component {
     const { dispatch } = this.props
     this.removeListener = firebase.auth().onAuthStateChanged((user) => {
       if (user && user.uid) {
-        dispatch(login({
-          uid: user.uid,
-          email: user.email,
-          emailVerified: user.emailVerified,
-          photoURL: user.photoURL,
-          phoneNumber: user.phoneNumber,
-          providerData: user.providerData,
-          displayName: user.displayName,
-          accountType: user.accountType,
-        }))
-
         getUser(user.uid, snapshot => {
-          dispatch(login(snapshot.val()))
+          const userData = snapshot.val()
+          userData.profilePicture = userData.photoURL || user.photoURL
+          dispatch(login(userData))
           this.setState({ loading: false })
         })
       } else {
