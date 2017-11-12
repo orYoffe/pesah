@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import ReactAudioPlayer from 'react-audio-player'
 import { pageView } from '../helpers/analytics'
-import { getArtist, getPhotoUrl } from '../helpers/firebase'
+import { getArtist, getPhotoUrl, getTrackUrl } from '../helpers/firebase'
 import { setProfilePicture } from '../reducers/auth'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
@@ -18,7 +19,7 @@ class Artist extends Component {
 
     componentDidMount() {
         pageView();
-        
+
         this.getArtistData()
     }
     renderArtistEdit = () => {
@@ -28,13 +29,24 @@ class Artist extends Component {
         if (userId === id) {
             return [
                 <BookingArtistPanel key={`BookingArtistPanel_${id}`} uid={id} />,
-                userId && <FileInput
-                    key={`FileInput_${id}`}
+                <FileInput
+                    key={`FileInput_profilepic_${id}`}
                     userUid={userId}
                     filePurpose="profilePicture"
-                    label="Upload a profile picture"
+                    label="Upload a profile picture (max size 5MB)"
                     id="artist_profilePicture_upload_input"
-                />
+                    type="image"
+                />,
+              <div key={`FileInput_track_${id}`}>
+                <h4>Upload your track</h4>
+                  <FileInput
+                      userUid={userId}
+                      filePurpose="profileTrack"
+                      label="Upload a track (only audio formats supported, max size 15MB)"
+                      type="track"
+                      id="artist_profileTrack_upload_input"
+                  />
+              </div>
             ]
         }
     }
@@ -44,9 +56,14 @@ class Artist extends Component {
         getArtist(id, snapshot => {
             const artist = snapshot && snapshot.val()
             this.setState({ artist: artist || 'not found' })
-            getPhotoUrl(id, 'profilePicture', (url) => {
-                if (url.code !== 'storage/object-not-found') {
-                    this.setState({ artist: { ...artist, profilePicture: url} })
+            getPhotoUrl(id, 'profilePicture', (profilePicture) => {
+                if (profilePicture.code !== 'storage/object-not-found') {
+                    this.setState(state => ({ artist: { ...state.artist, profilePicture} }))
+                }
+            })
+            getTrackUrl(id, 'profileTrack', (profileTrack) => {
+                if (profileTrack.code !== 'storage/object-not-found') {
+                    this.setState(state => ({ artist: { ...state.artist, profileTrack} }))
                 }
             })
         })
@@ -72,7 +89,7 @@ class Artist extends Component {
         }
     }
 
-    render() {     
+    render() {
         // TODO if the artist belongs to the user show edit options
         const { artist } = this.state
         const { id } = this.props.match.params
@@ -80,37 +97,37 @@ class Artist extends Component {
         if (artist && id !== artist.uid) {
             this.getArtistData()
         }
-        
+
         if(artist === 'not found') {
             return <NotFound />
         } else if(!artist) {
             return <Loader />
         }
         const { userId, isLoggedIn } = this.props
-        const { displayName, email, uid, photoURL, profilePicture } = this.state.artist
-        const content = (
-            <div className="page-content">
-                {this.renderArtistEdit()}
-                {email && <h5> email: {email} </h5>}
-                {profilePicture && <img src={profilePicture} alt="profile" height="100" width="100"/>}
-                {displayName && <h5> displayName: {displayName} </h5>}
-                {this.renderEvents()}
-                {isLoggedIn && uid !== userId && (
-                    <OpenChat
-                    chatPartner={{
-                        uid: uid,
-                        photo: photoURL || '',
-                        displayName: displayName
-                    }} />
-                    )
-                }
-            </div>
-        )
-
+        const { displayName, email, uid, photoURL, profilePicture, profileTrack } = artist
         console.log('artist', artist)
         return (
             <div className="page">
-                {content}
+                <div className="page-content">
+                    {this.renderArtistEdit()}
+                    {email && <h5> email: {email} </h5>}
+                    {profilePicture && <img src={profilePicture} alt="profile" height="100" width="100"/>}
+                    {profileTrack && <ReactAudioPlayer
+                                      src={profileTrack}
+                                      controls
+                                    />}
+                    {displayName && <h5> displayName: {displayName} </h5>}
+                    {this.renderEvents()}
+                    {isLoggedIn && uid !== userId && (
+                        <OpenChat
+                        chatPartner={{
+                            uid: uid,
+                            photo: photoURL || '',
+                            displayName: displayName
+                        }} />
+                        )
+                    }
+                </div>
             </div>
         )
     }

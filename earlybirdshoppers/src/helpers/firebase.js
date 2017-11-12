@@ -58,6 +58,7 @@ export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('va
 
 // ======== Firebase storage
 export const getPhotoUrl = (userUid, type, callback) => storageRef.child(`images/${userUid}/${type}.png`).getDownloadURL().then(callback).catch(callback)
+export const getTrackUrl = (userUid, type, callback) => storageRef.child(`tracks/${userUid}/${type}.flac`).getDownloadURL().then(callback).catch(callback)
 
 // ======== API functions
 export const get = (url) => fetch(url).then(res => res.json())
@@ -66,7 +67,7 @@ export const post = (url, body, callback) => {
         console.log('Not authenticated. Make sure you\'re signed in!')
         return 404
     }
-    
+
     // Get the Firebase auth token to authenticate the request
     return firebase.auth().currentUser.getIdToken().then(function (token) {
         document.cookie = '__session=' + token + ';max-age=3600';

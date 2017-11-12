@@ -9,6 +9,7 @@ class FileInput extends Component {
         className: Proptypes.string,
         filePurpose: Proptypes.string.isRequired,
         userUid: Proptypes.string.isRequired,
+        type: Proptypes.string.isRequired,
     }
 
     onFileChange = e => {
@@ -17,7 +18,7 @@ class FileInput extends Component {
         this.upload(e)
     }
     upload = (e) => {
-        const { userUid, filePurpose } = this.props
+        const { userUid, filePurpose, type } = this.props
         if (!userUid || !filePurpose) {
             return
         }
@@ -25,16 +26,46 @@ class FileInput extends Component {
         const metadata = {
             'contentType': file.type
         }
-        storageRef.child(`images/${userUid}/${filePurpose}.png`).put(file, metadata).then(snapshot => {
-            console.log('Uploaded', snapshot.totalBytes, 'bytes.')
-            console.log(snapshot.metadata)
-            const url = snapshot.downloadURL
-            console.log('File available at', url)
-            // TODO remove reload nad get the picture
-            window.location.reload()
-        }).catch((error) => {
-            console.error('Upload failed:', error)
-        })
+        let storageRoot = 'images'
+        if (type === 'track') {
+          storageRoot = 'tracks'
+        }
+        if (storageRoot === 'images' && metadata.contentType.startsWith('image/')) {
+            storageRef.child(`${storageRoot}/${userUid}/${filePurpose}.png`).put(file, metadata).then(snapshot => {
+                console.log('Uploaded', snapshot.totalBytes, 'bytes.')
+                console.log(snapshot.metadata)
+                const url = snapshot.downloadURL
+                console.log('File available at', url)
+                // TODO remove reload nad get the picture
+                window.location.reload()
+            }).catch((error) => {
+                console.error('Upload failed:', error)
+            })
+        } else if (storageRoot === 'tracks' && metadata.contentType.startsWith('audio/')) {
+            // let hasRightFormat = false
+            //
+            // switch (metadata.contentType) {
+            //     case 'audio/flac':
+            //     case 'audio/wav':
+            //     case 'audio/aif':
+            //         hasRightFormat = true
+            //         break;
+            //     default:
+            //
+            // }
+            // if (hasRightFormat) {
+                storageRef.child(`${storageRoot}/${userUid}/${filePurpose}.flac`).put(file, metadata).then(snapshot => {
+                    console.log('Uploaded', snapshot.totalBytes, 'bytes.')
+                    console.log(snapshot.metadata)
+                    const url = snapshot.downloadURL
+                    console.log('File available at', url)
+                    // TODO remove reload nad get the picture
+                    window.location.reload()
+                }).catch((error) => {
+                    console.error('Upload failed:', error)
+                })
+            // }
+        }
     }
 
     render() {

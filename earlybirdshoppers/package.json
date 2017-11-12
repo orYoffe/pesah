@@ -47,6 +47,7 @@
     "rc-calendar": "^9.0.2",
     "rc-time-picker": "^2.4.1",
     "react": "16.0.0",
+    "react-audio-player": "^0.6.2",
     "react-dom": "16.0.0",
     "react-google-maps": "9.2.1",
     "react-redux": "^5.0.6",
