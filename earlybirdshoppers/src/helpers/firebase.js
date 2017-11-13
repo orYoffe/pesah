@@ -54,6 +54,7 @@ export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('valu
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
 export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback).catch(callback)
+export const getAnalytics = (path, callback) => ref.child(`analytics/${path}`).once('value', callback).catch(callback)
 
 
 // ======== Firebase storage

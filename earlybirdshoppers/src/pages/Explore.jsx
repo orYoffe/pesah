@@ -17,7 +17,7 @@ class Explore extends Component {
   }
 
   componentDidMount() {
-      pageView();
+      pageView('explore');
       getExplore(res => {
         if (res && (res.artists || res.events || res.fans || res.venues)){
           const { artists, events, venues, fans } = res

@@ -131,9 +131,9 @@ class Signup extends Component {
         })
         return false
     }
-    
+
     componentDidMount() {
-        pageView();
+        pageView('signup');
     }
 
     render() {

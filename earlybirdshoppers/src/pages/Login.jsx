@@ -49,7 +49,7 @@ class Login extends Component {
     signIn = (e) => {
         e && e.preventDefault()
         e && e.stopPropagation()
-        
+
             const email = this.state.email.value
             const password = this.state.pass.value
             if (email.length < 4) {
@@ -76,12 +76,12 @@ class Login extends Component {
     }
 
     componentDidMount() {
-        pageView();
+        pageView('login');
     }
 
     render() {
         const { messages: { message, error } } = this.state
-        
+
         if (this.props.isLoggedIn) {
             return  <Redirect to='/'/>
         }

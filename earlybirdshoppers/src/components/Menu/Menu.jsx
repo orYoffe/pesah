@@ -64,7 +64,7 @@ class Menu extends Component {
     }
 
     render() {
-        
+
         const { trans, isLoggedIn } = this.props
         const { isOpen } = this.state
 
@@ -83,9 +83,9 @@ class Menu extends Component {
                     </div>
                     <div className={`collapse ${isOpen ? 'in' : ''} navbar-collapse`}>
                         <ul className="nav navbar-nav">
-                            <li>
+                            {/*<li>
                                 <NavLink  onClick={this.closeMenu}  to={"/"}>{trans.Explore}</NavLink>
-                            </li>
+                            </li>*/}
                             <li>
                                 <NavLink  onClick={this.closeMenu}  to={"/venues"}>{trans.Venues}</NavLink>
                             </li>

@@ -204,6 +204,14 @@ type Message {
   // Make sure that the only value allowed to be written is now.
   //validate() { this.modified == now }
 
+type AnalyticsObject {
+  /*time: String,
+  event: String,
+  url: String,
+  eventData: Object | Null
+  user: String | Null*/
+}
+
 //======================================PATHS
 
 path /users/{uid} is UserData {
@@ -260,4 +268,8 @@ path /messages/{uid} is Message {
 path /members/{uid} is Member {
   read() { isMember(uid) && isNotBanned(uid) }
   update() { isMember(uid) && isNotBanned(uid) }
+}
+path /analytics/{uid}/{eventId} is AnalyticsObject {
+  read() { isLoggedIn() && (eventId == currentUser() || uid == currentUser() || ('artist' + uid) == currentUser() || ('fan' + uid) == currentUser() || ('venue' + uid) == currentUser()) }
+  write() { true }
 }

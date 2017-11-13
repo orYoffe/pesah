@@ -15,19 +15,22 @@ import BookingVenuePanel from '../components/Booking/BookingVenuePanel'
 import '../components/VenueItem/VenueItem.css'
 
 const defaultBookingMessage = 'Hi I would like to book an event at your venue :)'
+const defaultState = {
+    venue: null,
+    artist: null,
+    isModalOpen: false,
+    bookingMessage: '',
+}
 
 class Venue extends Component {
-    state = {
-        venue: null,
-        artist: null,
-        isModalOpen: false,
-        bookingMessage: '',
-    }
+    state = defaultState
 
     componentDidMount() {
-        pageView();
+        const { userId } = this.props
+      const { id } = this.props.match.params
+        pageView('venue', { page: id, userId })
+            this.setState(defaultState)
 
-        const { id } = this.props.match.params
         getVenue(id, snapshot => {
             const venue = snapshot && snapshot.val()
             this.setState({ venue: venue || 'not found' })
@@ -94,7 +97,7 @@ class Venue extends Component {
         return <button onClick={this.requestBooking} className="btn btn-default">Book an Event with this Venue</button>
     }
 
-    
+
 
     renderVenueEdit = () => {
         const { userId } = this.props
@@ -111,10 +114,10 @@ class Venue extends Component {
         }
     }
 
-    render() {     
+    render() {
         // TODO if the Venue belongs to the user show edit options
         const { venue, isModalOpen } = this.state
-        
+
         if(!venue) {
             return <Loader />
         }

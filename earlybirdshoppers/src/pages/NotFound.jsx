@@ -5,7 +5,7 @@ import { pageView } from '../helpers/analytics'
 class NotFound extends Component {
 
     componentDidMount() {
-        pageView();
+        pageView('404');
     }
 
     render() {

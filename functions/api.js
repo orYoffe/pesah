@@ -63,7 +63,7 @@ const adminAuthenticate = (req, res, next) => {
     }
 };
 
-app.options('*', cors); // include before other routes 
+app.options('*', cors); // include before other routes
 app.use(cors);
 app.use(cookieParser);
 

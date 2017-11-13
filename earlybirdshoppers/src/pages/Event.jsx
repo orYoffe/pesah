@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import moment from 'moment'
 import { getEvent } from '../helpers/firebase'
 import NotFound from './NotFound'
@@ -13,9 +14,10 @@ class Event extends Component {
     }
 
     componentDidMount() {
-        pageView();
-
+        const { userId } = this.props
         const { id } = this.props.match.params
+        pageView('event', { page: id, userId })
+        
 
         getEvent(id, snapshot => {
             const event = snapshot && snapshot.val()
@@ -31,12 +33,12 @@ class Event extends Component {
         this.setState({event: {...event, fundsRaised: event.fundsRaised + (event.price || event.ticketPrice)}})
     }
 
-    render() {     
+    render() {
         // TODO if the event belongs to the user show edit options
         // TODO if user doesn't have event, show him onboarding for creating events
-        
+
         const { event } = this.state
-        
+
         if(event === 'not found') {
             return <NotFound />
         } else if(!event) {
@@ -46,7 +48,7 @@ class Event extends Component {
             date: {
                 // created,
                 eventTime,
-                },
+            },
             goalPrice,
             ticketPrice,
             title,
@@ -70,38 +72,39 @@ class Event extends Component {
             // artistVerified,
             // cancelled,
             // funded,
-        } = event   
+        } = event
         const managersArray = Object.keys(managers)
         const bar = fundsRaised ? ((fundsRaised / goalPrice) * 100).toFixed(3) : 0
-        const content = (
-            <div className="page-content">
-                <h3>Event title: {title} {verified ? 'event is verified' : 'event is not verified'}</h3>
-                <h4>Where: {address}</h4>
-                <p>city: {city}, country {country}, short name {short}</p>
-                {page && <img src={page.cover} alt=""/> }
-                <div>
-                    <div className="bar-progress"><div style={{ height: `${bar}%` }}>{fundsRaised}$</div></div>
-                    <h4>This Event already raised {fundsRaised}$</h4>
-                    <h5>Help make this event happen</h5>
-                    <p>Ticket price {ticketPrice}$</p>
-                    <button className="btn btn-success" onClick={this.raiseTheBar}>Raise The Bar</button>
-                </div>
-                <h5>When: {moment(eventTime).format('LLL')}</h5>
-                <h4>Who:</h4>
-                <div className="row">
-                    {managersArray.length && managersArray.map(artist =>
-                    <div key={`artist_item_${managers[artist].uid}`}>{managers[artist].email}</div>)}
-                </div>
-            </div>
-        )
-        
+
+
         console.log('event', event)
         return (
             <div className="page">
-                {content}
+                <div className="page-content">
+                    <h3>Event title: {title} {verified ? 'event is verified' : 'event is not verified'}</h3>
+                    <h4>Where: {address}</h4>
+                    <p>city: {city}, country {country}, short name {short}</p>
+                    {page && <img src={page.cover} alt=""/> }
+                    <div>
+                        <div className="bar-progress"><div style={{ height: `${bar}%` }}>{fundsRaised}$</div></div>
+                        <h4>This Event already raised {fundsRaised}$</h4>
+                        <h5>Help make this event happen</h5>
+                        <p>Ticket price {ticketPrice}$</p>
+                        <button className="btn btn-success" onClick={this.raiseTheBar}>Raise The Bar</button>
+                    </div>
+                    <h5>When: {moment(eventTime).format('LLL')}</h5>
+                    <h4>Who:</h4>
+                    <div className="row">
+                        {managersArray.length && managersArray.map(artist => <div key={`artist_item_${managers[artist].uid}`}>{managers[artist].email}</div>)}
+                    </div>
+                </div>
             </div>
         )
     }
 }
 
-export default Event
+const mapStateToProps = state => ({
+    isLoggedIn: state.auth.loggedIn,
+    userId: state.auth.user && state.auth.user.uid,
+})
+export default connect(mapStateToProps)(Event)

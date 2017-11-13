@@ -37,7 +37,7 @@ class PassReset extends Component {
     resetPassword = (e) => {
         e && e.preventDefault()
         e && e.stopPropagation()
-        
+
             const email = this.state.email.value
             if (email.length < 4) {
                 this.setMessage('error', 'Please enter an email address.')
@@ -53,7 +53,7 @@ class PassReset extends Component {
     }
 
     componentDidMount() {
-        pageView();
+        pageView('passreset');
     }
 
     render() {

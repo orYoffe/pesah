@@ -5,9 +5,11 @@ const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 const isEmailValid = (email) => emailRegex.test(email);
 const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
 const isUrlValid = (url) => urlRegex.test(url);
-// const testBodyItem = (body, item) => 
+// const testBodyItem = (body, item) =>
+const turnObjectToArray = obj => obj && typeof obj === 'object' ? Object.keys(obj).map(key => obj[key]) : []
 
 exports.isString = isString;
 exports.isNumber = isNumber;
 exports.isEmailValid = isEmailValid;
 exports.isUrlValid = isUrlValid;
+exports.turnObjectToArray = turnObjectToArray;

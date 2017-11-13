@@ -46,7 +46,9 @@ audio::-webkit-media-controls-panel {
   color: #f00;
 }
 .page {
-  height: auto;
+  /*height: auto;*/
+    position: relative;
+    display: block;
 }
 form {
   padding-bottom: 20px;
@@ -54,6 +56,15 @@ form {
 
 .has-warning .form-control {
   border-color: #f00;
+}
+
+.hint {
+	margin: 15px 0;
+	font-style: italic;
+	color: #999;
+}
+.chart {
+  background: #fff;
 }
 
 .page::after,

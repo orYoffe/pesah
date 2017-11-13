@@ -7,7 +7,7 @@ import Venues from '../components/Venues'
 
 class Admin extends Component {
     componentDidMount() {
-        pageView(); 
+        pageView('admin'); 
     }
 
     render() {

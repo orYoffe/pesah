@@ -10,7 +10,7 @@ class Venues extends Component {
         markers: [],
     }
     componentDidMount() {
-        pageView();
+        pageView('venues');
         getVenues(res => {
             if (res && res.length) {
                 const markers = res.filter(item => item.locationLng && item.locationLat)
@@ -28,8 +28,8 @@ class Venues extends Component {
         const { venues, markers } = this.state
         if (!venues.length) {
             return null
-        } 
-        
+        }
+
         return (
             <div>
                 <Map markers={markers} />

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getUser } from '../helpers/firebase'
+import { getFan } from '../helpers/firebase'
 import NotFound from './NotFound'
 // import EventItem from '../components/EventItem/'
 import Loader from '../components/Loader/'
@@ -8,16 +8,19 @@ import { pageView } from '../helpers/analytics'
 import OpenChat from '../components/OpenChat/'
 import '../components/FanItem/FanItem.css'
 
+const defaultState = {
+    fan: null
+}
 class Fan extends Component {
-    state = {
-        fan: null
-    }
+    state = defaultState
 
     componentDidMount() {
-        pageView();
+      const { userId } = this.props
+      const { id } = this.props.match.params
+        pageView('fan', { page: id, userId });
 
-        const { id } = this.props.match.params
-        getUser(id, snapshot => {
+        this.setState(defaultState)
+        getFan(id, snapshot => {
             const fan = snapshot && snapshot.val()
             this.setState({ fan: fan || 'not found' })
         })
@@ -26,10 +29,10 @@ class Fan extends Component {
         })
     }
 
-    render() {     
+    render() {
         // TODO if the fan belongs to the user show edit options
         const { fan } = this.state
-        
+
         if(fan === 'not found') {
             return <NotFound />
         } else if(!fan) {
@@ -65,4 +68,3 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps)(Fan)
-
