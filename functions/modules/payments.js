@@ -23,9 +23,16 @@ const paymentValidator = (req, res, isUpdate) => {
     if (event.isFunded) {// TODO validate
         // TODO do normal ticket purchase
 
-        if (event.ticketsLeft) {// TODO validate
+        if (!event.ticketsLeft) {// TODO validate
             return res.status(400).json({ errorCode: 400, errorMessage: 'no tickets left' });
         }
+        // if user logged in
+        if (req.user && req.user.uid) {// TODO validate
+            // TODO add details to user and event and send email confirmation
+        } else {
+            // TODO store email and send email confirmation
+        }
+
         return res.status(200).json({ errorCode: 200, errorMessage: 'normal purchase' });
     } else {
         // TODO add pledge to event
@@ -38,10 +45,30 @@ const paymentValidator = (req, res, isUpdate) => {
             // TODO charge all of the payments pledged
         }
 
+        // if user logged in
+        if (req.user && req.user.uid) {// TODO validate
+            // TODO add details to user and event and send email confirmation
+        } else {
+            // TODO store email and send email confirmation
+        }
     }
 
 
 
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO Create cron job to check if event.hasEnded and to switch between the statuses
+// TODO if event ended and not funded then send notifications and update
+// TODO if event ended and funded then send notifications and update
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
+// TODO
 
 
 
