@@ -2,15 +2,16 @@ const admin = require('firebase-admin');
 
 const getItems = (arr, type, max) => admin.database().ref(`${type}s`).once("value")
     .then(snapshot => {
-        snapshot.forEach(function (childSnapshot) {
-            const item = childSnapshot.val();
-            if (!item.disabled && item.uid) {
-                arr.push(item);
-            }
-            if (max ? arr.length > max : arr.length > 5) {
-                return true;
-            }
-        });
+      const isEvent = type === 'event';
+      snapshot.forEach(function (childSnapshot) {
+          const item = childSnapshot.val();
+          if (!item.disabled && item.uid && (!isEvent || item.isPublished)) {
+              arr.push(item);
+          }
+          if (max ? arr.length > max : arr.length > 5) {
+              return true;
+          }
+      });
     });
 
 exports.getArtists = (req, res) => {

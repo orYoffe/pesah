@@ -19,30 +19,25 @@ const venueValidator = (req, res, isUpdate) => {
                 && body.locationLat && common.isNumber(body.locationLat)
                 && body.locationLng && common.isNumber(body.locationLng)
             ) {
-                
+
                 Object.keys(body).forEach(key => {
                     if (!body[key] && body[key] !== false) {
                         delete body[key];
                     }
                 })
-                if (body.venueEmail) {
-                    if (!common.isEmailValid(body.venueEmail)) {
-                        return res.status(400).json({ errorCode: 400, errorMessage: 'venueEmail' });
-                    }
+                if (body.venueEmail && !common.isEmailValid(body.venueEmail)) {
+                    return res.status(400).json({ errorCode: 400, errorMessage: 'venueEmail' });
                 }
-                if (body.website) {
-                    if (!common.isUrlValid(body.website)) {
-                        return res.status(400).json({ errorCode: 400, errorMessage: 'website' });
-                    }
+                if (body.website && !common.isUrlValid(body.website)) {
+                    return res.status(400).json({ errorCode: 400, errorMessage: 'website' });
                 }
-                if (body.fb) {
-                    if (!common.isUrlValid(body.fb)) {
-                        return res.status(400).json({ errorCode: 400, errorMessage: 'fb' });
-                    }
+                if (body.fb && !common.isUrlValid(body.fb)) {
+                    return res.status(400).json({ errorCode: 400, errorMessage: 'fb' });
                 }
                 if (isUpdate) {
                     console.log('--------update venue body=====', body);
-                    return admin.database().ref(`venues/${body.uid}`).update(body).then(newVenue => {
+                    return admin.database().ref(`venues/${body.uid}`).update(body)
+                    .then(newVenue => {
                         return res.status(200).json({ code: 200, message: 'ok', uid: body.uid });
                     })
                 } else {

@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 const common = require('../common');
 
 
-const createEvent = (req, res) => {
+const eventValidator = (req, res, isUpdate) => {
     console.log('createEvent was called ===== ', new Date().toJSON());
         // TODO validate user given strings
     if (!req.body || !req.body.eventObject) {
@@ -11,12 +11,19 @@ const createEvent = (req, res) => {
     if (!req.user.email_verified) {
         return res.status(400).json({ errorCode: 400, errorMessage: 'email' });
     }
+    // TODO finish and add update functionality
+    if (isUpdate && !req.body.eventObject.uid) {
+        return res.status(400).json({ errorCode: 400, errorMessage: 'uid' });
+    }
     return admin.database().ref(`users/${req.user.uid}`).once("value").then(snapshot => {
         const user = snapshot.val();
         const event = req.body.eventObject;
 
         const isArtist = user.accountType === 'artist'
         const isVenue = user.accountType === 'venue'
+        if (isUpdate) {
+
+        }
 
         if (!isArtist && !isVenue) {
             return res.status(400).json({ errorCode: 400, errorMessage: 'account' });
@@ -33,8 +40,10 @@ const createEvent = (req, res) => {
         if (!common.isString(event.title) || event.title.length < 4) {
             return res.status(400).json({ errorCode: 400, errorMessage: 'title' });
         }
-        if (!common.isString(event.city) || !common.isString(event.country) || !common.isString(event.formatted_address) || !common.isString(event.countryShortName)
-            || !common.isNumber(event.lat) || !common.isNumber(event.lng)) {
+        if (
+            !common.isString(event.city) || !common.isString(event.country) || !common.isString(event.formatted_address) || !common.isString(event.countryShortName)
+            || !common.isNumber(event.lat) || !common.isNumber(event.lng)
+        ) {
             return res.status(400).json({ errorCode: 400, errorMessage: 'location' });
         }
         if (!common.isString(event.currency) || (event.currency !== '$' && event.currency !== '₪')) {
@@ -48,6 +57,14 @@ const createEvent = (req, res) => {
         }
 
         // TODO add validations
+
+        if (isUpdate) {
+            console.log('--------update venue event=====', event);
+            return admin.database().ref(`venues/${event.uid}`).update(event)
+            .then(newVenue => {
+                return res.status(200).json({ code: 200, message: 'ok', uid: event.uid });
+            })
+        } else {
 
         const newEvent = {
             fans: {},
@@ -98,6 +115,7 @@ const createEvent = (req, res) => {
             venueVerified: false,
             artistVerified: false,
             cancelled: false,
+            isPublished: false,
             funded: false
         };
         newEvent.managers[req.user.uid] = {
@@ -142,7 +160,12 @@ const createEvent = (req, res) => {
                             return newDBEvent
                         }))
             });
+        }
     });
 };
 
-exports.default = createEvent;
+const createEvent = (req, res) => eventValidator(req, res);
+const updateEvent = (req, res) => eventValidator(req, res, true);
+
+exports.createEvent = createEvent;
+exports.updateEvent = updateEvent;

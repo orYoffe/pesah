@@ -79,7 +79,9 @@ app.get('/explore', getters.explore);
 
 app.use(authenticate);
 
-app.post('/createEvent', createEvent.default);
+app.post('/createEvent', createEvent.createEvent);
+// TODO finish the update function
+// app.post('/updateEvent', createEvent.updateEvent);
 app.post('/createUser', createUser.default);
 app.post('/getRoom', getRoom.default);
 app.post('/sendBookingRequest', booking.createBookingRequest);

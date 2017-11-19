@@ -12,6 +12,9 @@ isEmptyAndLogged() { auth != null && isInitial(data) }
 // isMember(id, this) {
 //   isLoggedIn() && prior(this).child('members').val()[currentUser()] != null && !prior(this).child('members').val()[currentUser()].isBanned
 // }
+isEventPublished(eventId) {
+  (prior(root).events[eventId].hasChildren(['isPublished']) && prior(root).events[eventId].isPublished == true) || (isLoggedIn() && prior(root).events[eventId].managers.hasChildren([auth.uid]))
+}
 isMember(roomId) {
   prior(root).members[roomId].hasChildren([auth.uid]) //&& prior(root).child('rooms').child(room).child('members').val()[auth.uid].isBanned != true
 }
@@ -237,7 +240,7 @@ path /fans/{uid} is Fan {
 }
 
 path /events/{uid} is Event {
-  read() { true }
+  read() { isEventPublished(uid) }
   // update() { isEventOwner(uid) }
   // create() { isAdmin() }
 }
