@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
+import { connect } from 'react-redux'
 import { pageView } from '../helpers/analytics'
 import { getExplore, database, sendMeEmail } from '../helpers/firebase'
 import EventItem from '../components/EventItem'
@@ -172,9 +173,9 @@ class Explore extends Component {
   render() {
       return (
           <div className="Explore container">
-            <button onClick={() => {
+            {this.props.isLoggedIn && <button onClick={() => {
                 sendMeEmail()
-              }}>send me an mail</button>
+              }}>send me an mail</button>}
             <h3>Explore Events, Artists and Venues</h3>
             <form className="input-group" onKeyDown={this.keyDownSearch} onSubmit={this.search}>
               <input className="form-control" ref={ref => this.searchInput = ref} type="search" placeholder="Artist/Venue name/location" />
@@ -193,4 +194,8 @@ class Explore extends Component {
   }
 }
 
-export default Explore
+const mapStateToProps = state => ({
+  isLoggedIn: state.auth.loggedIn,
+})
+
+export default connect(mapStateToProps)(Explore)

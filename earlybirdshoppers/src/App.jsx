@@ -41,15 +41,9 @@ class App extends Component {
   }
 
   render() {
-    const { isAdmin, isLoggedIn } = this.props
     if (this.state.loading) return <Loader />
-    return <Routes isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
+    return <Routes />
   }
 }
 
-const mapStateToProps = state => ({
-  isLoggedIn: state.auth.loggedIn,
-  isAdmin: state.auth.user && state.auth.user.isAdmin,
-})
-
-export default connect(mapStateToProps)(App)
+export default connect()(App)

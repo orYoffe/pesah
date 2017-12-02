@@ -30,18 +30,17 @@ const Routes = (props) => (
                         <Menu />
 
                         <Switch>
-                            <Route exact path="/realhtml_186231treg.html" component={Explore}/>
                             <Route exact path="/" component={Explore}/>
                             <Route exact path="/venues" component={Venues}/>
-                            <PublicRoute exact path="/login" authed={props.isLoggedIn} component={Login}/>
-                            <PublicRoute exact path="/signup" authed={props.isLoggedIn} component={SignUp}/>
+                            <PublicRoute exact path="/login" component={Login}/>
+                            <PublicRoute exact path="/signup" component={SignUp}/>
                             <Route exact path="/password-reset" component={PassReset}/>
                             <Route path="/artist/:id" component={Artist}/>
                             <Route path="/venue/:id" component={Venue}/>
                             <Route path="/event/:id" component={Event}/>
                             <Route path="/fan/:id" component={Fan}/>
-                            <PrivateRoute authed={props.isLoggedIn} path='/create-event' component={CreateEvent} />
-                            <PrivateRoute authed={props.isLoggedIn && props.isAdmin} path='/admin' component={Admin} />
+                            <PrivateRoute path='/create-event' component={CreateEvent} />
+                            <PrivateRoute isRouteForAdmin path='/admin' component={Admin} />
                             <Route path="/404" component={NotFound}/>
                             <Redirect from="/guard" to="/" />
                             <Redirect to="/404" />
