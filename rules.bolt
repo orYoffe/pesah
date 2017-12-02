@@ -95,7 +95,8 @@ type Artist extends User {
   collaboration: Collaboration,
   openDates: Object,
   bookedDates: Object,
-  accountType: AccountTypeArtist
+  accountType: AccountTypeArtist,
+  youtubeID: String
 }
 
 

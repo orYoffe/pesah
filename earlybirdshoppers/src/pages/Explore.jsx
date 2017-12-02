@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
 import { pageView } from '../helpers/analytics'
-import { getExplore, database, ref } from '../helpers/firebase'
+import { getExplore, database } from '../helpers/firebase'
 import EventItem from '../components/EventItem'
 import ArtistItem from '../components/ArtistItem'
 import VenueItem from '../components/VenueItem'

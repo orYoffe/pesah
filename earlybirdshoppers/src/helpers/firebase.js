@@ -19,6 +19,7 @@ import {
     SEND_BOOKING_REQUEST,
     APPROVE_BOOKING_REQUEST,
     DECLINE_BOOKING_REQUEST,
+    SET_YOUTUBE_ID_REQUEST,
  } from './config'
 
 firebase.initializeApp(DB_CONFIG)
@@ -100,6 +101,7 @@ export const getRoom = (body, callback) => post(GET_ROOM, body, callback).then(c
 export const requestBooking = (body, callback) => post(SEND_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
 export const approveBooking = (body, callback) => post(APPROVE_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
 export const declineBooking = (body, callback) => post(DECLINE_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
+export const setYoutubeUrl = (body, callback) => post(SET_YOUTUBE_ID_REQUEST, body, callback).then(callback).catch(callback)
 
 if (isDev) {
     window.storageRef = storageRef

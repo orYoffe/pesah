@@ -4,7 +4,7 @@ import ReactAudioPlayer from 'react-audio-player'
 import { Line } from 'react-chartjs-2'
 import { pageView, sendAudioEvent } from '../helpers/analytics'
 import { turnObjectToArray } from '../helpers/common'
-import { getArtist, getPhotoUrl, getTrackUrl, getAnalytics } from '../helpers/firebase'
+import { getArtist, getPhotoUrl, getTrackUrl, getAnalytics, setYoutubeUrl } from '../helpers/firebase'
 import { setProfilePicture } from '../reducers/auth'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
@@ -14,6 +14,7 @@ import FileInput from '../components/FileInput'
 import Dropdown from '../components/Dropdown'
 import BookingArtistPanel from '../components/Booking/BookingArtistPanel'
 
+const youtubeRegexp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
 const defaultState = {
     artist: null,
     image: null,
@@ -28,7 +29,9 @@ const defaultState = {
     musicYouListenedLabel: null,
     profilePictureLabel: null,
     profileTrackLabel: null,
-    sortingBy: 'hour'
+    sortingBy: 'hour',
+    youtubeError: null,
+    youtubeSuccess: null,
 }
 
 class Artist extends Component {
@@ -41,6 +44,35 @@ class Artist extends Component {
 
         this.getArtistData()
     }
+
+    setYoutubeVideo = e => {
+        e && e.preventDefault()
+        const url = this.youtubeUrl.value.trim()
+        const match = url.match(youtubeRegexp)
+
+        if (match[1]) {
+            setYoutubeUrl({ youtubeURL: url }, res => {
+                if (res && res.errorCode) {
+                    this.setState({
+                        youtubeError: true,
+                        youtubeSuccess: false,
+                    })
+                } else {
+                    this.setState({
+                        youtubeError: false,
+                        youtubeSuccess: true,
+                    })
+                }
+            })
+        } else {
+            this.setState({
+                youtubeError: true,
+                youtubeSuccess: false,
+            })
+        }
+
+    }
+
     renderArtistEdit = () => {
         const { userId } = this.props
         const { id } = this.props.match.params
@@ -52,6 +84,8 @@ class Artist extends Component {
             musicYouListened,
             musicYouListenedLabel,
             sortingBy,
+            youtubeError,
+            youtubeSuccess,
         } = this.state
 
         if (userId === id) {
@@ -76,8 +110,19 @@ class Artist extends Component {
                         id="artist_profileTrack_upload_input"
                         />
                 </div>,
-                <div key={`analytics_stats_${id}`}><h4>Stats</h4>
-                <br />
+                <h4 key={`music_input_video_${id}_title`}>Add a youtube video</h4>,
+                <form key={`music_input_video_${id}`} onSubmit={this.setYoutubeVideo}>
+                      <input className="form-control" ref={ref => this.youtubeUrl = ref}
+                          type="text" placeholder="http://www.youtube.com/watch?v=..." />
+                      <span className="input-group-btn">
+                        <button className="btn btn-default" type="submit">Save</button>
+                      </span>
+                </form>,
+                youtubeSuccess && <div key={`music_input_video_${id}_youtubeSuccess`}>Video saved</div>,
+                youtubeError && <div key={`music_input_video_${id}_youtubeError`} className="error">There was a problem with the youtube url you provided</div>,
+                <div key={`analytics_stats_${id}`}>
+                  <h4>Stats</h4>
+                  <br />
                     <Dropdown
                     className="col-md-6"
                     value={sortingBy}
@@ -89,103 +134,103 @@ class Artist extends Component {
                     label="Sort by"
                     id="artists_stats_sorting"
                     />
-                <div className="chart">
-                pageViews: {pageViews ? (
-                    <Line
-                        data={{
-                          labels: pageViewsLabel,
-                          datasets: [
-                            {
-                              label: 'Page views',
-                              fill: false,
-                              lineTension: 0.1,
-                            //   backgroundColor: 'rgba(255,255,255,1)',
-                              borderColor: 'rgba(75,192,192,1)',
-                              borderCapStyle: 'butt',
-                              borderDash: [],
-                              borderDashOffset: 0.0,
-                              borderJoinStyle: 'miter',
-                              pointBorderColor: 'rgba(12,12,12,1)',
-                              pointBackgroundColor: '#fff',
-                              pointBorderWidth: 1,
-                              pointHoverRadius: 5,
-                              pointHoverBackgroundColor: 'rgba(12,12,12,1)',
-                              pointHoverBorderColor: 'rgba(220,220,220,1)',
-                              pointHoverBorderWidth: 2,
-                              pointRadius: 1,
-                              pointHitRadius: 10,
-                              data: pageViews
-                            }
-                          ]
-                        }}
-                        />
-                ) : 0}
+                  <div className="chart">
+                  pageViews: {pageViews ? (
+                      <Line
+                          data={{
+                            labels: pageViewsLabel,
+                            datasets: [
+                              {
+                                label: 'Page views',
+                                fill: false,
+                                lineTension: 0.1,
+                              //   backgroundColor: 'rgba(255,255,255,1)',
+                                borderColor: 'rgba(75,192,192,1)',
+                                borderCapStyle: 'butt',
+                                borderDash: [],
+                                borderDashOffset: 0.0,
+                                borderJoinStyle: 'miter',
+                                pointBorderColor: 'rgba(12,12,12,1)',
+                                pointBackgroundColor: '#fff',
+                                pointBorderWidth: 1,
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: 'rgba(12,12,12,1)',
+                                pointHoverBorderColor: 'rgba(220,220,220,1)',
+                                pointHoverBorderWidth: 2,
+                                pointRadius: 1,
+                                pointHitRadius: 10,
+                                data: pageViews
+                              }
+                            ]
+                          }}
+                          />
+                  ) : 0}
+                  </div>
+                  <div className="chart">
+                   audioPlays: {audioPlays ? (
+                       <Line
+                           data={{
+                             labels: audioPlaysLabel,
+                             datasets: [
+                               {
+                                 label: 'Track plays',
+                                 fill: false,
+                                 lineTension: 0.1,
+                                 backgroundColor: 'rgba(255,255,255,0.4)',
+                                 borderColor: 'rgba(75,192,192,1)',
+                                 borderCapStyle: 'butt',
+                                 borderDash: [],
+                                 borderDashOffset: 0.0,
+                                 borderJoinStyle: 'miter',
+                                 pointBorderColor: 'rgba(12,12,12,1)',
+                                 pointBackgroundColor: '#fff',
+                                 pointBorderWidth: 1,
+                                 pointHoverRadius: 5,
+                                 pointHoverBackgroundColor: 'rgba(12,12,12,1)',
+                                 pointHoverBorderColor: 'rgba(220,220,220,1)',
+                                 pointHoverBorderWidth: 2,
+                                 pointRadius: 1,
+                                 pointHitRadius: 10,
+                                 data: audioPlays
+                               }
+                             ]
+                           }}
+                           />
+                  ): 0}
+                  </div>
+                  <br />
+                  <div className="chart">
+                    musicYouListened: {musicYouListened ? (
+                      <Line
+                          data={{
+                            labels: musicYouListenedLabel,
+                            datasets: [
+                              {
+                                label: 'Tracks you listened to',
+                                fill: false,
+                                lineTension: 0.1,
+                                backgroundColor: 'rgba(255,255,255,0.4)',
+                                borderColor: 'rgba(75,192,192,1)',
+                                borderCapStyle: 'butt',
+                                borderDash: [],
+                                borderDashOffset: 0.0,
+                                borderJoinStyle: 'miter',
+                                pointBorderColor: 'rgba(12,12,12,1)',
+                                pointBackgroundColor: '#fff',
+                                pointBorderWidth: 1,
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: 'rgba(12,12,12,1)',
+                                pointHoverBorderColor: 'rgba(220,220,220,1)',
+                                pointHoverBorderWidth: 2,
+                                pointRadius: 1,
+                                pointHitRadius: 10,
+                                data: musicYouListened
+                              }
+                            ]
+                          }}
+                          />
+                  ) : 0}
                 </div>
-                <div className="chart">
-                 audioPlays: {audioPlays ? (
-                     <Line
-                         data={{
-                           labels: audioPlaysLabel,
-                           datasets: [
-                             {
-                               label: 'Track plays',
-                               fill: false,
-                               lineTension: 0.1,
-                               backgroundColor: 'rgba(255,255,255,0.4)',
-                               borderColor: 'rgba(75,192,192,1)',
-                               borderCapStyle: 'butt',
-                               borderDash: [],
-                               borderDashOffset: 0.0,
-                               borderJoinStyle: 'miter',
-                               pointBorderColor: 'rgba(12,12,12,1)',
-                               pointBackgroundColor: '#fff',
-                               pointBorderWidth: 1,
-                               pointHoverRadius: 5,
-                               pointHoverBackgroundColor: 'rgba(12,12,12,1)',
-                               pointHoverBorderColor: 'rgba(220,220,220,1)',
-                               pointHoverBorderWidth: 2,
-                               pointRadius: 1,
-                               pointHitRadius: 10,
-                               data: audioPlays
-                             }
-                           ]
-                         }}
-                         />
-                ): 0}
-            </div>
-                <br />
-                <div className="chart">
-                musicYouListened: {musicYouListened ? (
-                    <Line
-                        data={{
-                          labels: musicYouListenedLabel,
-                          datasets: [
-                            {
-                              label: 'Tracks you listened to',
-                              fill: false,
-                              lineTension: 0.1,
-                              backgroundColor: 'rgba(255,255,255,0.4)',
-                              borderColor: 'rgba(75,192,192,1)',
-                              borderCapStyle: 'butt',
-                              borderDash: [],
-                              borderDashOffset: 0.0,
-                              borderJoinStyle: 'miter',
-                              pointBorderColor: 'rgba(12,12,12,1)',
-                              pointBackgroundColor: '#fff',
-                              pointBorderWidth: 1,
-                              pointHoverRadius: 5,
-                              pointHoverBackgroundColor: 'rgba(12,12,12,1)',
-                              pointHoverBorderColor: 'rgba(220,220,220,1)',
-                              pointHoverBorderWidth: 2,
-                              pointRadius: 1,
-                              pointHitRadius: 10,
-                              data: musicYouListened
-                            }
-                          ]
-                        }}
-                        />
-                ) : 0}
-            </div>
                 <br />
             </div>
         ]
@@ -335,12 +380,15 @@ renderEvents = () => {
                 return <Loader />
             }
             const { userId, isLoggedIn } = this.props
-            const { displayName, email, uid, photoURL } = artist
+            const { displayName, email, uid, photoURL, youtubeID } = artist
             console.log('artist', artist)
             return (
                 <div className="page">
                     <div className="page-content">
                         {this.renderArtistEdit()}
+                        {youtubeID && <iframe id="ytplayer" title="artist youtube video" type="text/html" width="560" height="315"
+src={`https://www.youtube.com/embed/${youtubeID}`}
+frameborder="0" allowfullscreen />}
                         {email && <h5> email: {email} </h5>}
                         {profilePicture && <img src={profilePicture} alt="profile" height="100" width="100"/>}
                         {profileTrack && <ReactAudioPlayer
