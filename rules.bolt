@@ -224,18 +224,24 @@ path /users/{uid} is UserData {
   // delete() { isAdmin() }
 }
 
+path /artists {
+  read() { true }
+}
 path /artists/{uid} is Artist {
-  read() { true }
   write() { isSameId(uid) }
 }
 
+path /venues {
+  read() { true }
+}
 path /venues/{uid} is Venue {
-  read() { true }
   write() { isSameId(uid) }
 }
 
-path /fans/{uid} is Fan {
+path /fans {
   read() { true }
+}
+path /fans/{uid} is Fan {
   write() { isSameId(uid) }
 }
 
