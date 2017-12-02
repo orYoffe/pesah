@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import debounce from 'lodash/debounce'
 import { pageView } from '../helpers/analytics'
-import { getExplore, database } from '../helpers/firebase'
+import { getExplore, database, sendMeEmail } from '../helpers/firebase'
 import EventItem from '../components/EventItem'
 import ArtistItem from '../components/ArtistItem'
 import VenueItem from '../components/VenueItem'
@@ -172,6 +172,9 @@ class Explore extends Component {
   render() {
       return (
           <div className="Explore container">
+            <button onClick={() => {
+                sendMeEmail()
+              }}>send me an mail</button>
             <h3>Explore Events, Artists and Venues</h3>
             <form className="input-group" onKeyDown={this.keyDownSearch} onSubmit={this.search}>
               <input className="form-control" ref={ref => this.searchInput = ref} type="search" placeholder="Artist/Venue name/location" />

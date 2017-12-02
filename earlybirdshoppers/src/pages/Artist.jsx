@@ -14,7 +14,7 @@ import FileInput from '../components/FileInput'
 import Dropdown from '../components/Dropdown'
 import BookingArtistPanel from '../components/Booking/BookingArtistPanel'
 
-const youtubeRegexp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+const youtubeRegexp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i; // eslint-disable-line no-useless-escape
 const defaultState = {
     artist: null,
     image: null,

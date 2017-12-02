@@ -28,3 +28,4 @@ export const SEND_BOOKING_REQUEST = `${API_ENDPOINT}sendBookingRequest`
 export const APPROVE_BOOKING_REQUEST = `${API_ENDPOINT}approveBookingRequest`
 export const DECLINE_BOOKING_REQUEST = `${API_ENDPOINT}declineBookingRequest`
 export const SET_YOUTUBE_ID_REQUEST = `${API_ENDPOINT}youtubeID`
+export const SEND_ME_AN_EMAIL = `${API_ENDPOINT}email`

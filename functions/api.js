@@ -5,13 +5,14 @@ const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
 const express = require('express');
 const cookieParser = require('cookie-parser')();
-const common = require('./common');
 const createEvent = require('./modules/createEvent');
 const createUser = require('./modules/createUser');
 const getRoom = require('./modules/getRoom');
 const getters = require('./modules/getters');
 const adminApis = require('./modules/admin');
 const booking = require('./modules/booking');
+const youtubeId = require('./modules/youtubeId');
+const email = require('./modules/email');
 
 const app = express();
 
@@ -80,28 +81,10 @@ app.get('/explore', getters.explore);
 
 app.use(authenticate);
 
-const youtubeRegexp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
-app.post('/youtubeID', (req, res) => {
-  if (!req.body || !req.body.youtubeURL) {
-      return res.status(400).json({ errorCode: 400, errorMessage: 'youtubeURL' });
-  }
-  if (!common.isString(req.body.youtubeURL) || req.body.youtubeURL.length < 4) {
-      return res.status(400).json({ errorCode: 400, errorMessage: 'youtubeURL' });
-  }
-
-  const url = req.body.youtubeURL.trim();
-  const match = url.match(youtubeRegexp);
-  if (!match || !match[1]) {
-      return res.status(400).json({ errorCode: 400, errorMessage: 'youtubeURL' });
-  }
-  return admin.database().ref(`artists/${req.user.uid}`).update({ youtubeID: match[1] })
-  .then((response) => {
-    return res.status(200).json({ code: 200, message: 'ok' });
-  })
-  .catch((error) => {
-      return res.status(400).json({ errorCode: 400, errorMessage: 'youtubeURL' });
-  });
-});
+if (email && email.default) {
+    app.get('/email', email.default);
+}
+app.post('/youtubeID', youtubeId.default);
 app.post('/createEvent', createEvent.createEvent);
 // TODO finish the update function
 // app.post('/updateEvent', createEvent.updateEvent);

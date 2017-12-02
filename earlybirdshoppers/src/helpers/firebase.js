@@ -20,6 +20,7 @@ import {
     APPROVE_BOOKING_REQUEST,
     DECLINE_BOOKING_REQUEST,
     SET_YOUTUBE_ID_REQUEST,
+    SEND_ME_AN_EMAIL,
  } from './config'
 
 firebase.initializeApp(DB_CONFIG)
@@ -64,6 +65,25 @@ export const getTrackUrl = (userUid, type, callback) => storageRef.child(`tracks
 
 // ======== API functions
 export const get = (url) => fetch(url).then(res => res.json())
+export const authGet = (url) => {
+    if (!auth().currentUser) {
+        console.log('Not authenticated. Make sure you\'re signed in!')
+        return 404
+    }
+
+    // Get the Firebase auth token to authenticate the request
+    return firebase.auth().currentUser.getIdToken().then(function (token) {
+        document.cookie = '__session=' + token + ';max-age=3600';
+        return fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            mode: 'cors',
+        }).then(res => res.json())
+    })
+}
 export const post = (url, body, callback) => {
     if (!auth().currentUser) {
         console.log('Not authenticated. Make sure you\'re signed in!')
@@ -91,6 +111,10 @@ export const getArtists = (callback) => get(GET_ARTISTS).then(callback).catch(ca
 export const getVenues = (callback) => get(GET_VENUES).then(callback).catch(callback)
 export const getFans = (callback) => get(GET_FANS).then(callback).catch(callback)
 export const getExplore = (callback) => get(GET_EXPLORE).then(callback).catch(callback)
+
+// ======= GET with token
+
+export const sendMeEmail = (callback) => authGet(SEND_ME_AN_EMAIL).then(callback).catch(callback)
 
 // ======= POST
 export const createEvent = (body, callback) => post(CREATE_EVENT, body, callback).then(callback).catch(callback)
