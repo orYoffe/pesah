@@ -8,17 +8,17 @@ import {
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import PassReset from './pages/PassReset'
-import PrivateRoute from './helpers/PrivateRoute'
+// import PrivateRoute from './helpers/PrivateRoute'
 import PublicRoute from './helpers/PublicRoute'
 import Explore from './pages/Explore'
 import Artist from './pages/Artist'
 import Venue from './pages/Venue'
 import Event from './pages/Event'
-import Fan from './pages/Fan'
-import Admin from './pages/Admin'
+// import Fan from './pages/Fan'
+// import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 import Menu from './components/Menu/'
-import CreateEvent from './components/CreateEvent/'
+// import CreateEvent from './components/CreateEvent/'
 import Chat from './components/Chat/'
 import Venues from './components/Venues'
 
@@ -38,9 +38,8 @@ const Routes = (props) => (
                             <Route path="/artist/:id" component={Artist}/>
                             <Route path="/venue/:id" component={Venue}/>
                             <Route path="/event/:id" component={Event}/>
-                            <Route path="/fan/:id" component={Fan}/>
-                            <PrivateRoute path='/create-event' component={CreateEvent} />
-                            <PrivateRoute isRouteForAdmin path='/admin' component={Admin} />
+                            {/*<PrivateRoute path='/create-event' component={CreateEvent} />
+                        <PrivateRoute isRouteForAdmin path='/admin' component={Admin} />*/}
                             <Route path="/404" component={NotFound}/>
                             <Redirect from="/guard" to="/" />
                             <Redirect to="/404" />

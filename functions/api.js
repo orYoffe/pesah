@@ -73,7 +73,7 @@ app.get('/getArtists', getters.getArtists);
 
 app.get('/getVenues', getters.getVenues);
 
-app.get('/getFans', getters.getFans);
+// app.get('/getFans', getters.getFans);
 
 app.get('/getEvents', getters.getEvents);
 

@@ -1,4 +1,4 @@
-import { isDev } from './common'
+// import { isDev } from './common'
 import firebase from 'firebase'
 import 'firebase/database'
 import 'firebase/auth'
@@ -9,7 +9,7 @@ import {
     GET_ARTISTS,
     GET_VENUES,
     GET_EVENTS,
-    GET_FANS,
+    // GET_FANS,
     GET_EXPLORE,
     CREATE_EVENT,
     CREATE_USER,
@@ -51,7 +51,7 @@ export const fbProvider = new firebase.auth.FacebookAuthProvider();
 
 // ======== Firebase functions
 export const getUser = (id, callback) => ref.child(`users/${id}`).once('value', callback).catch(callback)
-export const getFan = (id, callback) => ref.child(`fans/${id}`).once('value', callback).catch(callback)
+// export const getFan = (id, callback) => ref.child(`fans/${id}`).once('value', callback).catch(callback)
 export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('value', callback).catch(callback)
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
@@ -109,7 +109,7 @@ export const post = (url, body, callback) => {
 export const getEvents = (callback) => get(GET_EVENTS).then(callback).catch(callback)
 export const getArtists = (callback) => get(GET_ARTISTS).then(callback).catch(callback)
 export const getVenues = (callback) => get(GET_VENUES).then(callback).catch(callback)
-export const getFans = (callback) => get(GET_FANS).then(callback).catch(callback)
+// export const getFans = (callback) => get(GET_FANS).then(callback).catch(callback)
 export const getExplore = (callback) => get(GET_EXPLORE).then(callback).catch(callback)
 
 // ======= GET with token
@@ -127,7 +127,7 @@ export const approveBooking = (body, callback) => post(APPROVE_BOOKING_REQUEST, 
 export const declineBooking = (body, callback) => post(DECLINE_BOOKING_REQUEST, body, callback).then(callback).catch(callback)
 export const setYoutubeUrl = (body, callback) => post(SET_YOUTUBE_ID_REQUEST, body, callback).then(callback).catch(callback)
 
-if (isDev) {
-    window.storageRef = storageRef
-    window.firebase = firebase
-}
+// if (isDev) {
+//     window.storageRef = storageRef
+//     window.firebase = firebase
+// }

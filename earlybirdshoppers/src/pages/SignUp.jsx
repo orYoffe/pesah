@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { signup, verifyEmail } from '../helpers/auth'
+import { signup } from '../helpers/auth'
+import { capitalize } from '../helpers/common'
 import { Link, Redirect } from 'react-router-dom'
 import { login as loginAction } from '../reducers/auth'
 import { pageView } from '../helpers/analytics'
@@ -8,6 +9,9 @@ import { pageView } from '../helpers/analytics'
 class Signup extends Component {
     state = {
         loggedIn: false,
+        phone: {
+            value: '',
+        },
         email: {
             value: '',
         },
@@ -20,16 +24,20 @@ class Signup extends Component {
         name: {
             value: '',
         },
+        firstname: {
+            value: '',
+        },
+        lastname: {
+            value: '',
+        },
         messages: {
             error: '',
             message: ''
         },
-        type: 'fan',
+        type: 'musician',
     }
 
-    checkType = e => {
-        this.setState({type: e.target.value})
-    }
+    checkType = e => this.setState({type: e.target.value})
 
     setMessage = (type, newMessage) => {
         const { messages: { error, message } } = this.state
@@ -50,10 +58,30 @@ class Signup extends Component {
             this.setState({ name: { value }})
         }
     }
+    firstnameChange = (e) => {
+        const value = e.target.value
+        if (!!value && this.state.firstname.value !== value) {
+            this.setState({ firstname: { value }})
+        }
+    }
+    lastnameChange = (e) => {
+        const value = e.target.value
+        if (!!value && this.state.lastname.value !== value) {
+            this.setState({ lastname: { value }})
+        }
+    }
+
     emailChange = (e) => {
         const value = e.target.value
         if (!!value && this.state.email.value !== value) {
             this.setState({ email: { value }})
+        }
+    }
+
+    phoneChange = (e) => {
+        const value = e.target.value
+        if (!!value && this.state.phone.value !== value) {
+            this.setState({ phone: { value }})
         }
     }
 
@@ -63,6 +91,7 @@ class Signup extends Component {
             this.setState({ pass: { value }})
         }
     }
+
     passConfirmChange = (e) => {
         const value = e.target.value
         if (!!value && this.state.passConfirm.value !== value) {
@@ -75,8 +104,18 @@ class Signup extends Component {
         const password = this.state.passConfirm.value
         const passwordConfirm = this.state.passConfirm.value
         const displayName = this.state.name.value
-        if (displayName.length < 4) {
+        const firstname = this.state.firstname.value
+        const lastname = this.state.lastname.value
+        if (displayName.length < 2) {
             this.setMessage('error', 'Please enter a Name or a Title.')
+            return false
+        }
+        if (firstname.length < 2) {
+            this.setMessage('error', 'Please enter a First Name or a Title.')
+            return false
+        }
+        if (lastname.length < 2) {
+            this.setMessage('error', 'Please enter a Last Name or a Title.')
             return false
         }
         if (email.length < 4) {
@@ -101,27 +140,34 @@ class Signup extends Component {
     handleSignUp = (e) => {
         e && e.preventDefault()
         e && e.stopPropagation()
-        if(!this.isValid()) {
+        const { type } = this.state
+        if(!this.isValid() || type === 'venue') { // TODO fix signup process for venue = > venueManager
             return false
         }
+        const accountType = type === 'venue' ? 'venueManager' : type
         const { login } = this.props
         const email = this.state.email.value
         const password = this.state.pass.value
         const displayName = this.state.name.value
+        const firstname = this.state.firstname.value
+        const lastname = this.state.lastname.value
         signup({
             email,
             password,
-            accountType: this.state.type,
             displayName,
+            firstname,
+            lastname,
+            accountType,
         })
         .then(res => {
-            verifyEmail()
             const user = res.user
             return login({
                 email,
+                firstname,
+                lastname,
+                displayName,
+                accountType,
                 uid: user.uid,
-                displayName: displayName,
-                accountType: this.state.type,
             })
         })
         .catch((error) => {
@@ -137,30 +183,30 @@ class Signup extends Component {
     }
 
     render() {
+        const { history } = this.props
         const { messages: { message, error }, type } = this.state
 
         if (this.props.isLoggedIn) {
-            return  <Redirect to='/'/>
+            if (history && history.length) {
+                history.goBack()
+                return null
+            } else {
+                return  <Redirect to="/" />
+            }
         }
+        const capitalizedType = capitalize(type)
+        const isMusician = type === 'musician'
 
         return (
             <div className="Signup container">
-                <h2>Sign up</h2>
+                <h2>Sign up as a {capitalizedType}</h2>
                 <form onSubmit={this.handleSignUp}>
                     <div className="radio">
                         <label>
                             <input type="radio"
-                            checked={type === 'fan'}
-                            onChange={this.checkType} name="optionsRadios" id="optionsRadios0" value="fan" />
-                            I am a Fan
-                        </label>
-                    </div>
-                    <div className="radio">
-                        <label>
-                            <input type="radio"
-                            checked={type === 'artist'}
-                            onChange={this.checkType} name="optionsRadios" id="optionsRadios1" value="artist" />
-                            I am an Artist
+                            checked={type === 'musician'}
+                            onChange={this.checkType} name="optionsRadios" id="optionsRadios0" value="musician" />
+                        Musician
                         </label>
                     </div>
                     <div className="radio">
@@ -168,17 +214,39 @@ class Signup extends Component {
                             <input type="radio"
                             checked={type === 'venue'}
                             onChange={this.checkType} name="optionsRadios" id="optionsRadios2" value="venue" />
-                            I manage a Venue
+                            Venue
                         </label>
                     </div>
-                    <label htmlFor="name">Name{type !== 'fan' ? '/Title' : ''}:</label>
+                    <label htmlFor="name">{capitalizedType} Name:</label>
                     <input
                         className="form-control"
                         type="text"
                         onChange={this.nameChange}
                         id="name"
                         name="displayName"
-                        placeholder="Lizards of Gondor"
+                        placeholder={isMusician ? 'Lizards of Gondor' : 'The Great Piano club'}
+                        required
+                    />
+                    <br />
+                    <label htmlFor="firstname">First Name:</label>
+                    <input
+                        className="form-control"
+                        type="text"
+                        onChange={this.firstnameChange}
+                        id="firstname"
+                        name="firstname"
+                        placeholder="John"
+                        required
+                    />
+                    <br />
+                    <label htmlFor="lastname">Last Name:</label>
+                    <input
+                        className="form-control"
+                        type="text"
+                        onChange={this.lastnameChange}
+                        id="lastname"
+                        name="lastname"
+                        placeholder="Doe"
                         required
                     />
                     <br />
@@ -192,6 +260,19 @@ class Signup extends Component {
                         placeholder="example@example.com"
                         required
                     />
+                    {!isMusician && <br />}
+                    {!isMusician && <label htmlFor="phone">Phone number:</label>}
+                    {!isMusician && (
+                        <input
+                            className="form-control"
+                            type="tel"
+                            onChange={this.phoneChange}
+                            id="phone"
+                            name="phone"
+                            placeholder="XXX-XXXXXXX"
+                            required
+                        />
+                    )}
                     <br />
                     <label htmlFor="password">Password:</label>
                     <input
@@ -214,6 +295,45 @@ class Signup extends Component {
                         placeholder="Password Confirmation"
                         required
                     />
+                    {!isMusician && <br />}
+                    {!isMusician && <label htmlFor="location">Location:</label>}
+                    {!isMusician && (
+                        <input
+                            className="form-control"
+                            type="text"
+                            onChange={this.locationChange}
+                            id="location"
+                            name="location"
+                            placeholder="XXX-XXXXXXX"
+                            required
+                            />
+                    )}
+                    {!isMusician && <br />}
+                    {!isMusician && <label htmlFor="url">URL:</label>}
+                    {!isMusician && (
+                        <input
+                            className="form-control"
+                            type="text"
+                            onChange={this.urlChange}
+                            id="url"
+                            name="url"
+                            placeholder="XXX-XXXXXXX"
+                            required
+                            />
+                    )}
+                    {!isMusician && <br />}
+                    {!isMusician && <label htmlFor="capacity">Capacity:</label>}
+                    {!isMusician && (
+                        <input
+                            className="form-control"
+                            type="text"
+                            onChange={this.urlChange}
+                            id="capacity"
+                            name="capacity"
+                            placeholder="XXX-XXXXXXX"
+                            required
+                            />
+                    )}
                     <br />
                     <input
                         className="btn btn-primary form-control"
@@ -228,28 +348,30 @@ class Signup extends Component {
                 {!!message && <br/>}
                 {!!message && <div>{message}</div>}
 
-                <br />
-                <input
+                {isMusician && <br />}
+                {isMusician && <input
                     className="btn btn-primary"
                     type="button"
                     value="Connect with FB (unfunctional)"
-                />
-                <br />
-                <input
+                />}
+                {isMusician && <br />}
+                {isMusician && <input
                     className="btn btn-primary"
                     type="button"
                     value="Connect with google (unfunctional)"
-                />
-                <br />
-                <input
+                />}
+                {isMusician && <br />}
+                {isMusician && <input
                     className="btn btn-primary"
                     type="button"
                     value="Connect with twitter (unfunctional)"
-                />
+                />}
 
-                <br />
+                {isMusician && <br />}
                 <br />
                 <p>Already have a User? Log in <Link to="login">here</Link></p>
+                <br />
+                <br />
             </div>
 
         )

@@ -2,7 +2,7 @@ import { auth, createUser
     // googleProvider, fbProvider
 } from './firebase'
 
-const accountTypes = ['fan', 'artist', 'venue']
+const accountTypes = ['musician', 'venueManager']
 
 export const logout = () => auth().signOut()
 
@@ -12,18 +12,25 @@ export const resetPassword = (email) => auth().sendPasswordResetEmail(email)
 
 export const verifyEmail = () => auth().currentUser.sendEmailVerification()
 
-// TODO FIX SIGNUP PROCESS
 export const signup = ({
     email,
     password,
     accountType,
-    displayName
+    displayName,
+    firstname,
+    lastname,
 }) => {
     if (!accountTypes.includes(accountType)) {
         return false
     }
     return auth().createUserWithEmailAndPassword(email, password)
-        .then(user => saveUser(user, accountType, displayName))
+        .then(user => saveUser(
+            user,
+            accountType,
+            displayName,
+            firstname,
+            lastname,
+        ))
 }
 // TODO add provider signup
 // export const signupwithProvider = ({
@@ -60,7 +67,7 @@ export const saveUser = (user, accountType, displayName) => {
     //     photoURL: user.photoURL,
     //     uid: user.uid,
     // }
-    
+    verifyEmail()
     return user.updateProfile({
         displayName
     }).then(() => createUser({

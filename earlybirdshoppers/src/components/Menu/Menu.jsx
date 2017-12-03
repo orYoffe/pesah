@@ -20,10 +20,10 @@ class Menu extends Component {
     }
     renderDynamicLinks = () => {
         const { isLoggedIn, userUid, accountType, trans, isAdmin } = this.props
-        const isFan = accountType === 'fan'
+        // const isFan = accountType === 'fan'
         const links = []
         if (isLoggedIn && userUid) {
-            if (!isFan) {
+            // if (!isFan) {
                 links.push(
                     <li key={`menu_item_${userUid}_page`}>
                         <NavLink  onClick={this.closeMenu}  to={`/${accountType}/${userUid}`}>{trans.My_Page}</NavLink>
@@ -34,7 +34,7 @@ class Menu extends Component {
                         <NavLink  onClick={this.closeMenu}  to="/create-event">{trans.Create_Event} +</NavLink>
                     </li>
                 )
-            }
+            // }
             if (isAdmin) {
                 links.push(
                     <li key={`menu_item_${userUid}_admin_pannel`}>

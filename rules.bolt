@@ -231,6 +231,12 @@ path /artists {
 path /artists/{uid} is Artist {
   write() { isSameId(uid) }
 }
+path /musician {
+  read() { true }
+}
+path /musician/{uid} is Artist {
+  write() { isSameId(uid) }
+}
 
 path /venues {
   read() { true }
@@ -238,16 +244,45 @@ path /venues {
 path /venues/{uid} is Venue {
   write() { isSameId(uid) }
 }
+path /venueManagers/{uid} {
+  read() { isSameId(uid) }
+}
 
-path /fans {
+path /pendingVenues/{uid} is Venue {
+  read() { isSameId(uid) }
+  write() { isSameId(uid) }
+}
+
+/*path /fans {
   read() { true }
 }
 path /fans/{uid} is Fan {
   write() { isSameId(uid) }
+}*/
+
+path /events {
+  read() { true }
+  // update() { isEventOwner(uid) }
+  // create() { isAdmin() }
+}
+/*path /events/{uid} is Event {
+  read() { isEventPublished(uid) }
+  // update() { isEventOwner(uid) }
+  // create() { isAdmin() }
+}*/
+path /pendingEvents/{uid} is Event {
+  read() { isSameId(uid) }
+  // update() { isEventOwner(uid) }
+  // create() { isAdmin() }
 }
 
-path /events/{uid} is Event {
-  read() { isEventPublished(uid) }
+path /campains {
+  read() { true }
+  // update() { isEventOwner(uid) }
+  // create() { isAdmin() }
+}
+path /pendingCampains/{uid} {
+  read() { isSameId(uid) }
   // update() { isEventOwner(uid) }
   // create() { isAdmin() }
 }

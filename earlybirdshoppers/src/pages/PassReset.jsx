@@ -46,6 +46,7 @@ class PassReset extends Component {
             resetPassword(email)
            .then(user => this.setMessage('message', 'An email has been sent to you.'))
             .catch((error) => {
+              // TODO fix error handing for error.code: "auth/user-not-found"
                 this.setMessage('error', error.message)
                 console.log(error)
             })

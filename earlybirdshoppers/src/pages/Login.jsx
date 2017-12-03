@@ -80,10 +80,16 @@ class Login extends Component {
     }
 
     render() {
+        const { history } = this.props
         const { messages: { message, error } } = this.state
 
         if (this.props.isLoggedIn) {
-            return  <Redirect to='/'/>
+            if (history && history.length) {
+                history.goBack()
+                return null
+            } else {
+                return  <Redirect to="/" />
+            }
         }
 
         return (
