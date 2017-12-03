@@ -70,6 +70,7 @@ app.use(cors);
 app.use(cookieParser);
 
 app.get('/getArtists', getters.getArtists);
+app.get('/getMusicians', getters.getMusicians);
 
 app.get('/getVenues', getters.getVenues);
 

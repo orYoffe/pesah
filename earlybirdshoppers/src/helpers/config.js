@@ -15,6 +15,7 @@ export const getMapsApi = (countryCode, language) =>
 // export const API_ENDPOINT = isDev ? 'http://localhost:5000/earlybirdshopers/us-central1/api/' : 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/'
 export const API_ENDPOINT = 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/'
 export const GET_ARTISTS = `${API_ENDPOINT}getArtists`
+export const GET_MUSICIANS = `${API_ENDPOINT}getMusicians`
 export const GET_VENUES = `${API_ENDPOINT}getVenues`
 export const GET_EVENTS = `${API_ENDPOINT}getEvents`
 export const GET_FANS = `${API_ENDPOINT}getFans`

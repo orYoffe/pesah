@@ -231,10 +231,10 @@ path /artists {
 path /artists/{uid} is Artist {
   write() { isSameId(uid) }
 }
-path /musician {
+path /musicians {
   read() { true }
 }
-path /musician/{uid} is Artist {
+path /musicians/{uid} is Artist {
   write() { isSameId(uid) }
 }
 

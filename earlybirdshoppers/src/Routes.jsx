@@ -12,6 +12,7 @@ import PassReset from './pages/PassReset'
 import PublicRoute from './helpers/PublicRoute'
 import Explore from './pages/Explore'
 import Artist from './pages/Artist'
+import Musician from './pages/Musician'
 import Venue from './pages/Venue'
 import Event from './pages/Event'
 // import Fan from './pages/Fan'
@@ -35,6 +36,7 @@ const Routes = (props) => (
                             <PublicRoute exact path="/login" component={Login}/>
                             <PublicRoute exact path="/signup" component={SignUp}/>
                             <Route exact path="/password-reset" component={PassReset}/>
+                            <Route path="/musician/:id" component={Musician}/>
                             <Route path="/artist/:id" component={Artist}/>
                             <Route path="/venue/:id" component={Venue}/>
                             <Route path="/event/:id" component={Event}/>

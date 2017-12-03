@@ -4,6 +4,7 @@ import { pageView } from '../helpers/analytics'
 import { getExplore, sendMeEmail } from '../helpers/firebase'
 import EventItem from '../components/EventItem'
 import ArtistItem from '../components/ArtistItem'
+import MusicianItem from '../components/MusicianItem'
 import VenueItem from '../components/VenueItem'
 // import FanItem from '../components/FanItem'
 import Loader from '../components/Loader'
@@ -13,6 +14,7 @@ class Explore extends Component {
   state = {
     artists: [],
     venues: [],
+    musicians: [],
     // fans: [],
     events: [],
     loading: true,
@@ -21,9 +23,9 @@ class Explore extends Component {
   componentDidMount() {
     pageView('explore')
     getExplore(res => {
-      if (res && (res.artists || res.events || res.venues)){
-        const { artists, events, venues } = res
-        this.setState({ artists, events, venues, loading: false })
+      if (res && (res.artists || res.events || res.venues || res.musicians)){
+        const { artists, events, venues, musicians } = res
+        this.setState({ artists, events, venues, musicians, loading: false })
       }
     })
   }
@@ -43,6 +45,15 @@ class Explore extends Component {
       <h4>Trending Artists</h4>
       <div className="row">
         {this.state.artists.map(artist => <ArtistItem key={`artist_item_${artist.uid}`} {...artist} />)}
+      </div>
+    </div>
+  )
+  renderMusicians = () => !!this.state.musicians.length && (
+    <div>
+      <hr />
+      <h4>Trending Musicians</h4>
+      <div className="row">
+        {this.state.musicians.map(musician => <MusicianItem key={`musician_item_${musician.uid}`} {...musician} />)}
       </div>
     </div>
   )
@@ -78,6 +89,7 @@ class Explore extends Component {
         {this.state.loading && <Loader />}
         {this.renderEvents()}
         {this.renderArtists()}
+        {this.renderMusicians()}
         {this.renderVenues()}
       </div>
     )

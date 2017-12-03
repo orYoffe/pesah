@@ -26,8 +26,14 @@ class App extends Component {
       if (user && user.uid) {
         getUser(user.uid, snapshot => {
           const userData = snapshot.val()
-          userData.profilePicture = userData.photoURL || user.photoURL
-          dispatch(login(userData))
+          if (userData) {
+            userData.profilePicture = userData.photoURL || user.photoURL
+            userData.emailVerified = user.emailVerified
+            dispatch(login(userData))
+          } else {
+            const { displayName, email, emailVerified, photoURL, uid } = user
+            dispatch(login({ displayName, email, emailVerified, photoURL, uid }))
+          }
           this.setState({ loading: false })
         })
       } else {

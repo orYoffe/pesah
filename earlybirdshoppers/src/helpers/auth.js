@@ -56,8 +56,14 @@ export const signup = ({
 //         .then(user => saveUser(user, accountType, displayName))
 // }
 
-export const saveUser = (user, accountType, displayName) => {
-    if (!accountType || !displayName || !user) {
+export const saveUser = (
+    user,
+    accountType,
+    displayName,
+    firstname,
+    lastname,
+) => {
+    if (!accountType || !displayName || !user || !firstname || !lastname) {
         return logout()
     }
     // const newUser = {
@@ -67,14 +73,19 @@ export const saveUser = (user, accountType, displayName) => {
     //     photoURL: user.photoURL,
     //     uid: user.uid,
     // }
-    verifyEmail()
+    verifyEmail() // TODO move to BE
     return user.updateProfile({
         displayName
     }).then(() => createUser({
         displayName,
         accountType,
+        firstname,
+        lastname,
         uid: user.uid
     }, res => {
+        if (!res || res.code !== 200 || res.message !== 'ok') {
+            return logout()
+        }
         console.log('createUser res ==== ', res)
         return res
     }))

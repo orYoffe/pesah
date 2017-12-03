@@ -1,0 +1,5 @@
+.musician-item {
+    background: url('/Artist.jpg') no-repeat;
+    background-size: cover;
+    background-position: 50%;
+}

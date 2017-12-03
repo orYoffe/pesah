@@ -34,6 +34,7 @@ class Artist extends Component {
         pageView('artist', { page: id, userId })
 
         this.getArtistData()
+        this.getArtistData()
     }
 
     setYoutubeVideo = e => {
@@ -164,11 +165,6 @@ class Artist extends Component {
 
     render() {
         const { artist, profilePicture, profileTrack } = this.state
-        const { id } = this.props.match.params
-
-        if (artist && id !== artist.uid) {
-            this.getArtistData()
-        }
 
         if(artist === 'not found') {
             return <NotFound />

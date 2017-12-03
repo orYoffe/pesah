@@ -7,6 +7,7 @@ import 'firebase/storage'
 import {
     DB_CONFIG,
     GET_ARTISTS,
+    GET_MUSICIANS,
     GET_VENUES,
     GET_EVENTS,
     // GET_FANS,
@@ -52,6 +53,7 @@ export const fbProvider = new firebase.auth.FacebookAuthProvider();
 // ======== Firebase functions
 export const getUser = (id, callback) => ref.child(`users/${id}`).once('value', callback).catch(callback)
 // export const getFan = (id, callback) => ref.child(`fans/${id}`).once('value', callback).catch(callback)
+export const getMusician = (id, callback) => ref.child(`musicians/${id}`).once('value', callback).catch(callback)
 export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('value', callback).catch(callback)
 export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
@@ -108,6 +110,7 @@ export const post = (url, body, callback) => {
 // ======= GET
 export const getEvents = (callback) => get(GET_EVENTS).then(callback).catch(callback)
 export const getArtists = (callback) => get(GET_ARTISTS).then(callback).catch(callback)
+export const getMusicians = (callback) => get(GET_MUSICIANS).then(callback).catch(callback)
 export const getVenues = (callback) => get(GET_VENUES).then(callback).catch(callback)
 // export const getFans = (callback) => get(GET_FANS).then(callback).catch(callback)
 export const getExplore = (callback) => get(GET_EXPLORE).then(callback).catch(callback)

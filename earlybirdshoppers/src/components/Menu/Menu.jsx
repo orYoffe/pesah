@@ -64,7 +64,6 @@ class Menu extends Component {
     }
 
     render() {
-
         const { trans, isLoggedIn } = this.props
         const { isOpen } = this.state
 

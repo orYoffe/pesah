@@ -42,6 +42,15 @@ exports.getVenues = (req, res) => {
 //         return getItems(fans, 'fan').then(() => res.status(200).json(fans));
 //     }
 // };
+exports.getMusicians = (req, res) => {
+    console.log('getMusicians was called ===== ', new Date().toJSON());
+    if (req.query.coutry) { // TODO add params and options
+        console.log('getMusicians was called with country ===== ', req.query.coutry);
+    } else {
+        let musicians = [];
+        return getItems(musicians, 'musician').then(() => res.status(200).json(musicians));
+    }
+};
 
 exports.getEvents = (req, res) => {
     console.log('getEvents was called ===== ', new Date().toJSON());
@@ -60,12 +69,14 @@ exports.explore = (req, res) => {
     } else {
         let events = [];
         let venues = [];
+        let musicians = [];
         // let fans = [];
         let artists = [];
         // .then(() => getItems(fans, 'fan'))
         return getItems(events, 'event')
             .then(() => getItems(venues, 'venue'))
             .then(() => getItems(artists, 'artist'))
-            .then(() => res.status(200).json({artists, events, venues}))
+            .then(() => getItems(musicians, 'musician'))
+            .then(() => res.status(200).json({artists, events, venues, musicians}))
     }
 };

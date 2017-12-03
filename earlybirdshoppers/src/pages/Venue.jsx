@@ -109,7 +109,7 @@ class Venue extends Component {
                 userUid={userId}
                 filePurpose="profilePicture"
                 label="Upload a profile picture"
-                id="artist_profilePicture_upload_input"
+                id="venue_profilePicture_upload_input"
             />]
         }
     }
@@ -132,52 +132,54 @@ class Venue extends Component {
             image, paidEntrance, hasLocalAudience, hasGuarantee, venueEmail, guaranteeAmount,
             phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
         } = venue
-        const { userId, isLoggedIn, isAdmin } = this.props
-        const content = (<div className="page-content">
-            {this.renderBooking()}
-            {this.renderVenueEdit()}
-            {isAdmin && (isLazarya || uid === userId) && <Link to={`/admin/edit-venue/${uid}`} className="btn btn-default">Edit This Venue</Link>}
-            {(venueEmail || email) && <p> email: {venueEmail || email} </p>}
-            {isLoggedIn && uid !== userId && hasUser !== false && (
-                            <OpenChat
-                            chatPartner={{
-                                uid: uid,
-                                photo: photoURL || '',
-                                displayName: displayName || name
-                            }} />
-                            )
-                        }
-                        {(displayName || name) && <h4>Venue name: {displayName || name}</h4>}
-                        {locationAddress && <p>Address: {locationAddress}</p>}
-                        {locationCity && <p>City: {locationCity}</p>}
-                        {locationCountry && <p>Country: {locationCountry}</p>}
-                        {locationCountryShortName && <p>CountryShortName: {locationCountryShortName}</p>}
-                        {venueSize && <p> venueSize: {venueSize} </p>}
-                        {stageSize && <p> stageSize: {stageSize} </p>}
-                        {contactPerson && <p> contactPerson: {contactPerson} </p>}
-                        {isLazarya && <p> *From Lazarya </p>}
-                        {paidEntrance && <p> *Has paid Entrance </p>}
-                        {hasLocalAudience && <p> *Has local audience </p>}
-                        {hasGuarantee && <p> *Has Guarantee </p>}
-                        {guaranteeAmount && <p>guaranteeAmount: {guaranteeAmount}</p>}
-                        {venueType && <p>venueType: {venueType}</p>}
-                        {phoneNumber && <p>phoneNumber: {phoneNumber}</p>}
-                        {genre && <p>genre: {genre}</p>}
-                        {capacity && <p>capacity: {capacity}</p>}
-                        {seatingCapacity && <p>seatingCapacity: {seatingCapacity}</p>}
-                        {businessPlan && <p>businessPlan: {businessPlan}</p>}
-                        {description && <p>description: {description}</p>}
-                        {comments && <p>comments: {comments}</p>}
-                        {date && <p>last edited: {date}</p>}
-                        {fb && <a href={fb} target="_blank" >FB link</a>}
-                        {website && <a href={website} target="_blank" >Website link</a>}
-                        {image && <img src={image} alt="venue"/>}
-                        {locationLng && locationLat && <Map markers={[
-                            {
-                                position: { lng: locationLng, lat: locationLat }
-                            },
-                        ]} />}
-                    </div>)
+        const { userId, isLoggedIn, isAdmin, emailVerified } = this.props
+        const content = (
+            <div className="page-content">
+                {this.renderBooking()}
+                {this.renderVenueEdit()}
+                {isAdmin && (isLazarya || uid === userId) && <Link to={`/admin/edit-venue/${uid}`} className="btn btn-default">Edit This Venue</Link>}
+                {(venueEmail || email) && <p> email: {venueEmail || email} </p>}
+                {isLoggedIn && emailVerified && uid !== userId && hasUser !== false && (
+                        <OpenChat
+                        chatPartner={{
+                            uid: uid,
+                            photo: photoURL || '',
+                            displayName: displayName || name
+                        }} />
+                    )
+                }
+                {(displayName || name) && <h4>Venue name: {displayName || name}</h4>}
+                {locationAddress && <p>Address: {locationAddress}</p>}
+                {locationCity && <p>City: {locationCity}</p>}
+                {locationCountry && <p>Country: {locationCountry}</p>}
+                {locationCountryShortName && <p>CountryShortName: {locationCountryShortName}</p>}
+                {venueSize && <p> venueSize: {venueSize} </p>}
+                {stageSize && <p> stageSize: {stageSize} </p>}
+                {contactPerson && <p> contactPerson: {contactPerson} </p>}
+                {isLazarya && <p> *From Lazarya </p>}
+                {paidEntrance && <p> *Has paid Entrance </p>}
+                {hasLocalAudience && <p> *Has local audience </p>}
+                {hasGuarantee && <p> *Has Guarantee </p>}
+                {guaranteeAmount && <p>guaranteeAmount: {guaranteeAmount}</p>}
+                {venueType && <p>venueType: {venueType}</p>}
+                {phoneNumber && <p>phoneNumber: {phoneNumber}</p>}
+                {genre && <p>genre: {genre}</p>}
+                {capacity && <p>capacity: {capacity}</p>}
+                {seatingCapacity && <p>seatingCapacity: {seatingCapacity}</p>}
+                {businessPlan && <p>businessPlan: {businessPlan}</p>}
+                {description && <p>description: {description}</p>}
+                {comments && <p>comments: {comments}</p>}
+                {date && <p>last edited: {date}</p>}
+                {fb && <a href={fb} target="_blank" >FB link</a>}
+                {website && <a href={website} target="_blank" >Website link</a>}
+                {image && <img src={image} alt="venue"/>}
+                {locationLng && locationLat && <Map markers={[
+                    {
+                        position: { lng: locationLng, lat: locationLat }
+                    },
+                ]} />}
+            </div>
+        )
 
 
         return (
@@ -204,6 +206,7 @@ const mapStateToProps = state => ({
     userId: state.auth.user && state.auth.user.uid,
     accountType: state.auth.user && state.auth.user.accountType,
     isAdmin: state.auth.user && state.auth.user.isAdmin,
+    emailVerified: state.auth.user && state.auth.user.emailVerified,
 })
 
 export default connect(mapStateToProps)(Venue)

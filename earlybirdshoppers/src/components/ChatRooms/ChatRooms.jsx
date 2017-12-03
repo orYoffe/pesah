@@ -7,13 +7,13 @@ class ChatRooms extends Component {
     state = {
         isOpen: false
     }
-        
+
     toggleOpen = () => this.setState({ isOpen: !this.state.isOpen })
-    
+
     render() {
-        const { rooms, setRoom, userUid } = this.props
+        const { rooms, setRoom, userUid, emailVerified } = this.props
         const { isOpen } = this.state
-        if (!rooms) {
+        if (!rooms || !emailVerified) { // TODO fix behaviour for non room promting to create new message
             return null
         }
         const roomsKeys = Object.keys(rooms)
@@ -36,7 +36,7 @@ class ChatRooms extends Component {
                     >
                         {membersNames}
                     </button>
-                
+
                 )
             })
         }
@@ -62,6 +62,7 @@ const mapDispatchToProps = dispatch => ({ setRoom: (roomId) => dispatch(setRoom(
 const mapStateToProps = state => ({
     rooms: state.auth.user && state.auth.user.rooms,
     userUid: state.auth.user && state.auth.user.uid,
+    emailVerified: state.auth.user && state.auth.user.emailVerified,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatRooms)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { signup } from '../helpers/auth'
-import { capitalize } from '../helpers/common'
+import { capitalize, isEmailValid } from '../helpers/common'
 import { Link, Redirect } from 'react-router-dom'
 import { login as loginAction } from '../reducers/auth'
 import { pageView } from '../helpers/analytics'
@@ -100,39 +100,48 @@ class Signup extends Component {
     }
 
     isValid = () => {
-        const email = this.state.email.value
-        const password = this.state.passConfirm.value
-        const passwordConfirm = this.state.passConfirm.value
-        const displayName = this.state.name.value
-        const firstname = this.state.firstname.value
-        const lastname = this.state.lastname.value
+        const {
+            email,
+            passConfirm,
+            pass,
+            name,
+            firstname,
+            lastname,
+            type,
+        } = this.state
+        const password = pass.value
+        const passwordConfirm = passConfirm.value
+        const displayName = name.value
         if (displayName.length < 2) {
             this.setMessage('error', 'Please enter a Name or a Title.')
             return false
         }
-        if (firstname.length < 2) {
+        if (firstname.value.length < 2) {
             this.setMessage('error', 'Please enter a First Name or a Title.')
             return false
         }
-        if (lastname.length < 2) {
+        if (lastname.value.length < 2) {
             this.setMessage('error', 'Please enter a Last Name or a Title.')
             return false
         }
-        if (email.length < 4) {
-            this.setMessage('error', 'Please enter an email address.')
+        if (email.value.length < 4 || !isEmailValid(email.value)) {
+            this.setMessage('error', 'Please enter a valid email address.')
             return false
         }
-        if (password.length < 4) {
+        if (password.length < 6) {
             this.setMessage('error', 'Please enter a password.')
             return false
         }
-        if (passwordConfirm.length < 4) {
+        if (passwordConfirm.length < 6) {
             this.setMessage('error', 'Please enter a the password again for confirmation.')
             return false
         }
         if (passwordConfirm !== password) {
             this.setMessage('error', 'The password and the password confirmation must be the same.')
             return false
+        }
+        if (type === 'venue') {
+
         }
         return true
     }
@@ -160,6 +169,9 @@ class Signup extends Component {
             accountType,
         })
         .then(res => {
+            if (!res || res.code !== 200 || res.message !== 'ok') {
+                return this.setMessage('error', 'An error accurd and we couldn\'t register you')
+            }
             const user = res.user
             return login({
                 email,
@@ -296,19 +308,6 @@ class Signup extends Component {
                         required
                     />
                     {!isMusician && <br />}
-                    {!isMusician && <label htmlFor="location">Location:</label>}
-                    {!isMusician && (
-                        <input
-                            className="form-control"
-                            type="text"
-                            onChange={this.locationChange}
-                            id="location"
-                            name="location"
-                            placeholder="XXX-XXXXXXX"
-                            required
-                            />
-                    )}
-                    {!isMusician && <br />}
                     {!isMusician && <label htmlFor="url">URL:</label>}
                     {!isMusician && (
                         <input
@@ -330,6 +329,19 @@ class Signup extends Component {
                             onChange={this.urlChange}
                             id="capacity"
                             name="capacity"
+                            placeholder="XXX-XXXXXXX"
+                            required
+                            />
+                    )}
+                    {!isMusician && <br />}
+                    {!isMusician && <label htmlFor="location">Location:</label>}
+                    {!isMusician && (
+                        <input
+                            className="form-control"
+                            type="text"
+                            onChange={this.locationChange}
+                            id="location"
+                            name="location"
                             placeholder="XXX-XXXXXXX"
                             required
                             />
