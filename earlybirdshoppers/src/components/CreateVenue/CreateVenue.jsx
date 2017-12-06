@@ -97,7 +97,7 @@ class CreateVenue extends Component {
     isValid = ({ name, location, contactPersonEmail, venueEmail }) => {
         const errors = []
         let error = ''
-        
+
         if (name.length < 4) {
             errors.push('name')
             error = `
@@ -105,7 +105,7 @@ class CreateVenue extends Component {
             Name must be longer than 3 chars
             `
         }
-        
+
         if (venueEmail.length > 0 && !isEmailValid(venueEmail)) {
             errors.push('venueEmail')
             error = `
@@ -113,7 +113,7 @@ class CreateVenue extends Component {
             Venue email must be a valid email
             `
         }
-        
+
         if (contactPersonEmail.length > 0 && !isEmailValid(contactPersonEmail)) {
             errors.push('contactPersonEmail')
             error = `
@@ -121,7 +121,7 @@ class CreateVenue extends Component {
             Contact person email must be a valid email
             `
         }
-        
+
         if (
             !location ||
             !location.city ||
@@ -146,11 +146,11 @@ class CreateVenue extends Component {
 
         return true
     }
-    
+
     onSubmit = e => {
         e && e.preventDefault()
         const { location, name, contactPersonEmail, venueEmail } = this.state
-        
+
         if (this.isValid({ name, location, contactPersonEmail, venueEmail })) {
             this.setState({isModalOpen: 'submit'})
         }
@@ -167,7 +167,7 @@ class CreateVenue extends Component {
 
         const locationProps = {}
         Object.keys(location).forEach(itemKey => locationProps[`location${capitalize(itemKey)}`] = location[itemKey])
-    
+
         console.log('submit============ ', {
             contactPerson, venueEmail, phoneNumber, website, fb, venueType, genre,
             capacity, seatingCapacity, date: new Date(date).toJSON(), businessPlan, description, comments, isLazarya, equipment,
@@ -516,17 +516,17 @@ class CreateVenue extends Component {
                         ]}
                     />
                     <div className="form-group col-md-6">
-                        <Checkbox 
+                        <Checkbox
                             checked={hasLocalAudience}
                             onChange={this.onLocalAudienceChange}
                             label="Has local Audience?"
                         />
-                        <Checkbox 
+                        <Checkbox
                             checked={paidEntrance}
                             onChange={this.onPaidEntranceChange}
                             label="Has paid entrance?"
                         />
-                        <Checkbox 
+                        <Checkbox
                             checked={hasGuarantee}
                             onChange={this.onGuaranteeChange}
                             label="Has Guarantee?"

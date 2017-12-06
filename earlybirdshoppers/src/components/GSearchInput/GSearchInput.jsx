@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 // import { compose, withProps, lifecycle } from 'recompose'
 // import {
 //     withScriptjs,
@@ -8,7 +9,7 @@ import StandaloneSearchBox from 'react-google-maps/lib/components/places/Standal
 // import Loader from '../Loader/'
 import { stopPropogation } from '../../helpers/common'
 
-const GSearchInput = props => (
+const GSearchInput = props => ( props.isMapsReady &&
     <div data-standalone-searchbox="">
         <StandaloneSearchBox
             ref={props.refrence}
@@ -33,7 +34,7 @@ const GSearchInput = props => (
         </ol>*/}
     </div>
 )
-     
+
 
 GSearchInput.proptypes = {
     placeholder: PropTypes.string.isRequired,
@@ -49,4 +50,8 @@ GSearchInput.proptypes = {
 //         loadingElement: <Loader />,
 //     }),
 // )(GSearchInput)
-export default GSearchInput
+
+const mapStateToProps = state => ({
+  isMapsReady: state.locale.isMapsReady,
+})
+export default connect(mapStateToProps)(GSearchInput)

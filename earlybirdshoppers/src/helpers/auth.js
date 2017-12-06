@@ -1,7 +1,7 @@
 import { auth, createUser
     // googleProvider, fbProvider
 } from './firebase'
-
+window.s = createUser; // TODO remove this line
 const accountTypes = ['musician', 'venueManager']
 
 export const logout = () => auth().signOut()
@@ -19,6 +19,10 @@ export const signup = ({
     displayName,
     firstname,
     lastname,
+    location,
+    seatingCapacity,
+    standingCapacity,
+    profileUrl,
 }) => {
     if (!accountTypes.includes(accountType)) {
         return false
@@ -30,6 +34,10 @@ export const signup = ({
             displayName,
             firstname,
             lastname,
+            location,
+            seatingCapacity,
+            standingCapacity,
+            profileUrl,
         ))
 }
 // TODO add provider signup
@@ -62,6 +70,10 @@ export const saveUser = (
     displayName,
     firstname,
     lastname,
+    location,
+    seatingCapacity,
+    standingCapacity,
+    profileUrl,
 ) => {
     if (!accountType || !displayName || !user || !firstname || !lastname) {
         return logout()
@@ -81,10 +93,14 @@ export const saveUser = (
         accountType,
         firstname,
         lastname,
-        uid: user.uid
+        uid: user.uid,
+        location,
+        seatingCapacity,
+        standingCapacity,
+        profileUrl,
     }, res => {
         if (!res || res.code !== 200 || res.message !== 'ok') {
-            return logout()
+            logout()
         }
         console.log('createUser res ==== ', res)
         return res

@@ -1,4 +1,4 @@
-// import { isDev } from './common'
+import { isDev } from './common'
 export const DB_CONFIG = {
     apiKey: "AIzaSyCmnoJEwqiaq-lavYiVySWdo77uSWIcFK4",
     authDomain: "earlybirdshopers.firebaseapp.com",
@@ -12,8 +12,8 @@ export const getMapsApi = (countryCode, language) =>
     `https://maps.googleapis.com/maps/api/js?v=3.29&libraries=places,geometry,drawing,places&key=${GMAPS_API_KEY}&region=${countryCode || 'US'}&language=${language || 'en'}&callback=mapsInit`
 
 // activate to test local functions
-// export const API_ENDPOINT = isDev ? 'http://localhost:5000/earlybirdshopers/us-central1/api/' : 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/'
-export const API_ENDPOINT = 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/'
+export const API_ENDPOINT = isDev ? 'http://localhost:5000/earlybirdshopers/us-central1/api/' : 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/'
+// export const API_ENDPOINT = 'https://us-central1-earlybirdshopers.cloudfunctions.net/api/'
 export const GET_ARTISTS = `${API_ENDPOINT}getArtists`
 export const GET_MUSICIANS = `${API_ENDPOINT}getMusicians`
 export const GET_VENUES = `${API_ENDPOINT}getVenues`

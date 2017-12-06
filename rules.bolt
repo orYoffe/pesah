@@ -229,12 +229,14 @@ path /artists {
   read() { true }
 }
 path /artists/{uid} is Artist {
+  index() { ["profileUrl"] }
   write() { isSameId(uid) }
 }
 path /musicians {
   read() { true }
 }
 path /musicians/{uid} is Artist {
+  index() { ["displayName"] }
   write() { isSameId(uid) }
 }
 
@@ -242,6 +244,7 @@ path /venues {
   read() { true }
 }
 path /venues/{uid} is Venue {
+  index() { ["profileUrl"] }
   write() { isSameId(uid) }
 }
 path /venueManagers/{uid} {

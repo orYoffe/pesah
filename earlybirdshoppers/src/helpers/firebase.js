@@ -59,7 +59,19 @@ export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value'
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
 export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback).catch(callback)
 export const getAnalytics = (path, callback) => ref.child(`analytics/${path}`).once('value', callback).catch(callback)
-
+const checkName = callback => (snapshot) => {
+  if (snapshot.val() === null) {
+    // username not taken
+    callback(true)
+  } else {
+    // username taken
+    callback(false)
+  }
+}
+export const findVenueByUrl = (name, callback) => ref.child(`venues`).orderByChild('profileUrl').equalTo(name).once('value', checkName(callback));
+export const checkVenueUrl = (name, callback) => ref.child(`venues`).orderByChild('profileUrl').equalTo(name).once('value', checkName(callback));
+export const checkMusicianUrl = (name, callback) => ref.child(`musicians`).orderByChild('displayName').equalTo(name).once('value', checkName(callback));
+export const checkArtistUrl = (name, callback) => ref.child(`artists`).orderByChild('profileUrl').equalTo(name).once('value', checkName(callback));
 
 // ======== Firebase storage
 export const getPhotoUrl = (userUid, type, callback) => storageRef.child(`images/${userUid}/${type}.png`).getDownloadURL().then(callback).catch(callback)

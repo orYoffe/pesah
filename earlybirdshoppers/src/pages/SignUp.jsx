@@ -1,15 +1,27 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { signup } from '../helpers/auth'
-import { capitalize, isEmailValid } from '../helpers/common'
+import { checkVenueUrl } from '../helpers/firebase'
+import { getLocation, capitalize, isEmailValid } from '../helpers/common'
 import { Link, Redirect } from 'react-router-dom'
 import { login as loginAction } from '../reducers/auth'
 import { pageView } from '../helpers/analytics'
+import GSearchInput from '../components/GSearchInput/'
+import Map from '../components/Map'
 
 class Signup extends Component {
     state = {
         loggedIn: false,
         phone: {
+            value: 0,
+        },
+        seatingCapacity: {
+            value: 0,
+        },
+        standingCapacity: {
+            value: 0,
+        },
+        profileUrl: {
             value: '',
         },
         email: {
@@ -34,7 +46,8 @@ class Signup extends Component {
             error: '',
             message: ''
         },
-        type: 'musician',
+        location: false,
+        type: 'venue',
     }
 
     checkType = e => this.setState({type: e.target.value})
@@ -85,6 +98,34 @@ class Signup extends Component {
         }
     }
 
+    profileUrlChange = (e) => {
+        const value = e.target.value
+        const url = value && value.trim().replace(/ /g, '_').replace(/[^\w\s]/gi, '');
+        if (!!url && this.state.profileUrl.value !== url) {
+            checkVenueUrl(value, (isUrlFree) => {
+                if (isUrlFree) {
+                    this.setState({ profileUrl: { value: url }})
+                } else {
+                    this.setMessage('error', 'This profile url is taken, please choose another.')
+                }
+            })
+        }
+    }
+
+    seatingCapacityChange = (e) => {
+        const value = e.target.value
+        if (!!value && this.state.seatingCapacity.value !== value) {
+            this.setState({ seatingCapacity: { value }})
+        }
+    }
+
+    standingCapacityChange = (e) => {
+        const value = e.target.value
+        if (!!value && this.state.standingCapacity.value !== value) {
+            this.setState({ standingCapacity: { value }})
+        }
+    }
+
     passChange = (e) => {
         const value = e.target.value
         if (!!value && this.state.pass.value !== value) {
@@ -96,6 +137,15 @@ class Signup extends Component {
         const value = e.target.value
         if (!!value && this.state.passConfirm.value !== value) {
             this.setState({ passConfirm: { value }})
+        }
+    }
+    onPlacesChanged = () => {
+        const place = this.venueLocation.getPlaces()[0]
+        const location = getLocation(place)
+        if (place && location) {
+            this.setState({ location })
+        } else if (this.state.location) {
+            this.setState({ location: null })
         }
     }
 
@@ -133,7 +183,7 @@ class Signup extends Component {
             return false
         }
         if (passwordConfirm.length < 6) {
-            this.setMessage('error', 'Please enter a the password again for confirmation.')
+            this.setMessage('error', 'Please enter the password again for confirmation.')
             return false
         }
         if (passwordConfirm !== password) {
@@ -141,7 +191,29 @@ class Signup extends Component {
             return false
         }
         if (type === 'venue') {
-
+            const {
+                location,
+                // seatingCapacity,
+                // standingCapacity,
+                profileUrl,
+            } = this.state
+            const url = profileUrl.value.trim().replace(/ /g, '_').replace(/[^\w\s]/gi, '');
+            if (url.length < 1) {
+                this.setMessage('error', 'Please enter a proper Profile url.')
+                return false
+            }
+            if (
+            !location ||
+            !location.city ||
+            !location.country ||
+            !location.countryShortName ||
+            !location.address ||
+            !location.lat ||
+            !location.lng
+            ) {
+                this.setMessage('error', 'Please enter a valid location')
+                return false
+            }
         }
         return true
     }
@@ -150,25 +222,48 @@ class Signup extends Component {
         e && e.preventDefault()
         e && e.stopPropagation()
         const { type } = this.state
-        if(!this.isValid() || type === 'venue') { // TODO fix signup process for venue = > venueManager
+        if(!this.isValid()) {
             return false
         }
-        const accountType = type === 'venue' ? 'venueManager' : type
+        const accountType = type === 'venue' ? 'venueManager' : 'musician'
         const { login } = this.props
         const email = this.state.email.value
         const password = this.state.pass.value
         const displayName = this.state.name.value
         const firstname = this.state.firstname.value
         const lastname = this.state.lastname.value
-        signup({
-            email,
-            password,
-            displayName,
-            firstname,
-            lastname,
-            accountType,
-        })
-        .then(res => {
+
+        let signupRequest
+        if (accountType === 'venueManager') {
+            const {
+                location,
+                seatingCapacity,
+                standingCapacity,
+                profileUrl,
+            } = this.state
+            signupRequest = signup({
+                email,
+                password,
+                displayName,
+                firstname,
+                lastname,
+                accountType,
+                location,
+                seatingCapacity: seatingCapacity.value,
+                standingCapacity: standingCapacity.value,
+                profileUrl: profileUrl.value,
+            })
+        } else {
+            signupRequest = signup({
+                email,
+                password,
+                displayName,
+                firstname,
+                lastname,
+                accountType,
+            })
+        }
+        signupRequest.then(res => {
             if (!res || res.code !== 200 || res.message !== 'ok') {
                 return this.setMessage('error', 'An error accurd and we couldn\'t register you')
             }
@@ -196,7 +291,7 @@ class Signup extends Component {
 
     render() {
         const { history } = this.props
-        const { messages: { message, error }, type } = this.state
+        const { messages: { message, error }, type, location, profileUrl, name } = this.state
 
         if (this.props.isLoggedIn) {
             if (history && history.length) {
@@ -277,7 +372,7 @@ class Signup extends Component {
                     {!isMusician && (
                         <input
                             className="form-control"
-                            type="tel"
+                            type="number"
                             onChange={this.phoneChange}
                             id="phone"
                             name="phone"
@@ -308,44 +403,71 @@ class Signup extends Component {
                         required
                     />
                     {!isMusician && <br />}
-                    {!isMusician && <label htmlFor="url">URL:</label>}
+                    {!isMusician && <label htmlFor="profileUrl">Profile Url:</label>}
                     {!isMusician && (
                         <input
                             className="form-control"
                             type="text"
-                            onChange={this.urlChange}
-                            id="url"
-                            name="url"
-                            placeholder="XXX-XXXXXXX"
+                            onChange={this.profileUrlChange}
+                            id="profileUrl"
+                            name="profileUrl"
+                            placeholder={name.value ? name.value.replace(/ /g, '_').replace(/[^\w\s]/gi, '') : 'The_Great_Piano_club'}
                             required
                             />
                     )}
                     {!isMusician && <br />}
-                    {!isMusician && <label htmlFor="capacity">Capacity:</label>}
+                    {!isMusician && profileUrl.value && <p>
+                        Your full url will be: www.raisethebar/v/{profileUrl.value.replace(/ /g, '_').replace(/[^\w\s]/gi, '')}
+                    </p>}
+                    {!isMusician && <br />}
+                    {!isMusician && <label htmlFor="standingCapacity">Standing capacity:</label>}
                     {!isMusician && (
                         <input
                             className="form-control"
-                            type="text"
-                            onChange={this.urlChange}
-                            id="capacity"
-                            name="capacity"
-                            placeholder="XXX-XXXXXXX"
+                            type="number"
+                            onChange={this.standingCapacityChange}
+                            id="standingCapacity"
+                            name="standingCapacity"
+                            placeholder="50"
                             required
                             />
                     )}
                     {!isMusician && <br />}
-                    {!isMusician && <label htmlFor="location">Location:</label>}
+                    {!isMusician && <label htmlFor="seatingCapacity">Seating capacity:</label>}
                     {!isMusician && (
                         <input
                             className="form-control"
-                            type="text"
-                            onChange={this.locationChange}
-                            id="location"
-                            name="location"
-                            placeholder="XXX-XXXXXXX"
+                            type="number"
+                            onChange={this.seatingCapacityChange}
+                            id="seatingCapacity"
+                            name="seatingCapacity"
+                            placeholder="20"
                             required
                             />
                     )}
+                    {!isMusician && <br />}
+                    {!isMusician && (
+                        <div className="form-group col-md-12">
+                            <label htmlFor="venueLocation">Venue Location</label>
+                            <GSearchInput
+                                placeholder="Somewhere street 54..."
+                                className="form-control"
+                                id="venueLocation"
+                                refrence={node => this.venueLocation = node}
+                                onPlacesChanged={this.onPlacesChanged}
+                            />
+                        </div>
+                    )}
+                    {!isMusician && location && (
+                        <div className="col-md-12">
+                            <Map markers={[
+                                {
+                                    position: { lng: location.lng, lat: location.lat }
+                                },
+                            ]} />
+                        </div>
+                    )}
+                    <br />
                     <br />
                     <input
                         className="btn btn-primary form-control"
