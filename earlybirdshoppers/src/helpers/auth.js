@@ -1,7 +1,6 @@
 import { auth, createUser
     // googleProvider, fbProvider
 } from './firebase'
-window.s = createUser; // TODO remove this line
 const accountTypes = ['musician', 'venueManager']
 
 export const logout = () => auth().signOut()

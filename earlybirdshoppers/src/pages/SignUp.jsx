@@ -47,7 +47,7 @@ class Signup extends Component {
             message: ''
         },
         location: false,
-        type: 'venue',
+        type: 'musician',
     }
 
     checkType = e => this.setState({type: e.target.value})
