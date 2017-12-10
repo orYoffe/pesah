@@ -7,6 +7,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser')();
 const createEvent = require('./modules/createEvent');
 const createUser = require('./modules/createUser');
+const createArtist = require('./modules/createArtist');
 const getRoom = require('./modules/getRoom');
 const getters = require('./modules/getters');
 const adminApis = require('./modules/admin');
@@ -90,6 +91,7 @@ app.post('/createEvent', createEvent.createEvent);
 // TODO finish the update function
 // app.post('/updateEvent', createEvent.updateEvent);
 app.post('/createUser', createUser.default);
+app.post('/createArtist', createArtist.default);
 app.post('/getRoom', getRoom.default);
 app.post('/sendBookingRequest', booking.createBookingRequest);
 app.post('/approveBookingRequest', booking.approveBookingRequest);

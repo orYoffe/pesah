@@ -18,8 +18,8 @@ class Venues extends Component {
                     venues: res, markers: markers.map(item => item.locationLng && item.locationLat && ({
                         position: { lng: item.locationLng, lat: item.locationLat },
                         // label: item.name || item.displayname,
-                        defaultTitle: item.name || item.displayname,
-                        onClick: () => this.props.history.push(`/venue/${item.uid}`)
+                        defaultTitle: item.displayname,
+                        onClick: () => this.props.history.push(`/v/${item.uid}`)
                     })) })
             }
         })

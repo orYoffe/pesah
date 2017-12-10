@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Route, Link } from 'react-router-dom'
 import ReactAudioPlayer from 'react-audio-player'
 import { pageView, sendAudioEvent } from '../helpers/analytics'
-import { getArtist, getPhotoUrl, getTrackUrl, setYoutubeUrl } from '../helpers/firebase'
+import { getArtistById, getPhotoUrl, getTrackUrl, setYoutubeUrl, findArtistByUrl } from '../helpers/firebase'
 import { setProfilePicture } from '../reducers/auth'
 import NotFound from './NotFound'
 import EventItem from '../components/EventItem'
@@ -32,8 +32,7 @@ class Artist extends Component {
         const { userId } = this.props
         const { id } = this.props.match.params
         pageView('artist', { page: id, userId })
-
-        this.getArtistData()
+debugger
         this.getArtistData()
     }
 
@@ -111,9 +110,20 @@ class Artist extends Component {
         const { id } = this.props.match.params
 
         this.setState(defaultState)
-        getArtist(id, snapshot => {
-            const artist = snapshot && snapshot.val()
-            this.setState({ artist: artist || 'not found' })
+        findArtistByUrl(id, snapshot => {
+            let artist = snapshot && snapshot.val()
+            debugger
+            artist = artist && Object.values(artist)
+            if (artist && artist[0] && artist[0].uid) {
+                this.setState({ artist: artist[0] || 'not found' })
+            } else {
+                return getArtistById(id, snapshot => {
+                    const artist = snapshot && snapshot.val()
+                    this.setState({ artist: artist || 'not found' })
+                })
+            }
+        })
+        .then(() => {
             getPhotoUrl(id, 'profilePicture', (profilePicture) => {
                 if (profilePicture.code !== 'storage/object-not-found') {
                     this.setState({ profilePicture })
@@ -126,6 +136,7 @@ class Artist extends Component {
             })
         })
         .catch(snapshot => {
+            debugger
             this.setState({ artist: 'not found' })
         })
     }
@@ -165,7 +176,7 @@ class Artist extends Component {
 
     render() {
         const { artist, profilePicture, profileTrack } = this.state
-
+debugger
         if(artist === 'not found') {
             return <NotFound />
         } else if(!artist) {

@@ -8,7 +8,7 @@ import {
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import PassReset from './pages/PassReset'
-// import PrivateRoute from './helpers/PrivateRoute'
+import PrivateRoute from './helpers/PrivateRoute'
 import PublicRoute from './helpers/PublicRoute'
 import Explore from './pages/Explore'
 import Artist from './pages/Artist'
@@ -19,7 +19,8 @@ import Event from './pages/Event'
 // import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 import Menu from './components/Menu/'
-// import CreateEvent from './components/CreateEvent/'
+import CreateEvent from './components/CreateEvent/'
+import CreateArtist from './components/CreateArtist/'
 import Chat from './components/Chat/'
 import Venues from './components/Venues'
 
@@ -37,10 +38,12 @@ const Routes = (props) => (
                             <PublicRoute exact path="/signup" component={SignUp}/>
                             <Route exact path="/password-reset" component={PassReset}/>
                             <Route path="/musician/:id" component={Musician}/>
-                            <Route path="/artist/:id" component={Artist}/>
-                            <Route path="/venue/:id" component={Venue}/>
+                            <Route path="/a/:id" component={Artist}/>
+                            <Route path="/v/:id" component={Venue}/>
                             <Route path="/event/:id" component={Event}/>
-                            {/*<PrivateRoute path='/create-event' component={CreateEvent} />
+                            <PrivateRoute path='/create-artist' component={CreateArtist} />
+                            <PrivateRoute path='/create-event' component={CreateEvent} />
+                            {/*
                         <PrivateRoute isRouteForAdmin path='/admin' component={Admin} />*/}
                             <Route path="/404" component={NotFound}/>
                             <Redirect from="/guard" to="/" />

@@ -19,21 +19,48 @@ class Menu extends Component {
         logout().then(() => logoutAction())
     }
     renderDynamicLinks = () => {
-        const { isLoggedIn, userUid, accountType, trans, isAdmin } = this.props
+        const { isLoggedIn, userUid, accountType, trans, isAdmin, venues, artists } = this.props
         // const isFan = accountType === 'fan'
         const links = []
         if (isLoggedIn && userUid) {
             // if (!isFan) {
+            let routeBase = accountType
+            let routeId = userUid
+            switch (accountType) {
+                case 'venueManager':
+                    routeBase = 'v'
+                    routeId = Object.values(venues)[0]
+                    routeId = routeId.profileUrl || routeId.uid
+
+                    links.push(
+                        <li key={`menu_item_${userUid}_create_event`}>
+                            <NavLink onClick={this.closeMenu}  to="/create-event">{trans.Create_Event} +</NavLink>
+                        </li>
+                    )
+                    break;
+                case 'musician':
+                    links.push(
+                        <li key={`menu_item_${userUid}_create_artist`}>
+                            <NavLink  onClick={this.closeMenu}  to="/create-artist">{trans.Create_Artist}</NavLink>
+                        </li>
+                    )
+                    break;
+                case 'artist':
+                    links.push(
+                        <li key={`menu_item_${userUid}_create_event`}>
+                            <NavLink  onClick={this.closeMenu}  to="/create-event">{trans.Create_Event} +</NavLink>
+                        </li>
+                    )
+                    break;
+                default:
+
+            }
                 links.push(
                     <li key={`menu_item_${userUid}_page`}>
-                        <NavLink  onClick={this.closeMenu}  to={`/${accountType}/${userUid}`}>{trans.My_Page}</NavLink>
+                        <NavLink  onClick={this.closeMenu}  to={`/${routeBase}/${routeId}`}>{trans.My_Page}</NavLink>
                     </li>
                 )
-                links.push(
-                    <li key={`menu_item_${userUid}_create_event`}>
-                        <NavLink  onClick={this.closeMenu}  to="/create-event">{trans.Create_Event} +</NavLink>
-                    </li>
-                )
+
             // }
             if (isAdmin) {
                 links.push(
@@ -110,6 +137,8 @@ const mapStateToProps = (state) => {
             userUid: state.auth.user.uid,
             trans: state.locale.trans,
             isAdmin: state.auth.user.isAdmin,
+            venues: state.auth.user.venues,
+            artists: state.auth.user.artists,
         }
     }
 

@@ -8,11 +8,12 @@ const Gmap = withGoogleMap(({
   onMapLoad,
   onMapClick,
   onMarkerRightClick,
+  defaultCenter
 }) => (
   <GoogleMap
     ref={onMapLoad}
     defaultZoom={11}
-    defaultCenter={{ lat: 32.111767, lng: 34.801361 }}
+    defaultCenter={markers.length === 1 ? markers[0].position : defaultCenter || { lat: 32.111767, lng: 34.801361 }}
     onClick={onMapClick}
   >
     {markers && markers.map((marker, index) => (
@@ -30,6 +31,7 @@ const Map = ({
   onMapClick,
   onMarkerRightClick,
   isMapsReady,
+  defaultCenter
 }) => (
     isMapsReady && <Gmap
     containerElement={
@@ -38,6 +40,7 @@ const Map = ({
     mapElement={
       <div style={{ height: `100%`, minHeight: '200px' }} />
     }
+    defaultCenter={defaultCenter}
     onMapLoad={noop}
     onMapClick={noop}
     markers={markers}

@@ -14,6 +14,7 @@ import {
     GET_EXPLORE,
     CREATE_EVENT,
     CREATE_USER,
+    CREATE_ARTIST,
     GET_ROOM,
     CREATE_NON_USER_VENUE,
     UPDATE_NON_USER_VENUE,
@@ -54,8 +55,8 @@ export const fbProvider = new firebase.auth.FacebookAuthProvider();
 export const getUser = (id, callback) => ref.child(`users/${id}`).once('value', callback).catch(callback)
 // export const getFan = (id, callback) => ref.child(`fans/${id}`).once('value', callback).catch(callback)
 export const getMusician = (id, callback) => ref.child(`musicians/${id}`).once('value', callback).catch(callback)
-export const getArtist = (id, callback) => ref.child(`artists/${id}`).once('value', callback).catch(callback)
-export const getVenue = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
+export const getArtistById = (id, callback) => ref.child(`artists/${id}`).once('value', callback).catch(callback)
+export const getVenueById = (id, callback) => ref.child(`venues/${id}`).once('value', callback).catch(callback)
 export const getEvent = (id, callback) => ref.child(`events/${id}`).once('value', callback).catch(callback)
 export const getPayment = (id, callback) => ref.child(`payments/${id}`).once('value', callback).catch(callback)
 export const getAnalytics = (path, callback) => ref.child(`analytics/${path}`).once('value', callback).catch(callback)
@@ -68,7 +69,8 @@ const checkName = callback => (snapshot) => {
     callback(false)
   }
 }
-export const findVenueByUrl = (name, callback) => ref.child(`venues`).orderByChild('profileUrl').equalTo(name).once('value', checkName(callback));
+export const findVenueByUrl = (name, callback) => ref.child(`venues`).orderByChild('profileUrl').equalTo(name).once('value', callback);
+export const findArtistByUrl = (name, callback) => ref.child(`artist`).orderByChild('profileUrl').equalTo(name).once('value', callback);
 export const checkVenueUrl = (name, callback) => ref.child(`venues`).orderByChild('profileUrl').equalTo(name).once('value', checkName(callback));
 export const checkMusicianUrl = (name, callback) => ref.child(`musicians`).orderByChild('displayName').equalTo(name).once('value', checkName(callback));
 export const checkArtistUrl = (name, callback) => ref.child(`artists`).orderByChild('profileUrl').equalTo(name).once('value', checkName(callback));
@@ -134,6 +136,7 @@ export const sendMeEmail = (callback) => authGet(SEND_ME_AN_EMAIL).then(callback
 // ======= POST
 export const createEvent = (body, callback) => post(CREATE_EVENT, body, callback).then(callback).catch(callback)
 export const createUser = (body, callback) => post(CREATE_USER, body, callback).then(callback).catch(callback)
+export const createArtist = (body, callback) => post(CREATE_ARTIST, body, callback).then(callback).catch(callback)
 export const createNonUserVenue = (body, callback) => post(CREATE_NON_USER_VENUE, body, callback).then(callback).catch(callback)
 export const updateNonUserVenue = (body, callback) => post(UPDATE_NON_USER_VENUE, body, callback).then(callback).catch(callback)
 export const getRoom = (body, callback) => post(GET_ROOM, body, callback).then(callback).catch(callback)

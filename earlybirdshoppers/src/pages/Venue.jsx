@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import NotFound from './NotFound'
 // import EventItem from '../components/EventItem/'
 import Loader from '../components/Loader/'
-import { getVenue, getArtist, requestBooking, findVenueByUrl } from '../helpers/firebase'
+import { getVenueById, getArtistById, requestBooking, findVenueByUrl } from '../helpers/firebase'
 import { pageView } from '../helpers/analytics'
 import OpenChat from '../components/OpenChat'
 import Map from '../components/Map'
@@ -28,12 +28,22 @@ class Venue extends Component {
     componentDidMount() {
         const { userId } = this.props
       const { id } = this.props.match.params
-        pageView('venue', { page: id, userId })
-            this.setState(defaultState)
 
-        getVenue(id, snapshot => {
-            const venue = snapshot && snapshot.val()
-            this.setState({ venue: venue || 'not found' })
+
+        pageView('venue', { page: id, userId })
+        this.setState(defaultState)
+
+        findVenueByUrl(id, snapshot => {
+            let venue = snapshot && snapshot.val()
+            venue = venue && Object.values(venue)
+            if (venue && venue[0] && venue[0].uid) {
+                this.setState({ venue: venue[0] || 'not found' })
+            } else {
+                return getVenueById(id, snapshot => {
+                    const venue = snapshot && snapshot.val()
+                    this.setState({ venue: venue || 'not found' })
+                })
+            }
         })
         .catch(snapshot => {
             this.setState({ venue: 'not found' })
@@ -46,7 +56,7 @@ class Venue extends Component {
         const { venue, bookingMessage } = this.state
         return (
             <div>
-                <h4>Are you sure you want to send a booking request to {venue.displayName || venue.name}?</h4>
+                <h4>Are you sure you want to send a booking request to {venue.displayName}?</h4>
                 <br/>
 
                 <Textarea
@@ -78,7 +88,7 @@ class Venue extends Component {
 
     requestBooking = () => {
         const { userId } = this.props
-        getArtist(userId, snapshot => {
+        getArtistById(userId, snapshot => {
             const artist = snapshot && snapshot.val()
             console.log('artist ======================', artist)
             this.setState({ artist, isModalOpen: 'booking' })
@@ -117,7 +127,6 @@ class Venue extends Component {
     render() {
         // TODO if the Venue belongs to the user show edit options
         const { venue, isModalOpen } = this.state
-
         if(!venue) {
             return <Loader />
         }
@@ -126,33 +135,36 @@ class Venue extends Component {
         }
 
         const {
-            displayName, uid, photoURL, locationLng, locationLat,
-            name, locationAddress, locationCity, locationCountry, locationCountryShortName,
-            venueSize, contactPerson, isLazarya, email, seatingCapacity, stageSize, hasUser,
-            image, paidEntrance, hasLocalAudience, hasGuarantee, venueEmail, guaranteeAmount,
-            phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
+            displayName, uid, photoURL, location,
+            seatingCapacity, standingCapacity, //stageSize, hasUser,
+            image, //paidEntrance, hasLocalAudience, hasGuarantee, venueEmail, guaranteeAmount,
+            //phoneNumber, website, fb, venueType, genre, capacity, date, businessPlan, description, comments,
         } = venue
+        console.log('================venue------', venue);
         const { userId, isLoggedIn, isAdmin, emailVerified } = this.props
         const content = (
             <div className="page-content">
                 {this.renderBooking()}
                 {this.renderVenueEdit()}
-                {isAdmin && (isLazarya || uid === userId) && <Link to={`/admin/edit-venue/${uid}`} className="btn btn-default">Edit This Venue</Link>}
-                {(venueEmail || email) && <p> email: {venueEmail || email} </p>}
-                {isLoggedIn && emailVerified && uid !== userId && hasUser !== false && (
+                {isAdmin && (uid === userId) && <Link to={`/admin/edit-venue/${uid}`} className="btn btn-default">Edit This Venue</Link>}
+                {/*(venueEmail || email) && <p> email: {venueEmail || email} </p>*/}
+                {isLoggedIn && emailVerified && uid !== userId && (
                         <OpenChat
                         chatPartner={{
                             uid: uid,
                             photo: photoURL || '',
-                            displayName: displayName || name
+                            displayName: displayName
                         }} />
                     )
                 }
-                {(displayName || name) && <h4>Venue name: {displayName || name}</h4>}
-                {locationAddress && <p>Address: {locationAddress}</p>}
-                {locationCity && <p>City: {locationCity}</p>}
-                {locationCountry && <p>Country: {locationCountry}</p>}
-                {locationCountryShortName && <p>CountryShortName: {locationCountryShortName}</p>}
+                {(displayName) && <h4>Venue name: {displayName}</h4>}
+                {seatingCapacity && <p>seatingCapacity: {seatingCapacity}</p>}
+                {standingCapacity && <p>standingCapacity: {standingCapacity}</p>}
+                {location.address && <p>Address: {location.address}</p>}
+                {location.city && <p>City: {location.city}</p>}
+                {location.country && <p>Country: {location.country}</p>}
+                {/*
+                    {locationCountryShortName && <p>CountryShortName: {locationCountryShortName}</p>}
                 {venueSize && <p> venueSize: {venueSize} </p>}
                 {stageSize && <p> stageSize: {stageSize} </p>}
                 {contactPerson && <p> contactPerson: {contactPerson} </p>}
@@ -165,17 +177,18 @@ class Venue extends Component {
                 {phoneNumber && <p>phoneNumber: {phoneNumber}</p>}
                 {genre && <p>genre: {genre}</p>}
                 {capacity && <p>capacity: {capacity}</p>}
-                {seatingCapacity && <p>seatingCapacity: {seatingCapacity}</p>}
                 {businessPlan && <p>businessPlan: {businessPlan}</p>}
                 {description && <p>description: {description}</p>}
                 {comments && <p>comments: {comments}</p>}
                 {date && <p>last edited: {date}</p>}
                 {fb && <a href={fb} target="_blank" >FB link</a>}
                 {website && <a href={website} target="_blank" >Website link</a>}
+                */}
                 {image && <img src={image} alt="venue"/>}
-                {locationLng && locationLat && <Map markers={[
+                {location.lng && location.lat && <Map
+                    markers={[
                     {
-                        position: { lng: locationLng, lat: locationLat }
+                        position: { lng: location.lng, lat: location.lat }
                     },
                 ]} />}
             </div>

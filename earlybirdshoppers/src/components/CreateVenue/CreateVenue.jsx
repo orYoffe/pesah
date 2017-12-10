@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import store from 'store'
 import { connect } from 'react-redux'
 import { getLocation, scrollToTop, capitalize, isEmailValid } from '../../helpers/common'
-import { createNonUserVenue, getVenue, updateNonUserVenue } from '../../helpers/firebase'
+import { createNonUserVenue, getVenueById, updateNonUserVenue } from '../../helpers/firebase'
 import GSearchInput from '../GSearchInput/'
 import Input from '../Input'
 import Checkbox from '../Checkbox'
@@ -57,7 +57,7 @@ class CreateVenue extends Component {
     componentDidMount() {
         const { match: { params: { venueUid } } } = this.props
         if (venueUid) {
-            getVenue(venueUid, snapshot => {
+            getVenueById(venueUid, snapshot => {
                 const venue = snapshot.val()
                 if (venue) {
                     const {
@@ -197,7 +197,7 @@ class CreateVenue extends Component {
                     this.setState({ isModalOpen: 'error' })
                 } else {
                     console.log(' new venue ===', venue)
-                    this.props.history.push(`/venue/${venue.uid}`)
+                    this.props.history.push(`/v/${venue.uid}`)
                 }
             }).catch(err => {
                 console.log('error ===', err)

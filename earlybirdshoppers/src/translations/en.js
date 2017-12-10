@@ -8,6 +8,7 @@ export default  {
     Explore: 'Explore',
     Venues: 'Venues',
     Create_Event: 'Create Event',
+    Create_Artist: 'Create Artist',
     Admin_pannel: 'Admin pannel',
 
 }

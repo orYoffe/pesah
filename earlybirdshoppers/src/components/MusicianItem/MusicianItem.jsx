@@ -25,7 +25,6 @@ class MusicianItem extends Component {
     render() {
         const { pic } = this.state
         const {
-            name,
             location,
             uid,
             displayName,
@@ -36,7 +35,7 @@ class MusicianItem extends Component {
                 <Link to={`/musician/${uid}`} className="musician-item item user-item">
                     <div className="musician-item-content user-item-content">
                         {pic && <img src={pic} alt="musician" className="pull-right" height="50" width="50"/>}
-                        <h4>Musician name: {name || displayName}</h4>
+                        <h4>Musician name: {displayName}</h4>
                         {location &&<p>Based in: {location}</p>}
                         {events && Object.keys(events).length && 'has ' + Object.keys(events).length + ' events'}
                     </div>

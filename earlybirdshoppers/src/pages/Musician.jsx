@@ -42,7 +42,6 @@ class Musician extends Component {
             }
             return (
                 <div>
-                    <button className="btn btn-primary" onClick={verifyEmail} >Click here to send another email for verification</button>
                     <FileInput
                         key={`FileInput_profilepic_${id}`}
                         userUid={userId}

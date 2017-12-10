@@ -6,16 +6,16 @@ import './VenueItem.css'
 
 const VenueItem = props => {
     const {
-        name,
         displayName,
-        uid, 
+        uid,
         locationAddress,
+        profileUrl
     } = props
     return (
         <div className="col-sm-6 col-xs-12">
-            <Link to={`/venue/${uid}`} className="venue-item user-item">
+            <Link to={`/v/${profileUrl || uid}`} className="venue-item user-item">
                 <div className="venue-item-content user-item-content">
-                    <h4>Venue name: {name || displayName}</h4>
+                    <h4>Venue name: {displayName}</h4>
                     <p>Address: {locationAddress}</p>
                 </div>
             </Link>

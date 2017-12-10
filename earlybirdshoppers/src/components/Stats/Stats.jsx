@@ -50,7 +50,7 @@ class Stats extends Component {
     const { userId } = this.props
 
     this.setState(defaultState)
-    getAnalytics(`artist/${userId}`, (snapshot) => {
+    getAnalytics(`a/${userId}`, (snapshot) => {
       if (snapshot && snapshot.code !== 'storage/object-not-found') {
         const pageViews = snapshot.val()
         if (pageViews) {

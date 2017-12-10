@@ -10,9 +10,10 @@ class ArtistItem extends Component {
         pic: null
     }
     proptypes = {
-        name: Proptypes.string.isRequired,
-        location: Proptypes.string.isRequired,
+        displayName: Proptypes.string.isRequired,
+        location: Proptypes.object.isRequired,
         uid: Proptypes.number.isRequired,
+        profileUrl: Proptypes.string.isRequired,
     }
     componentDidMount() {
         getPhotoUrl(this.props.uid, 'profilePicture', (url) => {
@@ -21,23 +22,23 @@ class ArtistItem extends Component {
             }
         })
     }
-    
+
     render() {
         const { pic } = this.state
         const {
-            name,
             location,
             uid,
             displayName,
             events,
+            profileUrl,
         } = this.props
         return (
             <div className="col-sm-6 col-xs-12">
-                <Link to={`/artist/${uid}`} className="artist-item item user-item">
+                <Link to={`/a/${profileUrl || uid}`} className="artist-item item user-item">
                     <div className="artist-item-content user-item-content">
                         {pic && <img src={pic} alt="artist" className="pull-right" height="50" width="50"/>}
-                        <h4>Artist name: {name || displayName}</h4>
-                        {location &&<p>Based in: {location}</p>}
+                        <h4>Artist name: {displayName}</h4>
+                        {location && location.address && <p>Based in: {location.address}</p>}
                         {events && Object.keys(events).length && 'has ' + Object.keys(events).length + ' events'}
                     </div>
                 </Link>
