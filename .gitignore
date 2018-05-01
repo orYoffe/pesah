@@ -61,3 +61,4 @@ typings/
 .history
 .history/
 .history/*
+.DS_Store

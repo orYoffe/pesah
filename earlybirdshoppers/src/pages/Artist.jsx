@@ -176,7 +176,6 @@ debugger
 
     render() {
         const { artist, profilePicture, profileTrack } = this.state
-debugger
         if(artist === 'not found') {
             return <NotFound />
         } else if(!artist) {

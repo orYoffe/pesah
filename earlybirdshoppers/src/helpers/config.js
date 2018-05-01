@@ -1,13 +1,13 @@
 // import { isDev } from './common'
 export const DB_CONFIG = {
-    apiKey: "AIzaSyCmnoJEwqiaq-lavYiVySWdo77uSWIcFK4",
-    authDomain: "earlybirdshopers.firebaseapp.com",
-    databaseURL: "https://earlybirdshopers.firebaseio.com",
-    projectId: "earlybirdshopers",
-    storageBucket: "earlybirdshopers.appspot.com",
-    messagingSenderId: "853475325627"
+    apiKey: '',
+    authDomain: '',
+    databaseURL: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
 }
-const GMAPS_API_KEY = 'AIzaSyBb-v3zujUJ9ZS4T7Inbo6pRHetDpRen3g'
+const GMAPS_API_KEY = ''
 export const getMapsApi = (countryCode, language) =>
     `https://maps.googleapis.com/maps/api/js?v=3.29&libraries=places,geometry,drawing,places&key=${GMAPS_API_KEY}&region=${countryCode || 'US'}&language=${language || 'en'}&callback=mapsInit`
 
